@@ -1,0 +1,351 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="docker、PHP、Golang、Redis、MySQL、Web面试；">
+
+
+    <meta name="description" content="defer nil函数123456789func() &#123;    var run func() = nil    defer run()        fmt.Println(" runs...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>Go 中 defer坑 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="Go 中 defer坑">
+            
+	            Go 中 defer坑
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/Golang/">Golang</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2019/08/28</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="defer-nil函数"><a href="#defer-nil函数" class="headerlink" title="defer nil函数"></a>defer nil函数</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> run <span class="function"><span class="keyword">func</span><span class="params">()</span> = <span class="title">nil</span></span></span><br><span class="line">    <span class="keyword">defer</span> run()</span><br><span class="line">    </span><br><span class="line">    fmt.Println(<span class="string">"runs"</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//output</span></span><br><span class="line">runs</span><br><span class="line"><span class="built_in">panic</span>: runtime error: invalid memory address or <span class="literal">nil</span> pointer dereference</span><br></pre></td></tr></table></figure>
+
+<p>名为 func 的函数一直运行至结束，然后 defer 函数会被执行且会因为值为 nil 而产生 panic 异常。然而值得注意的是，run() 的声明是没有问题，因为在外围函数运行完成后它才会被调用。</p>
+<hr>
+<h1 id="循环中使用defer"><a href="#循环中使用defer" class="headerlink" title="循环中使用defer"></a>循环中使用defer</h1><p><code>慎重在循环中使用defer</code>，因为结果出人意料</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">for</span>&#123;</span><br><span class="line">		row,err:=db.Query(<span class="string">"select ....."</span>)</span><br><span class="line">		<span class="keyword">if</span> err!=<span class="literal">nil</span>&#123;</span><br><span class="line">			...</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">defer</span> row.<span class="built_in">close</span>()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在上面的例子中，defer row.Close() 在循环中的延迟函数会在函数结束过后运行，而不是每次 for 循环结束之后。这些延迟函数会不停地堆积到延迟调用栈中，最终可能会导致一些不可预知的问题。</p>
+<ul>
+<li><p>解决方案1：不使用defer</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">for</span>&#123;</span><br><span class="line">		row,err:=db.Query(<span class="string">"select ....."</span>)</span><br><span class="line">		<span class="keyword">if</span> err!=<span class="literal">nil</span>&#123;</span><br><span class="line">			...</span><br><span class="line">		&#125;</span><br><span class="line">		row.<span class="built_in">close</span>()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解决方案2：移交给函数<br>这样每次匿名函数执行完，会执行defer</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">demo</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">for</span>&#123;</span><br><span class="line">		<span class="function"><span class="keyword">func</span><span class="params">()</span></span>&#123;</span><br><span class="line">			row,err:=db.Query(<span class="string">"select ....."</span>)</span><br><span class="line">            <span class="keyword">if</span> err!=<span class="literal">nil</span>&#123;</span><br><span class="line">                ...</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">defer</span> row.<span class="built_in">close</span>()</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="循环Z-A-倒叙"><a href="#循环Z-A-倒叙" class="headerlink" title="循环Z-A(倒叙)"></a>循环Z-A(倒叙)</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">4</span>; i++ &#123;</span><br><span class="line">        <span class="keyword">defer</span> fmt.Print(i)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//output</span></span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="number">2</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="延迟调用含有闭包的函数"><a href="#延迟调用含有闭包的函数" class="headerlink" title="延迟调用含有闭包的函数"></a>延迟调用含有闭包的函数</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> database <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *database)</span> <span class="title">connect</span><span class="params">()</span> <span class="params">(disconnect <span class="keyword">func</span>()</span>)</span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">"connect"</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">"disconnect"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//运行 </span></span><br><span class="line">db := &amp;database&#123;&#125;</span><br><span class="line"><span class="keyword">defer</span> db.connect()</span><br><span class="line"></span><br><span class="line">fmt.Println(<span class="string">"query db..."</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//output</span></span><br><span class="line">query db...</span><br><span class="line">connect</span><br></pre></td></tr></table></figure>
+
+<p>最终 disconnect 并没有输出，最后只有 connect ，这是一个 bug，最终的情况是 connect() 执行结束后，其执行域得以被保存起来，但内部的闭包并不会被执行。</p>
+<ul>
+<li>解决方案<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">    db := &amp;database&#123;&#125;  <span class="built_in">close</span> := db.connect()</span><br><span class="line">    <span class="keyword">defer</span> <span class="built_in">close</span>()</span><br><span class="line">    fmt.Println(<span class="string">"query db..."</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<hr>
+<h1 id="在执行块中使用-defer"><a href="#在执行块中使用-defer" class="headerlink" title="在执行块中使用 defer"></a>在执行块中使用 defer</h1><p>想要在执行块执行结束后执行在块内延迟调用的函数，但事实并非如此，它们只会在块所属的函数执行结束后才被执行，这种情况适用于所有的代码块除了上文的函数块例如，for，switch 等</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">            fmt.Println(<span class="string">"block: defer runs"</span>)</span><br><span class="line">        &#125;()</span><br><span class="line">            </span><br><span class="line">        fmt.Println(<span class="string">"block: ends"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    fmt.Println(<span class="string">"main: ends"</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//output</span></span><br><span class="line">block: ends</span><br><span class="line">main: ends</span><br><span class="line">block: <span class="keyword">defer</span> runs</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>解决方案<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">            fmt.Println(<span class="string">"func: defer runs"</span>)</span><br><span class="line">        &#125;()</span><br><span class="line">    </span><br><span class="line">        fmt.Println(<span class="string">"func: ends"</span>)</span><br><span class="line">    &#125;()</span><br><span class="line">    </span><br><span class="line">    fmt.Println(<span class="string">"main: ends"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<hr>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2019/08/28/Go/错误处理方案/" class="pre-post btn btn-default" title='Go-错误(error)处理方案'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">Go-错误(error)处理方案</span>
+        </a>
+    
+    
+        <a href="/2019/08/28/Go/defer与return之间的迷之执行顺序/" class="next-post btn btn-default" title='Go 中 defer 与 return 之间的迷之执行顺序'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">Go 中 defer 与 return 之间的迷之执行顺序</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#defer-nil函数"><span class="toc-text">defer nil函数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#循环中使用defer"><span class="toc-text">循环中使用defer</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#循环Z-A-倒叙"><span class="toc-text">循环Z-A(倒叙)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#延迟调用含有闭包的函数"><span class="toc-text">延迟调用含有闭包的函数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#在执行块中使用-defer"><span class="toc-text">在执行块中使用 defer</span></a></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>
