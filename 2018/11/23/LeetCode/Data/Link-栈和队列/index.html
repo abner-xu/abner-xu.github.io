@@ -1,0 +1,341 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="栈和队列">
+
+
+    <meta name="description" content="栈概念　栈（英语：stack）又称为堆栈或堆叠，栈作为一种数据结构，是一种只能在一端进行插入和删除操作的特殊线性表。它按照先进后出的原则存储数据，先进入的数据被压入栈底，最后的数据在栈顶，需要读...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>栈和队列 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="栈和队列">
+            
+	            栈和队列
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/数据结构/">数据结构</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+                    <a class="tag-link" href="/tags/栈和队列/">栈和队列</a>
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2018/11/23</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+            <p class="fa fa-exclamation-triangle warning">
+                本文于<strong>567</strong>天之前发表，文中内容可能已经过时。
+            </p>
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="栈概念"><a href="#栈概念" class="headerlink" title="栈概念"></a>栈概念</h1><p>　栈（英语：stack）又称为堆栈或堆叠，栈作为一种数据结构，是一种只能在一端进行插入和删除操作的特殊线性表。它按照先进后出的原则存储数据，先进入的数据被压入栈底，最后的数据在栈顶，需要读数据的时候从栈顶开始弹出数据（最后一个数据被第一个读出来）。栈具有记忆作用，对栈的插入与删除操作中，不需要改变栈底指针。</p>
+<p>　栈是允许在同一端进行插入和删除操作的特殊线性表。允许进行插入和删除操作的一端称为栈顶(top)，另一端为栈底(bottom)；栈底固定，而栈顶浮动；栈中元素个数为零时称为空栈。插入一般称为进栈（PUSH），删除则称为退栈（POP）。</p>
+<p>　由于堆叠数据结构只允许在一端进行操作，因而按照后进先出（LIFO, Last In First Out）的原理运作。栈也称为后进先出表。</p>
+<p>　这里以羽毛球筒为例，羽毛球筒就是一个栈，刚开始羽毛球筒是空的，也就是空栈，然后我们一个一个放入羽毛球，也就是一个一个push进栈，当我们需要使用羽毛球的时候，从筒里面拿，也就是pop出栈，但是第一个拿到的羽毛球是我们最后放进去的。</p>
+<h1 id="操作流程示意图"><a href="#操作流程示意图" class="headerlink" title="操作流程示意图"></a>操作流程示意图</h1><p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1g9epdmrj20j30b70bigll.jpg" alt="1120165-20171129201940386-674535319.png"></p>
+<h1 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Stack <span class="keyword">struct</span> &#123;</span><br><span class="line">	Array []<span class="keyword">interface</span>&#123;&#125; <span class="comment">//栈切片存储</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(stack *Stack)</span> <span class="title">Push</span><span class="params">(value ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">	stack.Array = <span class="built_in">append</span>(stack.Array, value...)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//返回下一个元素</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(stack *Stack)</span> <span class="title">Top</span><span class="params">()</span> <span class="params">(value <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> stack.Size() &gt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> stack.Array[stack.Size()<span class="number">-1</span>]</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span> <span class="comment">//read empty stack</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//返回下一个元素,并从Stack移除元素</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(stack *Stack)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">	<span class="keyword">if</span> stack.Size() &gt; <span class="number">0</span> &#123;</span><br><span class="line">		value := stack.Array[stack.Size()<span class="number">-1</span>]</span><br><span class="line">		stack.Array = stack.Array[:stack.Size()<span class="number">-1</span>]</span><br><span class="line">		<span class="keyword">return</span> value</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">panic</span>(<span class="string">"Stack为空."</span>) <span class="comment">//read empty stack</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//交换值</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(stack *Stack)</span> <span class="title">Swap</span><span class="params">(other *Stack)</span></span> &#123;</span><br><span class="line">	<span class="keyword">switch</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> stack.Size() == <span class="number">0</span> &amp;&amp; other.Size() == <span class="number">0</span>:</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	<span class="keyword">case</span> other.Size() == <span class="number">0</span>:</span><br><span class="line">		other.Array = stack.Array[:stack.Size()]</span><br><span class="line">		stack.Array = <span class="literal">nil</span></span><br><span class="line">	<span class="keyword">case</span> stack.Size() == <span class="number">0</span>:</span><br><span class="line">		stack.Array = other.Array</span><br><span class="line">		other.Array = <span class="literal">nil</span></span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		stack.Array, other.Array = other.Array, stack.Array</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//返回指定索引的元素</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(stack *Stack)</span> <span class="title">Get</span><span class="params">(idx <span class="keyword">int</span>)</span> <span class="params">(value <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> idx &gt;= <span class="number">0</span> &amp;&amp; stack.Size() &gt; <span class="number">0</span> &amp;&amp; stack.Size() &gt; idx &#123;</span><br><span class="line">		<span class="keyword">return</span> stack.Array[idx]</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Stack的size</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(stack *Stack)</span> <span class="title">Size</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">len</span>(stack.Array)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="栈-反转字符串"><a href="#栈-反转字符串" class="headerlink" title="栈-反转字符串"></a>栈-反转字符串</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">str := <span class="string">"hello,word"</span></span><br><span class="line">ss := &amp;stack.Stack&#123;&#125;</span><br><span class="line"><span class="keyword">for</span> _, v := <span class="keyword">range</span> str &#123;</span><br><span class="line">	ss.Push(<span class="keyword">string</span>(v))</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span> ss.Size() &gt; <span class="number">0</span> &#123;</span><br><span class="line">	fmt.Print(ss.Pop())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="共享栈"><a href="#共享栈" class="headerlink" title="共享栈"></a>共享栈</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line">package stack</span><br><span class="line"></span><br><span class="line">import &quot;fmt&quot;</span><br><span class="line"></span><br><span class="line">//共享栈</span><br><span class="line">const MaxDoubleSize = 20 //存储空间初始分配量</span><br><span class="line">type DoubleStack struct &#123;</span><br><span class="line">	data [MaxDoubleSize]int //数组最大值</span><br><span class="line">	top1 int                //栈1栈顶指针</span><br><span class="line">	top2 int                //栈2栈顶指针</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 初始化一个空栈</span><br><span class="line">func (d *DoubleStack) InitStack() &#123;</span><br><span class="line">	d.top1 = -1</span><br><span class="line">	d.top2 = MaxDoubleSize</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 把d置为空栈</span><br><span class="line">func (d *DoubleStack) ClearStack() &#123;</span><br><span class="line">	d.top1 = -1</span><br><span class="line">	d.top2 = MaxDoubleSize</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 若栈l为空栈，则返回true 否则返回false</span><br><span class="line">func (d *DoubleStack) IsEmpty() bool &#123;</span><br><span class="line">	if d.top1 == -1 &amp;&amp; d.top2 == MaxDoubleSize &#123;</span><br><span class="line">		return true</span><br><span class="line">	&#125; else &#123;</span><br><span class="line">		return false</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 返回s的元素个数，即栈的长度</span><br><span class="line">func (d *DoubleStack) Length() int &#123;</span><br><span class="line">	return (d.top1 + 1) + (MaxDoubleSize - 1 - d.top2)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line">value 插入元素e为新的栈顶元素</span><br><span class="line">stackNum 选择插入的栈</span><br><span class="line">*/</span><br><span class="line">func (d *DoubleStack) Push(value int, stackNum int) error &#123;</span><br><span class="line">	if d.top1+1 == d.top2 &#123;</span><br><span class="line">		panic(&quot;stack is full&quot;)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	// 栈1有元素进栈</span><br><span class="line">	if stackNum == 1 &#123;</span><br><span class="line">		d.top1++</span><br><span class="line">		d.data[d.top1] = value</span><br><span class="line">	&#125; else if stackNum == 2 &#123; // 栈2有元素进栈</span><br><span class="line">		d.top2--</span><br><span class="line">		d.data[d.top2] = value</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	return nil</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 若栈不空，则删除d的栈顶元素  用e返回其值,否则返回error</span><br><span class="line">func (d *DoubleStack) Pop(stackNum int) (value int) &#123;</span><br><span class="line">	if stackNum == 1 &#123;</span><br><span class="line">		if d.top1 == -1 &#123;</span><br><span class="line">			fmt.Errorf(&quot;stack is empty&quot;) //栈1为空，已溢出</span><br><span class="line">		&#125;</span><br><span class="line">		value = d.data[d.top1]</span><br><span class="line">		d.top1--</span><br><span class="line">	&#125; else if stackNum == 2 &#123;</span><br><span class="line">		if d.top2 == MaxDoubleSize &#123;</span><br><span class="line">			fmt.Errorf(&quot;stack is empty&quot;) //栈2为空，已溢出</span><br><span class="line">		&#125;</span><br><span class="line">		value = d.data[d.top2]</span><br><span class="line">		d.top2++</span><br><span class="line">	&#125;</span><br><span class="line">	return value</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//遍历栈</span><br><span class="line">func (d *DoubleStack) Traverse() &#123;</span><br><span class="line">	for i := 0; i &lt;= d.top1; i++ &#123;</span><br><span class="line">		fmt.Println(d.data[i])</span><br><span class="line">	&#125;</span><br><span class="line">	for i := d.top2; i &lt; MaxDoubleSize; i++ &#123;</span><br><span class="line">		fmt.Println(d.data[i])</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="队列实现"><a href="#队列实现" class="headerlink" title="队列实现"></a>队列实现</h1><p>队列其实和栈一样，只是队列是先进先出，那么只需要每次弹出第一个元素即可</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//返回下一个元素,并从Stack移除元素</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(stack *Stack)</span> <span class="title">Pop</span><span class="params">()</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">	<span class="keyword">if</span> stack.Size() &gt; <span class="number">0</span> &#123;</span><br><span class="line">		value := stack.Array[<span class="number">0</span>]</span><br><span class="line">		stack.Array = stack.Array[<span class="number">1</span>:]</span><br><span class="line">		<span class="keyword">return</span> value</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">panic</span>(<span class="string">"Stack为空."</span>) <span class="comment">//read empty stack</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ol>
+<li>栈、队列（单向队列）、优先级队列通常是用来简化某些程序操作的数据结构，而不是主要作为存储数据的。</li>
+<li>在这些数据结构中，只有一个数据项可以被访问。</li>
+<li>栈允许在栈顶压入（插入）数据，在栈顶弹出（移除）数据，但是只能访问最后一个插入的数据项，也就是栈顶元素。</li>
+<li>队列（单向队列）只能在队尾插入数据，对头删除数据，并且只能访问对头的数据。而且队列还可以实现循环队列，它基于数组，数组下标可以从数组末端绕回到数组的开始位置。</li>
+<li>优先级队列是有序的插入数据，并且只能访问当前元素中优先级别最大（或最小）的元素。</li>
+<li>这些数据结构都能由数组实现，但是可以用别的机制（链表、堆等数据结构）实现。</li>
+</ol>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2019/01/15/Go/base0.基础概念/" class="pre-post btn btn-default" title='Go基础-基本类型'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">Go基础-基本类型</span>
+        </a>
+    
+    
+        <a href="/2018/11/21/LeetCode/Data/Link-单向链表/" class="next-post btn btn-default" title='单向链表'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">单向链表</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#栈概念"><span class="toc-text">栈概念</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#操作流程示意图"><span class="toc-text">操作流程示意图</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#完整代码"><span class="toc-text">完整代码</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#栈-反转字符串"><span class="toc-text">栈-反转字符串</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#共享栈"><span class="toc-text">共享栈</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#队列实现"><span class="toc-text">队列实现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

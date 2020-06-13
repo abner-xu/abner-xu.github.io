@@ -1,0 +1,359 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="数据结构算法">
+
+
+    <meta name="description" content="算法推导大O阶方法
+用常数1取代运行时间中的所有加法常数
+在修改后的运行次数函数中，只保留最高阶项
+如果最高阶存在且不是1，则去除与这个项相乘的常数
+
+常数阶首先顺序结构的时间复杂度。下面这个算...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>算法笔记 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="算法笔记">
+            
+	            算法笔记
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/数据结构/">数据结构</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+                    <a class="tag-link" href="/tags/数据结构算法/">数据结构算法</a>
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2019/11/10</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="算法推导大O阶方法"><a href="#算法推导大O阶方法" class="headerlink" title="算法推导大O阶方法"></a>算法推导大O阶方法</h1><ol>
+<li>用常数1取代运行时间中的所有加法常数</li>
+<li>在修改后的运行次数函数中，只保留最高阶项</li>
+<li>如果最高阶存在且不是1，则去除与这个项相乘的常数</li>
+</ol>
+<h2 id="常数阶"><a href="#常数阶" class="headerlink" title="常数阶"></a>常数阶</h2><p>首先顺序结构的时间复杂度。下面这个算法案例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">int sum=0,n=100 /*执行第一次*/</span><br><span class="line">sum=(1+n)*n/2 /*执行第一次*/</span><br><span class="line">printf(&quot;%d&quot;,sum) /*执行第一次*/</span><br></pre></td></tr></table></figure>
+
+<p>这个算法的运行函数是f(n)=3,所以根据推倒大O，如果结果是常数3，所以常熟3改为1，记为<code>O(1)</code>,事实上无论<code>sum=(1+n)*n/2</code>执行多少次时间都是恒定的。</p>
+<h2 id="线性阶"><a href="#线性阶" class="headerlink" title="线性阶"></a>线性阶</h2><p>线性阶的循环结构会复制很多。要确定某个算法的阶次，我们常常需要确定某个特定语句或某个函数运行的次数。下面的代码示例复杂度为<code>O(n)</code>,因为循环体中的代码要执行n次。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">int i;</span><br><span class="line">for(i=0;i&lt;n;i++)&#123;</span><br><span class="line">  /*执行复杂度未O(1)的程序*/</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="对数阶"><a href="#对数阶" class="headerlink" title="对数阶"></a>对数阶</h2><p>下面这段代码，由于每次count乘以2以后，就距离n更近，由$2^x=n 得到x=log2n。所以这个循环的负责度为O(logn).</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">int count=1;</span><br><span class="line">while(count&lt;n)&#123;</span><br><span class="line">  count=count*2</span><br><span class="line">  /*执行复杂度未O(1)的程序*/</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="平方阶"><a href="#平方阶" class="headerlink" title="平方阶"></a>平方阶</h2><p>下面这段代码，是一个循环嵌套的，时间复杂度为O(n^2)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">int i,j</span><br><span class="line">for(i=0;i&lt;n;i++)&#123;</span><br><span class="line">  for(j=0;j&lt;n;j++)&#123;</span><br><span class="line">    /*执行复杂度未O(1)的程序*/</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果外循环改成了m,时间复杂度就是，时间复杂度为O(n*m)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">int i,j</span><br><span class="line">for(i=0;i&lt;m;i++)&#123;</span><br><span class="line">  for(j=0;j&lt;n;j++)&#123;</span><br><span class="line">    /*执行复杂度未O(1)的程序*/</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以总结规律，循环的时间复杂度等于循环体复杂度乘以改循环的运行的次数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">int i,j;</span><br><span class="line">for(i=0;i&lt;m;i++)&#123;</span><br><span class="line">  for(j=i;j&lt;n;j++)&#123; //注意j=i </span><br><span class="line">    /*执行复杂度未O(1)的程序*/</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于i逐步递减，所以总执行次数为：n+(n-1)+(n-2)+…+1=n(n+1)/2=n^2/2+n/2<br>所以我们推倒方法，第一条，没有加常数不予考虑；第二条，只保留最高阶，因此保留n^2/2;第三条，去除这个项相乘的常数，也就是去除1/2,最终这段代码的复杂度未O(n^2)</p>
+<h1 id="常用数据结构"><a href="#常用数据结构" class="headerlink" title="常用数据结构"></a>常用数据结构</h1><p><img src="http://ww1.sinaimg.cn/large/aaba1596gy1g95f3pc6ruj20by05j74f.jpg" alt="image"></p>
+<h1 id="数据结构分类"><a href="#数据结构分类" class="headerlink" title="数据结构分类"></a>数据结构分类</h1><p><img src="http://ww1.sinaimg.cn/large/aaba1596gy1g95f3pca86j20lb08ymxh.jpg" alt="分类"></p>
+<h1 id="数据结构比较"><a href="#数据结构比较" class="headerlink" title="数据结构比较"></a>数据结构比较</h1><p><img src="http://ww1.sinaimg.cn/large/aaba1596gy1g95f3pdiu2j20rm0h4dib.jpg" alt="数据结构比较"></p>
+<h1 id="O符号"><a href="#O符号" class="headerlink" title="O符号"></a>O符号</h1><ol>
+<li>O(1)：最低的复杂度，无论数据量大小，耗时都不变，都可以在一次计算后获得。哈希算法就是典型的O(1)</li>
+<li>O(n)：线性，n表示数据的量，当量增大，耗时也增大，常见有遍历算法</li>
+<li>O(n²)：平方，表示耗时是n的平方倍，当看到循环嵌循环的时候，基本上这个算法就是平方级的，如：冒泡排序等</li>
+<li>O(log n)：对数，通常ax=n,那么数x叫做以a为底n的对数,也就是x=logan，这里是a通常是2，如：数量增大8倍，耗时只增加了3倍，二分查找就是对数级的算法，每次剔除一半</li>
+<li>O(n log n)：线性对数，就是n乘以log n,按照上面说的数据增大8倍，耗时就是8*3=24倍，归并排序就是线性对数级的算法<br><img src="http://ww1.sinaimg.cn/large/aaba1596gy1g95f3pdhh1j20lm07275m.jpg" alt="image"></li>
+</ol>
+<h1 id="数据结构选择"><a href="#数据结构选择" class="headerlink" title="数据结构选择"></a>数据结构选择</h1><p><img src="http://ww1.sinaimg.cn/large/aaba1596gy1g95f3peciij20kx0fwt9n.jpg" alt="image"></p>
+<h3 id="常用数据结构和算法的时间复杂度"><a href="#常用数据结构和算法的时间复杂度" class="headerlink" title="常用数据结构和算法的时间复杂度"></a>常用数据结构和算法的时间复杂度</h3><p><img src="http://ww1.sinaimg.cn/large/007lnJOlly1gcecko7c34j31cu0vsq6l.jpg" alt="image"></p>
+<p><img src="http://ww1.sinaimg.cn/large/007lnJOlly1gcecko9864j31j80u6dmc.jpg" alt="image"></p>
+<p><img src="http://ww1.sinaimg.cn/large/007lnJOlly1gceckoav7jj30y40p6jwo.jpg" alt="image"></p>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2019/12/16/LeetCode/Data/树-二叉树/" class="pre-post btn btn-default" title='二叉树'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">二叉树</span>
+        </a>
+    
+    
+        <a href="/2019/10/14/Go/深入解析slice底层实现/" class="next-post btn btn-default" title='Go-深入解析slice底层实现'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">Go-深入解析slice底层实现</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#算法推导大O阶方法"><span class="toc-text">算法推导大O阶方法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#常数阶"><span class="toc-text">常数阶</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线性阶"><span class="toc-text">线性阶</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对数阶"><span class="toc-text">对数阶</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#平方阶"><span class="toc-text">平方阶</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#常用数据结构"><span class="toc-text">常用数据结构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#数据结构分类"><span class="toc-text">数据结构分类</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#数据结构比较"><span class="toc-text">数据结构比较</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#O符号"><span class="toc-text">O符号</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#数据结构选择"><span class="toc-text">数据结构选择</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用数据结构和算法的时间复杂度"><span class="toc-text">常用数据结构和算法的时间复杂度</span></a></li></ol></li></ol></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

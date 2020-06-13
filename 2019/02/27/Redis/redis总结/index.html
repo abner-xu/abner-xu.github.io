@@ -1,0 +1,531 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="面试">
+
+
+    <meta name="description" content="Redis为什么那么快
+纯内存操作
+单线程操作，避免了频繁的上下文切换
+采用了非阻塞I/O多路复用机制
+
+我们的redis-client在操作的时候，会产生具有不同事件类型的socket。在服务...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>redis总结 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="redis总结">
+            
+	            redis总结
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/Redis/">Redis</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+                    <a class="tag-link" href="/tags/面试/">面试</a>
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2019/02/27</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+            <p class="fa fa-exclamation-triangle warning">
+                本文于<strong>471</strong>天之前发表，文中内容可能已经过时。
+            </p>
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="Redis为什么那么快"><a href="#Redis为什么那么快" class="headerlink" title="Redis为什么那么快"></a>Redis为什么那么快</h1><ol>
+<li>纯内存操作</li>
+<li>单线程操作，避免了频繁的上下文切换</li>
+<li>采用了非阻塞I/O多路复用机制</li>
+</ol>
+<p>我们的redis-client在操作的时候，会产生具有不同事件类型的socket。在服务端，有一段I/0多路复用程序，将其置入队列之中。然后，文件事件分派器，依次去队列中取，转发到不同的事件处理器中。</p>
+<hr>
+<h1 id="Redis数据类型"><a href="#Redis数据类型" class="headerlink" title="Redis数据类型()"></a>Redis数据类型(<a href="/2019/02/28/Redis/单线程的redis为什么快/" title="[底层数据]">[底层数据]</a>)</h1><ol>
+<li>String,Hash,List,Set,SortedSet</li>
+<li>Pub/Sub</li>
+<li>HyperLogLog(2.8.9版本新增):用来做基数统计的算法，HyperLogLog 的优点是，在输入元素的数量或者体积非常非常大时，计算基数所需的空间总是固定 的、并且是很小的。使用场景最常见的就是计算网站UV等，对数据精度要求不高</li>
+<li>Geo（3.2版本新增）：GEO(地理位置)的支持，主要是对经纬度一个位置计算等特性</li>
+<li>BitMap</li>
+<li>BloomFilter<br><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0n97yi9czj30a504hjri.jpg" alt="data-struct"><br><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0n991tb0hj30rp0cqmyi.jpg" alt="data-struct"></li>
+</ol>
+<hr>
+<h1 id="Redis的过期策略以及内存淘汰机制"><a href="#Redis的过期策略以及内存淘汰机制" class="headerlink" title="Redis的过期策略以及内存淘汰机制"></a>Redis的过期策略以及内存淘汰机制</h1><ol>
+<li>三种过期策略<ul>
+<li>定时删除：在设置键的过期时间的同时，创建一个定时器(timer)，让定时器在键的过期时间来临时，立即执行对键的删除操作；</li>
+<li>惰性删除：放任键过期不管，但是每次从键空间中获取键时，都检查取得的键是否过期，如果过期的话，就删除该键；如果没有过期，那就返回该键；</li>
+<li>定期删除：每隔一段时间，程序就对数据库进行一次检查，删除里面的过期键。至于删除多少过期键，以及要检查多少个数据库，则由算法决定。</li>
+</ul>
+</li>
+</ol>
+<p>Redis采用的是定期删除+惰性删策略。  </p>
+<pre><code>为什么不用定时删除策略？定时删除策略需要定时器来监视key，过期则自动删除。虽然内存及时释放了，但是CPU消耗大。在大并发的情况下，这一策略得不偿失</code></pre><p>Redis采用的是定期删除+惰性删策略工作机制。  </p>
+<pre><code>定期删除，redis默认每100ms检查一次是否存在过期key，有则删除。需要说明的是redis并不是100ms检查所有的key一次，而是随机进行抽取检查。因此，惰性删除派上用处。</code></pre><p>惰性删策略延伸出来的问题就是，redis缓存淘汰机制</p>
+<ol start="2">
+<li>Redis(3.0版本)6种缓存淘汰机制<ol>
+<li>no-enviction(驱逐)：禁止驱逐数据（不删除数据策略，达到最大的内存限制时，如果有更多的数据写入，返回错误给客户端）</li>
+<li>allkeys-lru：所有key通用，优先删除最少使用的key（less recently used,LRU算法）</li>
+<li>allkeys-random ：所有key通用，随机删除一部分key</li>
+<li>volatile-lru：只限于设置了expire的部分，优先删除最少使用的key（less recently used,LRU算法）</li>
+<li>volatile-random：只限于设置了 expire 的部分; 随机删除一部分key</li>
+<li>volatile-ttl：只限于设置了 expire 的部分; 优先删除剩余时间(time to live,TTL) 短的key。</li>
+</ol>
+</li>
+</ol>
+<p><strong>注意：如果没有设置 expire 的key, 不满足先决条件(prerequisites); 那么 volatile-lru, volatile-random 和 volatile-ttl 策略的行为, 和 noeviction(不删除) 基本上一致。</strong></p>
+<p>一般来说：如果分为热数据与冷数据, 推荐使用allkeys-lru策略。 也就是, 其中一部分key经常被读写. 如果不确定具体的业务特征, 那么allkeys-lru是一个很好的选择。 如果需要循环读写所有的key, 或者各个key的访问频率差不多, 可以使用allkeys-random策略, 即读写所有元素的概率差不多。  </p>
+<p>假如要让 Redis 根据 TTL 来筛选需要删除的key, 请使用volatile-ttl策略。</p>
+<hr>
+<h1 id="Redis持久化原理"><a href="#Redis持久化原理" class="headerlink" title="Redis持久化原理"></a>Redis持久化原理</h1><ol>
+<li><p>快照（特点：bgsave做镜像全量持久化）<br>缺省情况下，Redis把数据快照存放在磁盘上的二进制文件中，文件名为dump.rdb。你可以配置Redis的持久化策略，例如数据集中每N秒钟有超过M次更新，就将数据写入磁盘；或者你可以手工调用命令SAVE或BGSAVE。<br>工作原理:</p>
+<ol>
+<li>主进程开启一个 Redis forks（子进程）.</li>
+<li>子进程开始将数据写到临时RDB文件中。</li>
+<li>当子进程完成写RDB文件，用新文件替换老文件。</li>
+<li>bgsave的原理是什么？你给出两个词汇就可以了，fork和cow。fork是指redis通过创建子进程来进行bgsave操作，cow指的是copy on write，子进程创建后，父子进程共享数据段，父进程继续提供读写服务，写脏的页面数据会逐渐和子进程分离开来。</li>
+</ol>
+<p><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0mlshrku0j30gn053gm7.jpg" alt="fork"></p>
+</li>
+<li><p>AOF（特点：AOF增量持久化）</p>
+<p>AOF持久化以日志的形式记录服务器所处理的每一个写、删除操作，查询操作不会记录，以文本的方式记录，可以打开文件看到详细的操作记录。 </p>
+<p><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0mltf2mfsj30hj037aan.jpg" alt="aof"></p>
+</li>
+</ol>
+<hr>
+<h1 id="Redis主从复制-3-0开始支持-原理"><a href="#Redis主从复制-3-0开始支持-原理" class="headerlink" title="Redis主从复制(3.0开始支持)原理"></a>Redis主从复制(3.0开始支持)原理</h1><ol>
+<li>全量同步<ol>
+<li>当启动一个slave node的时候，它会发送一个PSYNC命令给master</li>
+<li>如果这是slave node重新链接master，master会将缺少的数据发送给slave，如果是第一次链接master，则会触发一次full resynchronization,开始 full resynchronization的时候，master启动一个后台线程，先将现有数据生成一个零时的rdb文件，生成文件后，master会将这个rdb文件发送给slave，slave会先把这个rdb文件存放到本地磁盘，然后在加载到内存，然后master会将生成rdb这段时间内接收到的在内存中的数据发送给slave，slave也会接收这份数据。</li>
+<li>slave如果跟master网络故障，断开了，当重新连接上以后，master发现有多个slave都来重新连接，master会生成一个rdb文件，将这个文件同时发送个多个slave node</li>
+</ol>
+</li>
+</ol>
+<p><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0mm2zwx3qj30mn0dzjrv.jpg" alt="full_sync"></p>
+<ol start="2">
+<li>主从复制的断点续传<ol>
+<li>redis从2.8开始就支持断点续传功能，即当slave与master断开后，重新连接时，会继续从上一次断开的点继续传送数据，而不是full resynchronization。</li>
+<li>master会在内存中创建一个backlog，master和slave都会保存一个offset,slave还有一个master id,offset就是保存在backlog中的，如果slave和master网络断开，重新连接后slave会让master从replica offset开始续传。但是如果没有找到offset，则会触发full resynchronization。</li>
+</ol>
+</li>
+<li>无磁盘化复制<ol>
+<li>master在内存中直接创建rdb,然后直接发送给slave,不会存入本地磁盘</li>
+<li>参数配置<br>repl-diskless-sync<br>repl-diskless-sync-delay, 等待一定时长在复制，因为要等更多的slave重新连接</li>
+</ol>
+</li>
+<li>过期key处理<ol>
+<li>slave不会有过期Key,只有master有过期key,如果master过期了一个可以或者通过LRU算法淘汰了一个key，那么master会模拟发送一个del命令给slave</li>
+</ol>
+</li>
+</ol>
+<hr>
+<h1 id="Redis-Cluster集群"><a href="#Redis-Cluster集群" class="headerlink" title="Redis-Cluster集群"></a>Redis-Cluster集群</h1><div align="center"><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0natm1efxj30dr0fut9k.jpg" width="256" height="256"></div>
+
+<ol>
+<li>所有的redis节点彼此互联(PING-PONG机制),内部使用二进制协议优化传输速度和带宽。</li>
+<li>节点的fail是通过集群中超过半数的节点检测失效时才生效。</li>
+<li>客户端与redis节点直连,不需要中间proxy层.客户端不需要连接集群所有节点,连接集群中任何一个可用节点即可。</li>
+<li>redis-cluster把所有的物理节点映射到[0-16383]slot上（不一定是平均分配）,cluster 负责维护node&lt;-&gt;slot&lt;-&gt;value。</li>
+<li>Redis集群预分好16384个桶，当需要在 Redis 集群中放置一个 key-value 时，根据 CRC16(key) mod 16384的值，决定将一个key放到哪个桶中。</li>
+</ol>
+<p>为什么是16384（2^14）个？<br>在redis节点发送心跳包时需要把所有的槽放到这个心跳包里，以便让节点知道当前集群信息，16384=16k，在发送心跳包时使用char进行bitmap压缩后是2k（2 * 8 (8 bit) * 1024(1k) = 2K），也就是说使用2k的空间创建了16k的槽数。</p>
+<p>虽然使用CRC16算法最多可以分配65535（2^16-1）个槽位，65535=65k，压缩后就是8k（8 * 8 (8 bit) * 1024(1k) = 8K），也就是说需要需要8k的心跳包，作者认为这样做不太值得；并且一般情况下一个redis集群不会有超过1000个master节点，所以16k的槽位是个比较合适的选择。</p>
+<hr>
+<h1 id="Redis哨兵"><a href="#Redis哨兵" class="headerlink" title="Redis哨兵"></a>Redis哨兵</h1><div align="center">
+<img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0y43vh0ilj30ay07g3z3.jpg">
+
+<p>在Server1 掉线后：</p>
+<img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0y43vh0ilj30ay07g3z3.jpg">
+
+<p>升级Server2 为新的主服务器：</p>
+<img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0y477tgrvj30as082wfb.jpg">
+</div>
+
+<ol>
+<li><p>Sentinel的作用：</p>
+<ol>
+<li>Master 状态监测</li>
+<li>如果Master 异常，则会进行Master-slave 转换，将其中一个Slave作为Master，将之前的Master作为Slave </li>
+<li>Master-Slave切换后，master_redis.conf、slave_redis.conf和sentinel.conf的内容都会发生改变，即master_redis.conf中会多一行slaveof的配置，sentinel.conf的监控目标会随之调换 </li>
+</ol>
+</li>
+<li><p>Sentinel的工作方式:</p>
+<ol>
+<li>每个Sentinel以每秒钟一次的频率向它所知的Master，Slave以及其他 Sentinel 实例发送一个 PING 命令 </li>
+<li>如果一个实例（instance）距离最后一次有效回复 PING 命令的时间超过 down-after-milliseconds 选项所指定的值， 则这个实例会被 Sentinel 标记为主观下线。 </li>
+<li>如果一个Master被标记为主观下线，则正在监视这个Master的所有 Sentinel 要以每秒一次的频率确认Master的确进入了主观下线状态。 </li>
+<li>当有足够数量的 Sentinel（大于等于配置文件指定的值）在指定的时间范围内确认Master的确进入了主观下线状态， 则Master会被标记为客观下线 </li>
+<li>在一般情况下， 每个 Sentinel 会以每 10 秒一次的频率向它已知的所有Master，Slave发送 INFO 命令 </li>
+<li>当Master被 Sentinel 标记为客观下线时，Sentinel 向下线的 Master 的所有 Slave 发送 INFO 命令的频率会从 10 秒一次改为每秒一次 </li>
+<li>若没有足够数量的 Sentinel 同意 Master 已经下线， Master 的客观下线状态就会被移除。 </li>
+<li>若 Master 重新向 Sentinel 的 PING 命令返回有效回复， Master 的主观下线状态就会被移除。</li>
+</ol>
+</li>
+</ol>
+<hr>
+<h1 id="Redis和数据库双写一致性问题"><a href="#Redis和数据库双写一致性问题" class="headerlink" title="Redis和数据库双写一致性问题"></a>Redis和数据库双写一致性问题</h1><p>一致性问题是分布式系统常见问题，可以分为最终一致性和强一致性。所以弄清诉求<br>数据库强一致性，不放缓存，我们所做的一切只是保证最终一致性，另外无法完全避免，讨论三种更新策略：</p>
+<ol>
+<li>先更新数据库，再更新缓存</li>
+<li>先删除缓存，再更新数据库</li>
+<li>先更新数据库，再删除缓存</li>
+</ol>
+<ol>
+<li>先更新数据库，再更新缓存<br>这套方案，大家是普遍反对的，为什么呢？有如下两点原因：</li>
+</ol>
+<p>原因一、线程安全问题，同时有请求A和请求B进行更新操作，那么会出现：</p>
+<pre><code>线程A更新了数据库
+线程B更新了数据库
+线程B更新了缓存
+线程A更新了缓存
+
+这就出现请求A更新缓存应该比请求B更新缓存早才对，但是因为网络等原因，B比A更早更新了缓存。这就导致了脏数据，因此不考虑！</code></pre><p>原因二、业务场景考虑</p>
+<pre><code>1）如果是写数据库场景比较多，读数据库场景比较少业务需求。&quot;先更新数据库，再更新缓存&quot;这种方案会导致，数据压根还没读到，缓存就被频繁的更新浪费性能
+2）如果写入数据库是经过复杂计算以后再更新数据库，那么每次写入数据库后更新缓存，性能存在浪费</code></pre><ol start="2">
+<li>先删除缓存，再更新数据库 </li>
+</ol>
+<p>该方案会导致不一致的原因：同时有一个请求A进行更新操作，另一个请求B进行查询操作。那么就会出现以下情形：</p>
+<p>情况一：多进程读写原因</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">请求A进行写操作，删除缓存</span><br><span class="line">请求B查询发现缓存不存在</span><br><span class="line">请求B去数据库查询得到旧值</span><br><span class="line">请求B将旧值写入缓存</span><br><span class="line">请求A将新值写入数据库</span><br><span class="line">上诉请求出现不一致的情况，如果没采用缓存过期策略。则缓存数据一直是脏数据。</span><br></pre></td></tr></table></figure>
+
+<p>情况二：MYSQL主从分离原因</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">请求A进行写操作，删除缓存；</span><br><span class="line">请求A将数据写入数据库了；</span><br><span class="line">请求B查询缓存发现，缓存没有值；</span><br><span class="line">请求B去从库查询，这时，还没有完成主从同步，因此查询到的是旧值；</span><br><span class="line">请求B将旧值写入缓存；</span><br><span class="line">数据库完成主从同步，从库变为新值；</span><br></pre></td></tr></table></figure>
+
+<p>解决方案：采用延迟双删策略。先删除缓存，再删除数据库，进程休眠1秒再次删除缓存</p>
+<ol start="3">
+<li>先更新数据库，再删除缓存<br>这种情况不存在并发问题么？<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">不是的。假设这会有两个请求，一个请求A做查询操作，一个请求B做更新操作，那么会有如下情形产生：</span><br><span class="line">（1）缓存刚好失效；</span><br><span class="line">（2）请求A查询数据库，得一个旧值；</span><br><span class="line">（3）请求B将新值写入数据库；</span><br><span class="line">（4）请求B删除缓存；</span><br><span class="line">（5）请求A将查到的旧值写入缓存；</span><br><span class="line">ok，如果发生上述情况，确实是会发生脏数据。</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ol>
+<p>解决方案：发生上述情况有一个先天性条件，就是6.1中步骤（3）的写数据库操作比步骤（2）的读数据库操作耗时更短，才有可能使得步骤（4）先于步骤（5）。可是，大家想想，数据库的读操作的速度远快于写操作的（不然做读写分离干嘛，做读写分离的意义就是因为读操作比较快，耗资源少），因此步骤（3）耗时比步骤（2）更短，这一情形很难出现。  首先，给缓存设有效时间是一种方案。其次，采用策略2（先删除缓存，再更新数据库）里给出的异步延时删除策略，保证读请求完成以后，再进行删除操作。</p>
+<hr>
+<h1 id="如何解决redis的并发竞争key问题"><a href="#如何解决redis的并发竞争key问题" class="headerlink" title="如何解决redis的并发竞争key问题"></a>如何解决redis的并发竞争key问题</h1><p>分析:这个问题大致就是，同时有多个子系统去set一个key。这个时候要注意什么呢？大家思考过么。需要说明一下，博主提前百度了一下，发现答案基本都是推荐用redis事务机制。博主不推荐使用redis的事务机制。因为我们的生产环境，基本都是redis集群环境，做了数据分片操作。你一个事务中有涉及到多个key操作的时候，这多个key不一定都存储在同一个redis-server上。因此，redis的事务机制，十分鸡肋。</p>
+<p>解决方案</p>
+<ol>
+<li><p>如果对key操作不要求顺序  </p>
+<p> 这种情况下，准备一个分布式锁，谁抢到锁谁set即可</p>
+</li>
+<li><p>如果对key操作要求顺序  </p>
+<p> 假设有一个key1,系统A需要将key1设置为valueA,系统B需要将key1设置为valueB,系统C需要将key1设置为valueC.<br> 期望按照key1的value值按照 valueA–&gt;valueB–&gt;valueC的顺序变化。这种时候我们在数据写入数据库的时候，需要保存一个时间戳。假设时间戳如下<br> 系统A key 1 {valueA 3:00}<br> 系统B key 1 {valueB 3:05}<br> 系统C key 1 {valueC 3:10}<br> 那么，假设这会系统B先抢到锁，将key1设置为{valueB 3:05}。接下来系统A抢到锁，发现自己的valueA的时间戳早于缓存中的时间戳，那就不做set操作了。以此类推。<br> 或者使用队列，将set操作进行串联即可</p>
+</li>
+</ol>
+<hr>
+<h1 id="redis常见性能问题和解决方案"><a href="#redis常见性能问题和解决方案" class="headerlink" title="redis常见性能问题和解决方案"></a>redis常见性能问题和解决方案</h1><ol>
+<li>Master写内存快照，save命令调度rdbSave函数，会阻塞主线程的工作，当快照比较大时对性能影响是非常大的，会间断性暂停服务，所以Master最好不要写内存快照。</li>
+<li>Master AOF持久化，如果不重写AOF文件，这个持久化方式对性能的影响是最小的，但是AOF文件会不断增大，AOF文件过大会影响Master重启的恢复速度。Master最好不要做任何持久化工作，包括内存快照和AOF日志文件，特别是不要启用内存快照做持久化,如果数据比较关键，某个Slave开启AOF备份数据，策略为每秒同步一次。</li>
+<li>Master调用BGREWRITEAOF重写AOF文件，AOF在重写的时候会占大量的CPU和内存资源，导致服务load过高，出现短暂服务暂停现象。</li>
+<li>Redis主从复制的性能问题，为了主从复制的速度和连接的稳定性，Slave和Master最好在同一个局域网内</li>
+</ol>
+<hr>
+<h1 id="Redis6-0-多线程"><a href="#Redis6-0-多线程" class="headerlink" title="Redis6.0 多线程"></a>Redis6.0 多线程</h1><p>其实本质只是在网络IO上面实现了多线程读取和写入，然后进行执行队列，执行还是单线程<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gdoxcw7xwhj30cf0ah0tr.jpg" alt="1.jpeg"><br>加入多线程 IO 之后，整体的读流程如下:</p>
+<ul>
+<li>主线程负责接收建连请求，读事件到来(收到请求)则放到一个全局等待读处理队列</li>
+<li>主线程处理完读事件之后，通过 RR(Round Robin) 将这些连接分配给这些 IO 线程，然后主线程忙等待(spinlock 的效果)状态</li>
+<li>IO 线程将请求数据读取并解析完成(这里只是读数据和解析并不执行)</li>
+<li>主线程执行所有命令并清空整个请求等待读处理队列(执行部分串行)</li>
+</ul>
+<p>上面的这个过程是完全无锁的，因为在 IO 线程处理的时主线程会等待全部的 IO 线程完成，所以不会出现data race的场景。</p>
+<h1 id="Redis新特性"><a href="#Redis新特性" class="headerlink" title="Redis新特性"></a>Redis新特性</h1><ol>
+<li><p>Redis Module</p>
+<ol>
+<li>任何C/C++程序现在都可以运行在Redis上</li>
+<li>Modules是用一种本地的方式来扩展Redis的新用例和功能</li>
+<li>使用现有的或者添加新的数据结构</li>
+<li>享受简单，无限可扩展性和高可用性的同时保持着redis的本机的速度</li>
+</ol>
+</li>
+<li><p>Redis Search</p>
+<p> 高性能的全文搜索引擎（Faster, in-memory, highly available full text search），可作为Redis Module运行在Redis上。但是它与其他Redis搜索库不同的是，它不使用Redis内部数据结构，例如：集合、排序集（ps.后面会写一篇基于Redis的数据结构来设计搜索引擎），Redis原声的搜索还是有很大的局限性，简单的分词搜索是可以满足，但是应用到复杂的场景就不太适合。</p>
+</li>
+<li><p>Redis ML</p>
+<p> 机器学习模型服务器</p>
+</li>
+</ol>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2019/02/28/Redis/单线程的redis为什么快/" class="pre-post btn btn-default" title='单线程的redis为什么快'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">单线程的redis为什么快</span>
+        </a>
+    
+    
+        <a href="/2019/02/26/Go/pprof/" class="next-post btn btn-default" title='golang的pprof使用技巧'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">golang的pprof使用技巧</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis为什么那么快"><span class="toc-text">Redis为什么那么快</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis数据类型"><span class="toc-text">Redis数据类型([底层数据])</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis的过期策略以及内存淘汰机制"><span class="toc-text">Redis的过期策略以及内存淘汰机制</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis持久化原理"><span class="toc-text">Redis持久化原理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis主从复制-3-0开始支持-原理"><span class="toc-text">Redis主从复制(3.0开始支持)原理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis-Cluster集群"><span class="toc-text">Redis-Cluster集群</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis哨兵"><span class="toc-text">Redis哨兵</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis和数据库双写一致性问题"><span class="toc-text">Redis和数据库双写一致性问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#如何解决redis的并发竞争key问题"><span class="toc-text">如何解决redis的并发竞争key问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#redis常见性能问题和解决方案"><span class="toc-text">redis常见性能问题和解决方案</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis6-0-多线程"><span class="toc-text">Redis6.0 多线程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis新特性"><span class="toc-text">Redis新特性</span></a></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

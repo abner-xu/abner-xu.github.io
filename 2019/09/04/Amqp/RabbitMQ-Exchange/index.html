@@ -1,0 +1,358 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="RabbitMQ">
+
+
+    <meta name="description" content="交换器分类RabbitMQ的Exchange（交换器）分为四类：
+
+direct（默认）
+headers
+fanout
+topic
+
+其中headers交换器允许你匹配AMQP消息的header...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>RabbitMQ-Exchange | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="RabbitMQ-Exchange">
+            
+	            RabbitMQ-Exchange
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/RabbitMQ/">RabbitMQ</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+                    <a class="tag-link" href="/tags/RabbitMQ/">RabbitMQ</a>
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2019/09/04</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="交换器分类"><a href="#交换器分类" class="headerlink" title="交换器分类"></a>交换器分类</h1><p>RabbitMQ的Exchange（交换器）分为四类：</p>
+<ul>
+<li>direct（默认）</li>
+<li>headers</li>
+<li>fanout</li>
+<li>topic</li>
+</ul>
+<p>其中headers交换器允许你匹配AMQP消息的header而非路由键，除此之外headers交换器和direct交换器完全一致，但性能却很差，几乎用不到，所以我们本文也不做讲解。</p>
+<p><em>注意：fanout、topic交换器是没有历史数据的，也就是说对于中途创建的队列，获取不到之前的消息。</em></p>
+<h1 id="direct"><a href="#direct" class="headerlink" title="direct"></a>direct</h1><p>direct为默认的交换器类型，也非常的简单，如果路由键匹配的话，消息就投递到相应的队列，如图：</p>
+<div><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gcz4nahazsj30as0deaaq.jpg"><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gcz5lcc4o6j30cl07i0sy.jpg"></div>
+
+
+<p><em>注意：不能使用for循环单个消息消费来替代持续消息消费，因为这样性能很低；</em></p>
+<ul>
+<li><p>公平调度<br>当接收端订阅者有多个的时候，direct会轮询公平的分发给每个订阅者（订阅者消息确认正常）</p>
+</li>
+<li><p>消息的发后既忘特性<br>发后既忘模式是指接受者不知道消息的来源，如果想要指定消息的发送者，需要包含在发送内容里面，这点就像我们在信件里面注明自己的姓名一样，只有这样才能知道发送者是谁。</p>
+</li>
+<li><p>消息确认<br>看了上面的代码我们可以知道，消息接收到之后必须使用channel.basicAck()方法手动确认（非自动确认删除模式下），那么问题来了。</p>
+</li>
+<li><p>消息收到未确认会怎么样？<br>如果应用程序接收了消息，因为bug忘记确认接收的话，消息在队列的状态会从“Ready”变为“Unacked”，如图：<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gcz4qxvyoaj30ic02gdfo.jpg" alt="rabbitmq-unacked.png"><br><em>总结：消费者消费的每条消息都必须确认。</em></p>
+</li>
+<li><p>消息拒绝<br>消息在确认之前，可以有两个选择：</p>
+<ul>
+<li>选择1：断开与Rabbit的连接，这样Rabbit会重新把消息分派给另一个消费者；</li>
+<li>选择2：拒绝Rabbit发送的消息使用channel.basicReject(long deliveryTag, boolean requeue)，参数1：消息的id；参数2：处理消息的方式，如果是true Rabbib会重新分配这个消息给其他订阅者，如果设置成false的话，Rabbit会把消息发送到一个特殊的“死信”队列，用来存放被拒绝而不重新放入队列的消息。</li>
+</ul>
+</li>
+</ul>
+<h1 id="fanout交换器——发布-订阅模式"><a href="#fanout交换器——发布-订阅模式" class="headerlink" title="fanout交换器——发布/订阅模式"></a>fanout交换器——发布/订阅模式</h1><p>不处理路由键。你只需要简单的将队列绑定到交换机上。一个发送到交换机的消息都会被转发到与该交换机绑定的所有队列上。很像子网广播，每台子网内的主机都获得了一份复制的消息。Fanout交换机转发消息是最快的。 </p>
+<div><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gcz5dpum3vj30890aigmg.jpg"><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gcz5dczg54j30cl08m3yu.jpg"></div>
+
+<h1 id="topic"><a href="#topic" class="headerlink" title="topic"></a>topic</h1><p>topic交换器运行和fanout类似，但是可以更灵活的匹配自己想要订阅的信息，这个时候routingKey路由键就排上用场了，使用路由键进行消息（规则）匹配。<br>假设我们现在有一个日志系统，会把所有日志级别的日志发送到交换器，warning、log、error、fatal，但我们只想处理error以上的日志，要怎么处理？这就需要使用topic路由器了。<br>topic路由器的关键在于定义路由键，定义routingKey名称不能超过255字节，使用“.”作为分隔符，例如：com.mq.rabbit.error。</p>
+<div><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gcz5tem5nsj30bp0elabi.jpg"><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gcz5temiurj30f90870tz.jpg"></div>
+
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2019/10/14/Go/深入解析slice底层实现/" class="pre-post btn btn-default" title='Go-深入解析slice底层实现'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">Go-深入解析slice底层实现</span>
+        </a>
+    
+    
+        <a href="/2019/09/04/Amqp/RabbitMQ-工作原理/" class="next-post btn btn-default" title='RabbitMQ-工作原理'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">RabbitMQ-工作原理</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#交换器分类"><span class="toc-text">交换器分类</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#direct"><span class="toc-text">direct</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#fanout交换器——发布-订阅模式"><span class="toc-text">fanout交换器——发布/订阅模式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#topic"><span class="toc-text">topic</span></a></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

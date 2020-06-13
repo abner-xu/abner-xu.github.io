@@ -1,0 +1,394 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="面试">
+
+
+    <meta name="description" content="核心概念Node 与 ClusterElastic 本质上是一个分布式数据库，允许多台服务器协同工作，每台服务器可以运行多个 Elastic 实例。
+单个 Elastic 实例称为一个节点（no...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>elasticsearch核心概念(初版) | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="elasticsearch核心概念(初版)">
+            
+	            elasticsearch核心概念(初版)
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/elasticsearch/">elasticsearch</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+                    <a class="tag-link" href="/tags/面试/">面试</a>
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2019/07/24</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+            <p class="fa fa-exclamation-triangle warning">
+                本文于<strong>325</strong>天之前发表，文中内容可能已经过时。
+            </p>
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h1><h2 id="Node-与-Cluster"><a href="#Node-与-Cluster" class="headerlink" title="Node 与 Cluster"></a>Node 与 Cluster</h2><p>Elastic 本质上是一个分布式数据库，允许多台服务器协同工作，每台服务器可以运行多个 Elastic 实例。</p>
+<p>单个 Elastic 实例称为一个节点（node）。一组节点构成一个集群（cluster）。</p>
+<h2 id="Index"><a href="#Index" class="headerlink" title="Index"></a>Index</h2><p>Elastic 会索引所有字段，经过处理后写入一个反向索引（Inverted Index）。查找数据的时候，直接查找该索引。</p>
+<p>所以，Elastic 数据管理的顶层单位就叫做 Index（索引）。它是单个数据库的同义词。每个 Index （即数据库）的名字必须是小写。</p>
+<p>下面的命令可以查看当前节点的所有 Index。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl -X GET &apos;http://localhost:9200/_cat/indices?v&apos;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Document"><a href="#Document" class="headerlink" title="Document"></a>Document</h2><p>Index 里面单条的记录称为 Document（文档）。许多条 Document 构成了一个 Index。</p>
+<p>Document 使用 JSON 格式表示，下面是一个例子。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;user&quot;: &quot;张三&quot;,</span><br><span class="line">  &quot;title&quot;: &quot;工程师&quot;,</span><br><span class="line">  &quot;desc&quot;: &quot;数据库管理&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>同一个 Index 里面的 Document，不要求有相同的结构（scheme），但是最好保持相同，这样有利于提高搜索效率。</p>
+<h2 id="Type"><a href="#Type" class="headerlink" title="Type"></a>Type</h2><p>Document 可以分组，比如<code>weather</code>这个 Index 里面，可以按城市分组（北京和上海），也可以按气候分组（晴天和雨天）。这种分组就叫做 Type，它是虚拟的逻辑分组，用来过滤 Document。</p>
+<p>不同的 Type 应该有相似的结构（schema），举例来说，<code>id</code>字段不能在这个组是字符串，在另一个组是数值。这是与关系型数据库的表的一个区别。性质完全不同的数据（比如<code>products</code>和<code>logs</code>）应该存成两个 Index，而不是一个 Index 里面的两个 Type（虽然可以做到）。</p>
+<p>下面的命令可以列出每个 Index 所包含的 Type。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl &apos;localhost:9200/_mapping?pretty=true&apos;</span><br></pre></td></tr></table></figure>
+
+<h2 id="es与数据库类比"><a href="#es与数据库类比" class="headerlink" title="es与数据库类比"></a>es与数据库类比</h2><table>
+<thead>
+<tr>
+<th>es</th>
+<th>数据库</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>document</td>
+<td>行</td>
+</tr>
+<tr>
+<td>type</td>
+<td>表</td>
+</tr>
+<tr>
+<td>index</td>
+<td>数据库</td>
+</tr>
+</tbody></table>
+<h2 id="share（primary-数据分片-amp-replica-replica-share数据副本-深入理解"><a href="#share（primary-数据分片-amp-replica-replica-share数据副本-深入理解" class="headerlink" title="share（primary 数据分片) &amp; replica(replica share数据副本) 深入理解"></a>share（primary 数据分片) &amp; replica(replica share数据副本) 深入理解</h2><p>1）一个index包含多个share<br>2）每个share都是一个最小工作单元，包含完整的lucene实例，完整的建立索引和处理业务能力<br>3）增加节点时，share会自动在node中负载<br>4）每个document只存在一个share和其对应的replica中，不可能存在多个share中<br>5）replica数据副本，负责容错和负载<br>6）primary share在创建index的时候就已经确定了，replica share可以随时更改<br>7）primary share默认是5个，每个primary share有1个replica share,所以一个节点默认5个primary share和5个replica share<br>8）primary share和自己的replica share不能放在同一个节点上，避免宕机，但是可以同其他rimary share的replica share在同一个节点</p>
+<h2 id="document删除（或者全量替换）"><a href="#document删除（或者全量替换）" class="headerlink" title="document删除（或者全量替换）"></a>document删除（或者全量替换）</h2><ul>
+<li>删除的时候只是打了标记，并没有实时删除，es后台会在到达一定量的时候物理删除</li>
+<li>全量替换也是打了标记，所以数据的version会变</li>
+</ul>
+<h2 id="version并发版本控制和乐观锁"><a href="#version并发版本控制和乐观锁" class="headerlink" title="version并发版本控制和乐观锁"></a>version并发版本控制和乐观锁</h2><h2 id="什么是partial-update-amp-amp-实现原理"><a href="#什么是partial-update-amp-amp-实现原理" class="headerlink" title="什么是partial update  &amp;&amp; 实现原理"></a>什么是partial update  &amp;&amp; 实现原理</h2><p>POST /index/type/id/_update</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"doc"</span>: &#123;</span><br><span class="line">      <span class="attr">"要修改的几个少数filed,不需要全量的数据"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>内部原理：其实es跟传统全量替换一样，只不过是ES内部share完成</p>
+<ol>
+<li>获取到document</li>
+<li>将传过来的filed更新到document的json中，存放在内存中</li>
+<li>将老的document标记为删除</li>
+<li>将新的document创建出来<br>优点：</li>
+<li>由于是内部完成，减少网络请求开销，一瞬间完成</li>
+<li>减少并发造成的问题</li>
+</ol>
+<h1 id="bulk语法"><a href="#bulk语法" class="headerlink" title="bulk语法"></a>bulk语法</h1><hr>
+<h1 id="调优"><a href="#调优" class="headerlink" title="调优"></a>调优</h1><p>仅索引层面调优手段：</p>
+<ul>
+<li>1.1、设计阶段调优<br>1）根据业务增量需求，采取基于日期模板创建索引，通过roll over API滚动索引；<br>2）使用别名进行索引管理；<br>3）每天凌晨定时对索引做force_merge操作，以释放空间；<br>4）采取冷热分离机制，热数据存储到SSD，提高检索效率；冷数据定期进行shrink操作，以缩减存储；<br>5）采取curator进行索引的生命周期管理；<br>6）仅针对需要分词的字段，合理的设置分词器；<br>7）Mapping阶段充分结合各个字段的属性，是否需要检索、是否需要存储等。</li>
+<li>1.2、写入调优<br>1）写入前副本数设置为0；<br>2）写入前关闭refresh_interval设置为-1，禁用刷新机制；<br>3）写入过程中：采取bulk批量写入；<br>4）写入后恢复副本数和刷新间隔；<br>5）尽量使用自动生成的id。</li>
+<li>1.3、查询调优<br>1）禁用wildcard；<br>2）禁用批量terms（成百上千的场景）；<br>3）充分利用倒排索引机制，能keyword类型尽量keyword；<br>4）数据量大时候，可以先基于时间敲定索引再检索；<br>5）设置合理的路由机制。 </li>
+</ul>
+<h1 id="ES中的倒排索引是什么？"><a href="#ES中的倒排索引是什么？" class="headerlink" title="ES中的倒排索引是什么？"></a>ES中的倒排索引是什么？</h1><p>传统的检索方式是通过文章，逐个遍历找到对应关键词的位置。<br>倒排索引，是通过分词策略，形成了词和文章的映射关系表，也称倒排表，这种词典 + 映射表即为倒排索引。</p>
+<p>其中词典中存储词元，倒排表中存储该词元在哪些文中出现的位置。<br>有了倒排索引，就能实现 O(1) 时间复杂度的效率检索文章了，极大的提高了检索效率。<br>倒排索引的底层实现是基于：FST（Finite State Transducer）数据结构。</p>
+<p>Lucene 从 4+ 版本后开始大量使用的数据结构是 FST。FST 有两个优点：<br>1）空间占用小。通过对词典中单词前缀和后缀的重复利用，压缩了存储空间；<br>2）查询速度快。O(len(str)) 的查询时间复杂度。</p>
+<h1 id="ES是如何实现master选举的？"><a href="#ES是如何实现master选举的？" class="headerlink" title="ES是如何实现master选举的？"></a>ES是如何实现master选举的？</h1><ul>
+<li>前置条件：<br>1）只有是候选主节点（master：true）的节点才能成为主节点。<br>2）最小主节点数（min_master_nodes）的目的是防止脑裂。</li>
+<li>选举流程大致描述如下：<br>第一步：确认候选主节点数达标，elasticsearch.yml 设置的值 discovery.zen.minimum_master_nodes;<br>第二步：对所有候选主节点根据nodeId字典排序，每次选举每个节点都把自己所知道节点排一次序，然后选出第一个（第0位）节点，暂且认为它是master节点。<br>第三步：如果对某个节点的投票数达到一定的值（候选主节点数n/2+1）并且该节点自己也选举自己，那这个节点就是master。否则重新选举一直到满足上述条件。</li>
+</ul>
+<h1 id="如何解决ES集群的脑裂问题"><a href="#如何解决ES集群的脑裂问题" class="headerlink" title="如何解决ES集群的脑裂问题"></a>如何解决ES集群的脑裂问题</h1><p>所谓集群脑裂，是指 Elasticsearch 集群中的节点（比如共 20 个），其中的 10 个选了一个 master，另外 10 个选了另一个 master 的情况。</p>
+<p>当集群 master 候选数量不小于 3 个时，可以通过设置最少投票通过数量（discovery.zen.minimum_master_nodes）超过所有候选节点一半以上来解决脑裂问题；<br>当候选数量为两个时，只能修改为唯一的一个 master 候选，其他作为 data 节点，避免脑裂问题。</p>
+<h1 id="详细描述一下ES索引文档的过程？"><a href="#详细描述一下ES索引文档的过程？" class="headerlink" title="详细描述一下ES索引文档的过程？"></a>详细描述一下ES索引文档的过程？</h1><p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf4yt7tfgej30km0argmj.jpg" alt="1.png"></p>
+<p>第一步：客户端向集群某节点写入数据，发送请求。（如果没有指定路由/协调节点，请求的节点扮演协调节点的角色。）<br>第二步：协调节点接受到请求后，默认使用文档 ID 参与计算（也支持通过 routing），得到该文档属于哪个分片。随后请求会被转到另外的节点。路由算法：根据文档id或路由计算目标的分片id shard = hash(document_id) % (num_of_primary_shards)<br>第三步：当分片所在的节点接收到来自协调节点的请求后，会将请求写入到 Memory Buffer，然后定时（默认是每隔 1 秒）写入到F ilesystem Cache，这个从 Momery Buffer 到 Filesystem Cache 的过程就叫做 refresh；<br>第四步：当然在某些情况下，存在 Memery Buffer 和 Filesystem Cache 的数据可能会丢失，ES 是通过 translog 的机制来保证数据的可靠性的。其实现机制是接收到请求后，同时也会写入到 translog 中，当 Filesystem cache 中的数据写入到磁盘中时，才会清除掉，这个过程叫做 flush；<br>第五步：在 flush 过程中，内存中的缓冲将被清除，内容被写入一个新段，段的 fsync 将创建一个新的提交点，并将内容刷新到磁盘，旧的 translog 将被删除并开始一个新的 translog。<br>第六步：flush 触发的时机是定时触发（默认 30 分钟）或者 translog 变得太大（默认为 512 M）时。</p>
+<h1 id="在并发情况下，ES如果保证读写一致？"><a href="#在并发情况下，ES如果保证读写一致？" class="headerlink" title="在并发情况下，ES如果保证读写一致？"></a>在并发情况下，ES如果保证读写一致？</h1><p>可以通过版本号使用乐观并发控制，以确保新版本不会被旧版本覆盖，由应用层来处理具体的冲突；<br>另外对于写操作，一致性级别支持quorum/one/all，默认为quorum，即只有当大多数分片可用时才允许写操作。但即使大多数可用，也可能存在因为网络等原因导致写入副本失败，这样该副本被认为故障，分片将会在一个不同的节点上重建。<br>对于读操作，可以设置replication为sync(默认)，这使得操作在主分片和副本分片都完成后才会返回；如果设置replication为async时，也可以通过设置搜索请求参数_preference为primary来查询主分片，确保文档是最新版本。</p>
+<h1 id="lucence内部结构"><a href="#lucence内部结构" class="headerlink" title="lucence内部结构"></a>lucence内部结构</h1><p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf4j65m4p3j30ft0d90t5.jpg" alt="1.jpeg"></p>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2019/07/28/Elasticsearch/SQL/" class="pre-post btn btn-default" title='elasticsearch query 语法'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">elasticsearch query 语法</span>
+        </a>
+    
+    
+        <a href="/2019/07/12/protobuf/" class="next-post btn btn-default" title='protobuf'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">protobuf</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#核心概念"><span class="toc-text">核心概念</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Node-与-Cluster"><span class="toc-text">Node 与 Cluster</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Index"><span class="toc-text">Index</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Document"><span class="toc-text">Document</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Type"><span class="toc-text">Type</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#es与数据库类比"><span class="toc-text">es与数据库类比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#share（primary-数据分片-amp-replica-replica-share数据副本-深入理解"><span class="toc-text">share（primary 数据分片) &amp; replica(replica share数据副本) 深入理解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#document删除（或者全量替换）"><span class="toc-text">document删除（或者全量替换）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#version并发版本控制和乐观锁"><span class="toc-text">version并发版本控制和乐观锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是partial-update-amp-amp-实现原理"><span class="toc-text">什么是partial update  &amp;&amp; 实现原理</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#bulk语法"><span class="toc-text">bulk语法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#调优"><span class="toc-text">调优</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ES中的倒排索引是什么？"><span class="toc-text">ES中的倒排索引是什么？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ES是如何实现master选举的？"><span class="toc-text">ES是如何实现master选举的？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#如何解决ES集群的脑裂问题"><span class="toc-text">如何解决ES集群的脑裂问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#详细描述一下ES索引文档的过程？"><span class="toc-text">详细描述一下ES索引文档的过程？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#在并发情况下，ES如果保证读写一致？"><span class="toc-text">在并发情况下，ES如果保证读写一致？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#lucence内部结构"><span class="toc-text">lucence内部结构</span></a></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

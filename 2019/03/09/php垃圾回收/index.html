@@ -1,0 +1,412 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="面试,PHPGC垃圾">
+
+
+    <meta name="description" content="底层的运行原理和机制四层体系架构图
+Zend引擎：Zend整体用纯C实现，是PHP的内核部分，它将php代码翻译(词法、语法解析等一系列编译过程)为可执行opcode的 处理并实现相应的处理方法...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>php垃圾回收引发的一些底层了解 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="php垃圾回收引发的一些底层了解">
+            
+	            php垃圾回收引发的一些底层了解
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/PHP/">PHP</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+                    <a class="tag-link" href="/tags/PHPGC垃圾/">PHPGC垃圾</a> <a class="tag-link" href="/tags/面试/">面试</a>
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2019/03/09</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+            <p class="fa fa-exclamation-triangle warning">
+                本文于<strong>462</strong>天之前发表，文中内容可能已经过时。
+            </p>
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="底层的运行原理和机制"><a href="#底层的运行原理和机制" class="headerlink" title="底层的运行原理和机制"></a>底层的运行原理和机制</h1><h2 id="四层体系架构图"><a href="#四层体系架构图" class="headerlink" title="四层体系架构图"></a>四层体系架构图</h2><p><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0wp6w9yegj30ee0epdi4.jpg" alt="底层"></p>
+<p>Zend引擎：Zend整体用纯C实现，是PHP的内核部分，它将php代码翻译(词法、语法解析等一系列编译过程)为可执行opcode的 处理并实现相应的处理方法、实现了基本的数据结构(如hashtable、oo)、内存分配及管理、提供了相应的api方法供外部调用，是一切的核心，所 有的外围功能均围绕Zend实现。</p>
+<p>Extensions：围绕着Zend引擎，extensions通过组件式的方式提供各种基础服务，我们常见的各种内置函数(如array 系列)、标准库等都是通过extension来实现，用户也可以根据需要实现自己的extension以达到功能扩展、性能优化等目的(如贴吧正在使用的 PHP中间层、富文本解析就是extension的典型应用)。</p>
+<p>Sapi：Sapi全称是Server Application Programming Interface，也就是服务端应用编程接口，Sapi通过一系列钩子函数，使得PHP可以和外围交互数据，这是PHP非常优雅和成功的一个设计，通过 sapi成功的将PHP本身和上层应用解耦隔离，PHP可以不再考虑如何针对不同应用进行兼容，而应用本身也可以针对自己的特点实现不同的处理方式。</p>
+<p>上层应用：这就是我们平时编写的PHP程序，通过不同的sapi方式得到各种各样的应用模式，如通过webserver实现web应用、在命令行下以脚本方式运行等等。</p>
+<h1 id="PHP执行的几个阶段"><a href="#PHP执行的几个阶段" class="headerlink" title="PHP执行的几个阶段"></a>PHP执行的几个阶段</h1><p><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0whssv186j30u01ev0w1.jpg" alt="阶段"></p>
+<blockquote>
+<p>PHP 是一门托管型语言，在 PHP 编程中，程序员不需要手工处理内存资源的分配与释放（使用 C 编写 PHP 或 Zend 扩展除外），这就意味着 PHP 本身实现了垃圾回收机制（Garbage Collection）。在<a href="http://php.net/manual/zh/features.gc.php" target="_blank" rel="noopener">PHP官方网站</a>可以看到对垃圾回收机制的介绍。</p>
+</blockquote>
+<h1 id="引用计数基本知识"><a href="#引用计数基本知识" class="headerlink" title="引用计数基本知识"></a>引用计数基本知识</h1><p>PHP在内核中是通过zval这个结构体来存储变量的，在Zend/zend.h文件中找到了其定义：<br>PHP5定义如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">struct _zval_struct &#123;</span><br><span class="line">     union &#123;</span><br><span class="line">          long lval;</span><br><span class="line">          double dval;</span><br><span class="line">          struct &#123;</span><br><span class="line">               char *val;</span><br><span class="line">               int len;</span><br><span class="line">          &#125; str;</span><br><span class="line">          HashTable *ht;</span><br><span class="line">          zend_object_value obj;</span><br><span class="line">          zend_ast *ast;</span><br><span class="line">     &#125; value;</span><br><span class="line">     zend_uint refcount__gc;</span><br><span class="line">     zend_uchar type;</span><br><span class="line">     zend_uchar is_ref__gc;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>PHP7定义如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">struct _zval_struct &#123;</span><br><span class="line">    union &#123;</span><br><span class="line">        zend_long         lval;             /* long value */</span><br><span class="line">        double            dval;             /* double value */</span><br><span class="line">        zend_refcounted  *counted;</span><br><span class="line">        zend_string      *str;</span><br><span class="line">        zend_array       *arr;</span><br><span class="line">        zend_object      *obj;</span><br><span class="line">        zend_resource    *res;</span><br><span class="line">        zend_reference   *ref;</span><br><span class="line">        zend_ast_ref     *ast;</span><br><span class="line">        zval             *zv;</span><br><span class="line">        void             *ptr;</span><br><span class="line">        zend_class_entry *ce;</span><br><span class="line">        zend_function    *func;</span><br><span class="line">        struct &#123;</span><br><span class="line">            uint32_t w1;</span><br><span class="line">            uint32_t w2;</span><br><span class="line">        &#125; ww;</span><br><span class="line">    &#125; value;</span><br><span class="line">    union &#123;</span><br><span class="line">        struct &#123;</span><br><span class="line">            ZEND_ENDIAN_LOHI_4(</span><br><span class="line">                zend_uchar    type,         /* active type */</span><br><span class="line">                zend_uchar    type_flags,</span><br><span class="line">                zend_uchar    const_flags,</span><br><span class="line">                zend_uchar    reserved)     /* call info for EX(This) */</span><br><span class="line">        &#125; v;</span><br><span class="line">        uint32_t type_info;</span><br><span class="line">    &#125; u1;</span><br><span class="line">    union &#123;</span><br><span class="line">        uint32_t     var_flags;</span><br><span class="line">        uint32_t     next;                 /* hash collision chain */</span><br><span class="line">        uint32_t     cache_slot;           /* literal cache slot */</span><br><span class="line">        uint32_t     lineno;               /* line number (for ast nodes) */</span><br><span class="line">        uint32_t     num_args;             /* arguments number for EX(This) */</span><br><span class="line">        uint32_t     fe_pos;               /* foreach position */</span><br><span class="line">        uint32_t     fe_iter_idx;          /* foreach iterator index */</span><br><span class="line">    &#125; u2;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>我们定义一个PHP变量如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$var = &quot;laruence&quot;;</span><br><span class="line">$var_dup = $var;</span><br><span class="line">unset($var);</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>第一行代码创建了一个字符串变量，申请了一个大小为9字节的内存，保存了字符串”laruence”和一个NULL(\0)的结尾。</li>
+<li>第二行定义了一个新的字符串变量，并将变量var的值”复制”给这个新的变量。</li>
+<li>第三行unset了变量var<br>这样的代码在我们平时的脚本中是很常见的，如果PHP对于每一个变量赋值都重新分配内存，copy数据的话，那么上面的这段代码公要申请18个字节的内存空间，而我们也很容易的看出来，上面的代码其实根本没有必要申请俩份空间，PHP的开发者也看出来了：</li>
+</ol>
+<p>PHP中的变量是用一个存储在symbol_table中的符号名，对应一个zval来实现的，比如对于上面的第一行代码，会在symbol_table中存储一个值”var”, 对应的有一个指针指向一个zval结构，变量值”laruence”保存在这个zval中，所以不难想象，对于上面的代码来说，我们完全可以让”var”和”var_dup”对应的指针都指向同一个zval就可以了。</p>
+<p>PHP也是这样做的，这个时候就需要介绍过zval结构中的refcount字段了。</p>
+<p>refcount,顾名思义，记录了当前的zval被引用的计数。</p>
+<blockquote>
+<p>不准确但却通俗的说：<br>  refcount：多少个变量是一样的用了相同的值，这个数值就是多少。<br>  is_ref：bool类型，当refcount大于2的时候，其中一个变量用了地址&amp;的形式进行赋值，好了，它就变成1了。</p>
+</blockquote>
+<p>在 PHP 中可以通过 xdebug 扩展中提供的方法来查看变量的计数变化： </p>
+<p><strong>第一步：查看内部结构</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$name = &quot;这是一段内存测试&quot;;</span><br><span class="line"> xdebug_debug_zval(&apos;name&apos;);</span><br><span class="line">会得到</span><br><span class="line">name:(refcount=1, is_ref=0),string &apos;这是一段内存测试&apos; (length=18)</span><br></pre></td></tr></table></figure>
+
+<p><strong>第二步：查看内部结构</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$name = &quot;这是一段内存测试&quot;;</span><br><span class="line">$temp_name = $name;</span><br><span class="line">xdebug_debug_zval(&apos;name&apos;);</span><br><span class="line">会得到</span><br><span class="line">name:(refcount=2, is_ref=0),string &apos;这是一段内存测试&apos; (length=18)</span><br><span class="line">看到了吧，refcount＋1了。</span><br></pre></td></tr></table></figure>
+
+<p><strong>第三步：引用赋值</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$name = &quot;这是一段内存测试&quot;;</span><br><span class="line">$temp_name = &amp;$name;</span><br><span class="line">xdebug_debug_zval(&apos;name&apos;);</span><br><span class="line">会得到</span><br><span class="line">name:(refcount=2, is_ref=0),string &apos;这是一段内存测试&apos; (length=18)</span><br><span class="line">看到了吧，refcount＋1了。</span><br><span class="line">引用赋值会导致zval通过is_ref来标记是否存在引用的情况。</span><br></pre></td></tr></table></figure>
+
+<p><strong>第四步：数组型的变量</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$name = [&apos;a&apos;=&gt;&apos;这是一段&apos;, &apos;b&apos;=&gt;&apos;内存测试&apos;];</span><br><span class="line">xdebug_debug_zval(&apos;name&apos;);</span><br><span class="line">会得到</span><br><span class="line">name:</span><br><span class="line">(refcount=1, is_ref=0),</span><br><span class="line">array (size=2)</span><br><span class="line">  &apos;a&apos; =&gt; (refcount=1, is_ref=0),string &apos;这是一段&apos; (length=9)</span><br><span class="line">  &apos;b&apos; =&gt; (refcount=1, is_ref=0),string &apos;内存测试&apos; (length=9)</span><br><span class="line">还挺好理解的，对于数组来看是一个整体，对于内部kv来看又是分别独立的整体，各自都维护着一套zval的refount和is_ref。</span><br></pre></td></tr></table></figure>
+
+<p><strong>第五步：销毁变量</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$name = &quot;这是一段内存测试&quot;;</span><br><span class="line">$temp_name = $name;</span><br><span class="line">xdebug_debug_zval(&apos;name&apos;);</span><br><span class="line">unset($temp_name);</span><br><span class="line">xdebug_debug_zval(&apos;name&apos;);</span><br><span class="line">会得到</span><br><span class="line">name:(refcount=2, is_ref=0),string &apos;这是一段内存测试&apos; (length=18)</span><br><span class="line">name:(refcount=1, is_ref=0),string &apos;这是一段内存测试&apos; (length=18)</span><br><span class="line">refcount计数减1，说明unset并非一定会释放内存，当有两个变量指向的时候，并非会释放变量占用的内存，只是refcount减1.</span><br></pre></td></tr></table></figure>
+
+<h1 id="PHP的内存管理机制"><a href="#PHP的内存管理机制" class="headerlink" title="PHP的内存管理机制"></a>PHP的内存管理机制</h1><p>通过上面的案例，知道了zval的原理以后，接下来通过PHP来看一下内存管理机制是怎么样的</p>
+<h2 id="外在的内存变换"><a href="#外在的内存变换" class="headerlink" title="外在的内存变换"></a>外在的内存变换</h2><p>代码示例A：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//获取内存方法，加上true返回实际内存，不加则返回表现内存</span><br><span class="line">var_dump(memory_get_usage());</span><br><span class="line">$name = &quot;这是一段内存测试&quot;;</span><br><span class="line">var_dump(memory_get_usage());</span><br><span class="line">unset($name);</span><br><span class="line">var_dump(memory_get_usage());</span><br></pre></td></tr></table></figure>
+
+<p>会得到：</p>
+<pre><code>int 1593248
+int 1593384
+int 1593248</code></pre><p>大致过程：定义变量-&gt;内存增加-&gt;清除变量-&gt;内存恢复</p>
+<h2 id="潜在的内存变化"><a href="#潜在的内存变化" class="headerlink" title="潜在的内存变化"></a>潜在的内存变化</h2><p>当执行：$name=”这是一段内存测试”; 的时候，内存的分配做了2件事情：</p>
+<ol>
+<li>为变量名分配内存，存入符号表</li>
+<li>为变量分配内存</li>
+</ol>
+<p>代码示例B：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">var_dump(memory_get_usage());</span><br><span class="line">for($i=0;$i&lt;100;$i++)</span><br><span class="line">&#123;</span><br><span class="line">    $a = &quot;test&quot;.$i;</span><br><span class="line">    $$a = &quot;hello&quot;;    </span><br><span class="line">&#125;</span><br><span class="line">var_dump(memory_get_usage());</span><br><span class="line">for($i=0;$i&lt;100;$i++)</span><br><span class="line">&#123;</span><br><span class="line">    $a = &quot;test&quot;.$i;</span><br><span class="line">    unset($$a);    </span><br><span class="line">&#125;</span><br><span class="line">var_dump(memory_get_usage());</span><br></pre></td></tr></table></figure>
+
+<p>会得到：</p>
+<pre><code>int 1596864
+int 1612080
+int 1597680</code></pre><p>这里可以发现内存并没有全部收回来</p>
+<p>这里由于PHP核心数据Hashtable来说，由于未知性，定义的时候不可能一次性分配足够的内存块，所以初始分配的内存使用完成以后，进行扩容，而HashTable只扩容不减少，所以就出现了上面的情况：当存入100个变量的时候，符号表不够用了就进行一次扩容，当unset的时候只释放了”<font color="red">为变量值分配的内存</font>“，而”<font color="blue">为变量名分配的内存</font>“是在符号表的，符号表并没有缩减，所以没有收回来的内存是被符号表占去了</p>
+<h1 id="潜在的内存申请与释放设计"><a href="#潜在的内存申请与释放设计" class="headerlink" title="潜在的内存申请与释放设计"></a>潜在的内存申请与释放设计</h1><p>php和C语言一样，也是需要进行内存申请，只不过这些操作都封装在底层了，php使用者无感知。</p>
+<p>首先我们要打破一个思维：php不像C语言那样，只有你显示的调用内存分配API才会有相关的内存分配。也就是说，在PHP中，我们看不到内存分配。</p>
+<p>比如说</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$a=<span class="string">"laruence"</span>;</span><br></pre></td></tr></table></figure>
+
+<p>隐式的内存分配点就有：</p>
+<ol>
+<li>为变量名分配内存，存入符号表</li>
+<li>为变量值分配内存</li>
+</ol>
+<p>所以不能看表象</p>
+<p>别怀疑php的unset确实能是否内存（当然还要结合引用和计数），导致这个释放不是C语言意义上的释放，不是交回给OS，对于PHP来说，它自身提供了一套和C语言对内存分配相似的内存管理API</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">emalloc(size_t size);</span><br><span class="line">efree(void *ptr);</span><br><span class="line">ecalloc(size_t nmemb, size_t size);</span><br><span class="line">erealloc(void *ptr, size_t size);</span><br><span class="line">estrdup(<span class="keyword">const</span> char *s);</span><br><span class="line">estrndup(<span class="keyword">const</span> char *s, unsigned int length);</span><br></pre></td></tr></table></figure>
+
+<p>这些API和C的API意义对应， 在PHP内部都是通过这些API来管理内存的。</p>
+<p>当我们调用emalloc申请内存的时候，PHP并不是简单的向OS要内存， 而是会像OS要一个大块的内存, 然后把其中的一块分配给申请者，这样当再有逻辑来申请内存的时候， 就不再需要向OS申请内存了， 避免了频繁的系统调用。</p>
+<p>比如如下的例子:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">var_dump(memory_get_usage(<span class="keyword">TRUE</span>)); <span class="comment">//注意获取的是real_size</span></span><br><span class="line">$a = <span class="string">"laruence"</span>;</span><br><span class="line">var_dump(memory_get_usage(<span class="keyword">TRUE</span>));</span><br><span class="line"><span class="keyword">unset</span>($a);</span><br><span class="line">var_dump(memory_get_usage(<span class="keyword">TRUE</span>));</span><br><span class="line"><span class="comment">//输出</span></span><br><span class="line">int(<span class="number">262144</span>)</span><br><span class="line">int(<span class="number">262144</span>)</span><br><span class="line">int(<span class="number">262144</span>)</span><br></pre></td></tr></table></figure>
+
+<p>也就是我们在定义变量$a的时候, PHP并没有向系统申请新内存.</p>
+<p>同样的, 在我们调用efree释放内存的时候, PHP也不会把内存还给OS, 而会把这块内存, 归入自己维护的空闲内存列表. 而对于小块内存来说, 更可能的是, 把它放到内存缓存列表中去(后记, 某些版本的PHP, 比如我验证过的PHP7.2, 在调用get_memory_usage()的时候, 不会减去内存缓存列表中的可用内存块大小, 导致看起来, unset以后内存不变).</p>
+<h1 id="php中垃圾是如何定义的？"><a href="#php中垃圾是如何定义的？" class="headerlink" title="php中垃圾是如何定义的？"></a>php中垃圾是如何定义的？</h1><p>首先我们需要定义一下“垃圾”的概念，GC负责清理的垃圾是指变量的容器zval还存在，但是又没有任何变量名指向此zval。因此GC判断是否为垃圾的一个重要标准是有没有变量名指向变量容器zval。</p>
+<p>假设我们有一段PHP代码，使用了一个临时变量$tmp存储了一个字符串，在处理完字符串之后，就不需要这个$tmp变量了，$tmp变量对于我们来说可以算是一个“垃圾”了，但是对于GC来说，$tmp其实并不是一个垃圾，$tmp变量对我们没有意义，但是这个变量实际还存在，$tmp符号依然指向它所对应的zval，GC会认为PHP代码中可能还会使用到此变量，所以不会将其定义为垃圾。</p>
+<p>那么如果我们在PHP代码中使用完$tmp后，调用unset删除这个变量，那么$tmp是不是就成为一个垃圾了呢。很可惜，GC仍然不认为$tmp是一个垃圾，因为$tmp在unset之后，refcount减少1变成了0(这里假设没有别的变量和$tmp指向相同的zval),这个时候GC会直接将$tmp对应的zval的内存空间释放，$tmp和其对应的zval就根本不存在了。此时的$tmp也不是新的GC所要对付的那种“垃圾”。</p>
+<h1 id="PHP垃圾回收的相关配置"><a href="#PHP垃圾回收的相关配置" class="headerlink" title="PHP垃圾回收的相关配置"></a>PHP垃圾回收的相关配置</h1><p>可以通过修改配置文件 php.ini 中的 zend.enable_gc 来打开或关闭 PHP 的垃圾回收机制，也可以通过调用 gc_enable() 或 gc_disable() 打开或关闭 PHP 的垃圾回收机制。</p>
+<p>在 PHP5.3 中即使关闭了垃圾回收机制，PHP 仍然会记录可能根到根缓冲区，只是当根缓冲区满额时，不会自动运行垃圾回收，当然，任何时候您都可以通过手工调用 gc_collect_cycles() 函数强制执行内存回收。</p>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2019/03/10/php错误和异常处理/" class="pre-post btn btn-default" title='php错误和异常处理总结'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">php错误和异常处理总结</span>
+        </a>
+    
+    
+        <a href="/2019/03/04/微服务治理/" class="next-post btn btn-default" title='微服务治理'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">微服务治理</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#底层的运行原理和机制"><span class="toc-text">底层的运行原理和机制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#四层体系架构图"><span class="toc-text">四层体系架构图</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PHP执行的几个阶段"><span class="toc-text">PHP执行的几个阶段</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#引用计数基本知识"><span class="toc-text">引用计数基本知识</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PHP的内存管理机制"><span class="toc-text">PHP的内存管理机制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#外在的内存变换"><span class="toc-text">外在的内存变换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#潜在的内存变化"><span class="toc-text">潜在的内存变化</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#潜在的内存申请与释放设计"><span class="toc-text">潜在的内存申请与释放设计</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#php中垃圾是如何定义的？"><span class="toc-text">php中垃圾是如何定义的？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PHP垃圾回收的相关配置"><span class="toc-text">PHP垃圾回收的相关配置</span></a></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

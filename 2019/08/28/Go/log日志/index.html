@@ -1,0 +1,391 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="docker、PHP、Golang、Redis、MySQL、Web面试；">
+
+
+    <meta name="description" content="日志使用o语言为我们提供了标准的log包，来跟踪日志的记录。下面我们看看日志包log的使用
+1234func main() &#123;	log.Println(&quot;这是百度地址:&qu...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>Go-log日志 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="Go-log日志">
+            
+	            Go-log日志
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/Golang/">Golang</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2019/08/28</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="日志使用"><a href="#日志使用" class="headerlink" title="日志使用"></a>日志使用</h1><p>o语言为我们提供了标准的log包，来跟踪日志的记录。下面我们看看日志包log的使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">func main() &#123;</span><br><span class="line">	log.Println(&quot;这是百度地址:&quot;,&quot;http://www.baidu.com&quot;)</span><br><span class="line">	log.Printf(&quot;这是百度地址域名：%s\n&quot;,&quot;baidu.com&quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2019/08/28 13:18:44 这是百度地址: http://www.baidu.com</span><br><span class="line">2019/08/28 13:18:44 这是百度地址域名：baidu.com</span><br></pre></td></tr></table></figure>
+
+<p>有了时间了，我们还想要更多的信息，必然发生的源代码行号等，对此日志包log 为我们提供了可定制化的配制，让我们可以自己定制日志的抬头信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">func init()&#123;</span><br><span class="line">	log.SetFlags(log.Ldate|log.Lshortfile)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们使用<code>init</code>函数，这个函数在<code>main</code>函数执行之前就可以初始化，可以帮我们做一些配置，这里我们自定义日志的抬头信息为时间+文件名+源代码所在行号。也就是<code>log.Ldate|log.Lshortfile,</code>中间是一个位运算符<code>|</code>，然后通过函数<code>log.SetFlags</code>进行设置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2017/04/29 main.go:10: 飞雪无情的博客: http://www.flysnow.org</span><br><span class="line">2017/04/29 main.go:11: 飞雪无情的微信公众号：flysnow_org</span><br></pre></td></tr></table></figure>
+
+<p>看看<code>log</code>包为我们提供了那些可以定义的选项常量。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">const (</span><br><span class="line">	Ldate         = 1 &lt;&lt; iota     //日期示例： 2009/01/23</span><br><span class="line">	Ltime                         //时间示例: 01:23:23</span><br><span class="line">	Lmicroseconds                 //毫秒示例: 01:23:23.123123.</span><br><span class="line">	Llongfile                     //绝对路径和行号: /a/b/c/d.go:23</span><br><span class="line">	Lshortfile                    //文件和行号: d.go:23.</span><br><span class="line">	LUTC                          //日期时间转为0时区的</span><br><span class="line">	LstdFlags     = Ldate | Ltime //Go提供的标准抬头信息</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>这是log包定义的一些抬头信息，有日期、时间、毫秒时间、绝对路径和行号、文件名和行号等，在上面都有注释说明，这里需要注意的是：如果设置了<code>Lmicroseconds</code>，那么<code>Ltime</code>就不生效了；设置了<code>Lshortfile</code>， <code>Llongfile</code>也不会生效，大家自己可以测试一下。</p>
+<p><code>LUTC</code>比较特殊，如果我们配置了时间标签，那么如果设置了LUTC的话，就会把输出的日期时间转为0时区的日期时间显示。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">log.SetFlags(log.Ldate|log.Ltime |log.LUTC)</span><br></pre></td></tr></table></figure>
+
+<p>那么对我们东八区的时间来说，就会减去8个小时，我们看输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2017/04/29 05:46:29 飞雪无情的博客: http://www.flysnow.org</span><br><span class="line">2017/04/29 05:46:29 飞雪无情的微信公众号：flysnow_org</span><br></pre></td></tr></table></figure>
+
+<p>最后一个<code>LstdFlags</code>表示标准的日志抬头信息，也就是默认的，包含日期和具体时间。</p>
+<p>我们大部分情况下，都有很多业务，每个业务都需要记录日志，那么有没有办法，能区分这些业务呢？这样我们在查找日志的时候，就方便多了。</p>
+<p>对于这种情况，Go语言也帮我们考虑到了，这就是设置日志的前缀，比如一个用户中心系统的日志，我们可以这么设置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">func init()&#123;</span><br><span class="line">	log.SetPrefix(&quot;【UserCenter】&quot;)</span><br><span class="line">	log.SetFlags(log.LstdFlags | log.Lshortfile |log.LUTC)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过<code>log.SetPrefix</code>可以指定输出日志的前缀，这里我们指定为<code>【UserCenter】</code>，然后就可以看到日志的打印输出已经清晰的标记出我们的这些日志是属于哪些业务的啦。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">【UserCenter】2017/04/29 05:53:26 main.go:11: 飞雪无情的博客: http://www.flysnow.org</span><br><span class="line">【UserCenter】2017/04/29 05:53:26 main.go:12: 飞雪无情的微信公众号：flysnow_org</span><br></pre></td></tr></table></figure>
+
+<p><code>log</code>包除了有<code>Print</code>系列的函数，还有<code>Fatal</code>以及<code>Panic</code>系列的函数，其中<code>Fatal</code>表示程序遇到了致命的错误，需要退出，这时候使用<code>Fatal</code>记录日志后，然后程序退出，也就是说Fatal相当于先调用<code>Print</code>打印日志，然后再调用<code>os.Exit(1)</code>退出程序。</p>
+<p>同理<code>Panic</code>系列的函数也一样，表示先使用<code>Print</code>记录日志，然后调用<code>panic()</code>函数抛出一个恐慌，这时候除非使用<code>recover()</code>函数，否则程序就会打印错误堆栈信息，然后程序终止。</p>
+<p>这里贴下这几个系列函数的源代码，更好理解。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">func Println(v ...interface&#123;&#125;) &#123;</span><br><span class="line">	std.Output(2, fmt.Sprintln(v...))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func Fatalln(v ...interface&#123;&#125;) &#123;</span><br><span class="line">	std.Output(2, fmt.Sprintln(v...))</span><br><span class="line">	os.Exit(1)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func Panicln(v ...interface&#123;&#125;) &#123;</span><br><span class="line">	s := fmt.Sprintln(v...)</span><br><span class="line">	std.Output(2, s)</span><br><span class="line">	panic(s)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h1><p>通过上面的源代码，我们发现，日志包<code>log</code>的这些函数都是类似的，关键的输出日志就在于<code>std.Output</code>方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">func New(out io.Writer, prefix string, flag int) *Logger &#123;</span><br><span class="line">	return &amp;Logger&#123;out: out, prefix: prefix, flag: flag&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var std = New(os.Stderr, &quot;&quot;, LstdFlags)</span><br></pre></td></tr></table></figure>
+
+<p>从以上源代码可以看出，变量<code>std</code>其实是一个<code>*Logger</code>，通过<code>log.New</code>函数创建，默认输出到<code>os.Stderr</code>设备，前缀为空，日志抬头信息为标准抬头<code>LstdFlags</code>。</p>
+<p><code>os.Stderr</code>对应的是UNIX里的标准错误警告信息的输出设备，同时被作为默认的日志输出目的地。初次之外，还有标准输出设备<code>os.Stdout</code>以及标准输入设备<code>os.Stdin</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">var (</span><br><span class="line">	Stdin  = NewFile(uintptr(syscall.Stdin), &quot;/dev/stdin&quot;)</span><br><span class="line">	Stdout = NewFile(uintptr(syscall.Stdout), &quot;/dev/stdout&quot;)</span><br><span class="line">	Stderr = NewFile(uintptr(syscall.Stderr), &quot;/dev/stderr&quot;)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>以上就是定义的UNIX的标准的三种设备，分别用于输入、输出和警告错误信息。理解了<code>os.Stderr</code>，现在我们看下<code>Logger</code>这个结构体，日志的信息和操作，都是通过这个<code>Logger</code>操作的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">type Logger struct &#123;</span><br><span class="line">	mu     sync.Mutex // 字段mu是一个互斥锁，主要是是保证这个日志记录器Logger在多goroutine下也是安全的</span><br><span class="line">	prefix string     // 字段prefix是每一行日志的前缀</span><br><span class="line">	flag   int        // 字段flag是日志抬头信息</span><br><span class="line">	out    io.Writer  // 字段out是日志输出的目的地，默认情况下是os.Stderr。</span><br><span class="line">	buf    []byte     // 字段buf是一次日志输出文本缓冲，最终会被写到out里。</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>了解了结构体<code>Logger</code>的字段，现在就可以看下它最重要的方法<code>Output</code>了，这个方法会输出格式化好的日志信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">func (l *Logger) Output(calldepth int, s string) error &#123;</span><br><span class="line">	now := time.Now() // get this early.</span><br><span class="line">	var file string</span><br><span class="line">	var line int</span><br><span class="line">	//加锁，保证多goroutine下的安全</span><br><span class="line">	l.mu.Lock()</span><br><span class="line">	defer l.mu.Unlock()</span><br><span class="line">	//如果配置了获取文件和行号的话</span><br><span class="line">	if l.flag&amp;(Lshortfile|Llongfile) != 0 &#123;</span><br><span class="line">		//因为runtime.Caller代价比较大，先不加锁</span><br><span class="line">		l.mu.Unlock()</span><br><span class="line">		var ok bool</span><br><span class="line">		_, file, line, ok = runtime.Caller(calldepth)</span><br><span class="line">		if !ok &#123;</span><br><span class="line">			file = &quot;???&quot;</span><br><span class="line">			line = 0</span><br><span class="line">		&#125;</span><br><span class="line">		//获取到行号等信息后，再加锁，保证安全</span><br><span class="line">		l.mu.Lock()</span><br><span class="line">	&#125;</span><br><span class="line">	//把我们的日志信息和设置的日志抬头进行拼接</span><br><span class="line">	l.buf = l.buf[:0]</span><br><span class="line">	l.formatHeader(&amp;l.buf, now, file, line)</span><br><span class="line">	l.buf = append(l.buf, s...)</span><br><span class="line">	if len(s) == 0 || s[len(s)-1] != &apos;\n&apos; &#123;</span><br><span class="line">		l.buf = append(l.buf, &apos;\n&apos;)</span><br><span class="line">	&#125;</span><br><span class="line">	//输出拼接好的缓冲buf里的日志信息到目的地</span><br><span class="line">	_, err := l.out.Write(l.buf)</span><br><span class="line">	return err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>整个代码比较简洁，为了多goroutine安全互斥锁也用上了，但是在获取调用堆栈信息的时候，又要先解锁，因为这个过程比较重。获取到文件、行号等信息后，继续加互斥锁保证安全。</p>
+<p>后面的就比较简单了，<code>formatHeader</code>方法主要是格式化日志抬头信息，然后存储在buf这个缓冲中，最后再把我们自己的日志信息拼接到缓冲buf的后面，然后为一次log日志输出追加一个换行符，这样每次日志输出都是一行一行的。</p>
+<p>有了最终的日志信息<code>buf</code>，然后把它写到输出的目的地out里就可以了，这是一个实现了<code>io.Writer</code>接口的类型，只要实现了这个接口，都可以当作输出目的地。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">func (l *Logger) SetOutput(w io.Writer) &#123;</span><br><span class="line">	l.mu.Lock()</span><br><span class="line">	defer l.mu.Unlock()</span><br><span class="line">	l.out = w</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>log</code>包的<code>SetOutput</code>函数，可以设置输出目的地。这里稍微简单介绍下<code>runtime.Caller</code>，它可以获取运行时方法的调用信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">func Caller(skip int) (pc uintptr, file string, line int, ok bool)</span><br></pre></td></tr></table></figure>
+
+<p>参数<code>skip</code>表示跳过栈帧数，<code>0</code>表示不跳过，也就是<code>runtime.Caller</code>的调用者。<code>1</code>的话就是再向上一层，表示调用者的调用者。</p>
+<p><code>log</code>日志包里使用的是<code>2</code>，也就是表示我们在源代码中调用<code>log.Print</code>、<code>log.Fatal</code>和<code>log.Panic</code>这些函数的调用者。</p>
+<p>以<code>main</code>函数调用<code>log.Println</code>为例，是<code>main-&gt;log.Println-&gt;*Logger.Output-&gt;runtime.Caller</code>这么一个方法调用栈，所以这时候，skip的值分别代表：</p>
+<ol>
+<li>0表示*Logger.Output中调用runtime.Caller的源代码文件和行号</li>
+<li>1表示log.Println中调用*Logger.Output的源代码文件和行号</li>
+<li>2表示main中调用log.Println的源代码文件和行号</li>
+</ol>
+<p>所以这也是<code>log</code>包里的这个<code>skip</code>的值为什么一直是2的原因。</p>
+<h1 id="定制自己的日志"><a href="#定制自己的日志" class="headerlink" title="定制自己的日志"></a>定制自己的日志</h1><p>通过上面的源码分析，我们知道日志记录的根本就在于一个日志记录器<code>Logger</code>，所以我们定制自己的日志，其实就是创建不同的<code>Logger</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">var (</span><br><span class="line">	Info *log.Logger</span><br><span class="line">	Warning *log.Logger</span><br><span class="line">	Error * log.Logger</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">func init()&#123;</span><br><span class="line">	errFile,err:=os.OpenFile(&quot;errors.log&quot;,os.O_CREATE|os.O_WRONLY|os.O_APPEND,0666)</span><br><span class="line">	if err!=nil&#123;</span><br><span class="line">		log.Fatalln(&quot;打开日志文件失败：&quot;,err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	Info = log.New(os.Stdout,&quot;Info:&quot;,log.Ldate | log.Ltime | log.Lshortfile)</span><br><span class="line">	Warning = log.New(os.Stdout,&quot;Warning:&quot;,log.Ldate | log.Ltime | log.Lshortfile)</span><br><span class="line">	Error = log.New(io.MultiWriter(os.Stderr,errFile),&quot;Error:&quot;,log.Ldate | log.Ltime | log.Lshortfile)</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">	Info.Println(&quot;飞雪无情的博客:&quot;,&quot;http://www.flysnow.org&quot;)</span><br><span class="line">	Warning.Printf(&quot;飞雪无情的微信公众号：%s\n&quot;,&quot;flysnow_org&quot;)</span><br><span class="line">	Error.Println(&quot;欢迎关注留言&quot;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们根据日志级别定义了三种不同的<code>Logger</code>，分别为<code>Info</code>,<code>Warning</code>,<code>Error</code>，用于不同级别日志的输出。这三种日志记录器都是使用<code>log.New</code>函数进行创建。</p>
+<p>这里创建<code>Logger</code>的时候，<code>Info</code>和<code>Warning</code>都比较正常，<code>Error</code>这里采用了多个目的地输出，这里可以同时把错误日志输出到<code>os.Stderr</code>以及我们创建的<code>errors.log</code>文件中。</p>
+<p><code>io.MultiWriter</code>函数可以包装多个<code>io.Writer</code>为一个<code>io.Writer</code>，这样我们就可以达到同时对多个<code>io.Writer</code>输出日志的目的。</p>
+<p><code>io.MultiWriter</code>的实现也很简单，定义一个类型实现<code>io.Writer</code>，然后在实现的<code>Write</code>方法里循环调用要包装的多个<code>Writer</code>接口的<code>Write</code>方法即可。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">func (t *multiWriter) Write(p []byte) (n int, err error) &#123;</span><br><span class="line">	for _, w := range t.writers &#123;</span><br><span class="line">		n, err = w.Write(p)</span><br><span class="line">		if err != nil &#123;</span><br><span class="line">			return</span><br><span class="line">		&#125;</span><br><span class="line">		if n != len(p) &#123;</span><br><span class="line">			err = ErrShortWrite</span><br><span class="line">			return</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	return len(p), nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里我们通过定义了多个Logger来区分不同的日志级别，使用比较麻烦，针对这种情况，可以使用第三方的log框架，也可以自定包装定义，直接通过不同级别的方法来记录不同级别的日志，还可以设置记录日志的级别等。</p>
+<blockquote>
+<p>本文收集来源：<a href="https://www.flysnow.org" target="_blank" rel="noopener">https://www.flysnow.org</a></p>
+</blockquote>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2019/09/04/Amqp/RabbitMQ-面试/" class="pre-post btn btn-default" title='RabbitMQ-面试'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">RabbitMQ-面试</span>
+        </a>
+    
+    
+        <a href="/2019/08/28/Go/错误处理方案/" class="next-post btn btn-default" title='Go-错误(error)处理方案'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">Go-错误(error)处理方案</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#日志使用"><span class="toc-text">日志使用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#实现原理"><span class="toc-text">实现原理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#定制自己的日志"><span class="toc-text">定制自己的日志</span></a></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

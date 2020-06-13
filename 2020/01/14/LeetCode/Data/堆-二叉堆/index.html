@@ -1,0 +1,343 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="堆">
+
+
+    <meta name="description" content="堆和二叉堆的介绍堆的定义堆(heap)，这里所说的堆是数据结构中的堆，而不是内存模型中的堆。堆通常是一个可以被看做一棵树，它满足下列性质：
+
+堆中任意节点的值总是不大于(不小于)其子节点的值
+堆...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>二叉堆 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="二叉堆">
+            
+	            二叉堆
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/数据结构/">数据结构</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+                    <a class="tag-link" href="/tags/堆/">堆</a>
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2020/01/14</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="堆和二叉堆的介绍"><a href="#堆和二叉堆的介绍" class="headerlink" title="堆和二叉堆的介绍"></a>堆和二叉堆的介绍</h1><h2 id="堆的定义"><a href="#堆的定义" class="headerlink" title="堆的定义"></a>堆的定义</h2><p>堆(heap)，这里所说的堆是数据结构中的堆，而不是内存模型中的堆。堆通常是一个可以被看做一棵树，它满足下列性质：</p>
+<ul>
+<li>堆中任意节点的值总是不大于(不小于)其子节点的值</li>
+<li>堆总是一棵完全树。<br>将任意节点不大于其子节点的堆叫做<code>最小堆</code>或<code>小根堆</code>，而将任意节点不小于其子节点的堆叫做<code>最大堆</code>或<code>大根堆</code>。常见的堆有二叉堆、左倾堆、斜堆、二项堆、斐波那契堆等等。</li>
+</ul>
+<h2 id="二叉堆的定义"><a href="#二叉堆的定义" class="headerlink" title="二叉堆的定义"></a>二叉堆的定义</h2><p>二叉堆是完全二元树或者是近似完全二元树，它分为两种：<code>最大堆</code>和<code>最小堆</code>。</p>
+<p>最大堆：父结点的键值总是大于或等于任何一个子节点的键值；最小堆：父结点的键值总是小于或等于任何一个子节点的键值。</p>
+<p>二叉堆一般都通过”数组”来实现，下面是数组实现的最大堆和最小堆的示意图：<br><img src="http://ww1.sinaimg.cn/large/007lnJOlly1gawg9z1cllj311c0b3n0j.jpg" alt="2.jpg"></p>
+<p>二叉堆一般都通过”<code>数组</code>“来实现。数组实现的二叉堆，父节点和子节点的位置存在一定的关系。有时候，我们将”二叉堆的第一个元素”放在数组索引0的位置，有时候放在1的位置。当然，它们的本质一样(都是二叉堆)，只是实现上稍微有一丁点区别。</p>
+<p>假设”第一个元素”在数组中的索引为 0 的话，则父节点和子节点的位置关系如下：</p>
+<ul>
+<li>索引为i的左孩子的索引是 (2*i+1);</li>
+<li>索引为i的右孩子的索引是 (2*i+2);</li>
+<li>索引为i的父结点的索引是 floor((i-1)/2);<br><img src="http://ww1.sinaimg.cn/large/007lnJOlly1gawgdalnlvj30tz0cvq6v.jpg" alt="3.jpg"><br>假设”第一个元素”在数组中的索引为 1 的话，则父节点和子节点的位置关系如下：</li>
+<li>索引为i的左孩子的索引是 (2*i);</li>
+<li>索引为i的左孩子的索引是 (2*i+1);</li>
+<li>索引为i的父结点的索引是 floor(i/2);<br><img src="http://ww1.sinaimg.cn/large/007lnJOlly1gawgdaspuij30tz0cvn14.jpg" alt="4.jpg"></li>
+</ul>
+<h1 id="二叉堆的图文解析"><a href="#二叉堆的图文解析" class="headerlink" title="二叉堆的图文解析"></a>二叉堆的图文解析</h1><p>在前面，我们已经了解到：”最大堆”和”最小堆”是对称关系。这也意味着，了解其中之一即可。本节的图文解析是以”最大堆”来进行介绍的。</p>
+<p>二叉堆的核心是”添加节点”和”删除节点”，理解这两个算法，二叉堆也就基本掌握了。下面对它们进行介绍。</p>
+<h2 id="添加"><a href="#添加" class="headerlink" title="添加"></a>添加</h2><p>假设在最大堆[90,80,70,60,40,30,20,10,50]种添加85，需要执行的步骤如下：<br><img src="http://ww1.sinaimg.cn/large/007lnJOlly1gawgf9dzm6j31620tzn7s.jpg" alt="5.jpg"></p>
+<h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><p>假设从最大堆[90,85,70,60,80,30,20,10,50,40]中删除90，需要执行的步骤如下：<br><img src="http://ww1.sinaimg.cn/large/007lnJOlly1gawggju5hpj31s30watlt.jpg" alt="6.jpg"><br>从[90,85,70,60,80,30,20,10,50,40]删除90之后，最大堆变成了[85,80,70,60,40,30,20,10,50]。<br>如上图所示，当从最大堆中删除数据时：先删除该数据，然后用最大堆中最后一个的元素插入这个空位；接着，把这个“空位”尽量往上挪，直到剩余的数据变成一个最大堆。</p>
+<blockquote>
+<p>注意：考虑从最大堆[90,85,70,60,80,30,20,10,50,40]中删除60，执行的步骤不能单纯的用它的子节点来替换；而必须考虑到”替换后的树仍然要是最大堆”！<br><img src="http://ww1.sinaimg.cn/large/007lnJOlly1gawgks7phuj31as0qi47x.jpg" alt="7.jpg"><br>转换规则如索引计算规则一样即可，然后数组往前移动</p>
+</blockquote>
+<h1 id="最大堆完整代码"><a href="#最大堆完整代码" class="headerlink" title="最大堆完整代码"></a>最大堆完整代码</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> heap</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> BinaryHeap <span class="keyword">struct</span> &#123;</span><br><span class="line">	Array []<span class="keyword">int</span> <span class="comment">//切片存储</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">返回数据在数组中的索引</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *BinaryHeap)</span> <span class="title">GetIndex</span><span class="params">(data <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	i := <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> i = <span class="number">0</span>; i &lt; <span class="built_in">len</span>(this.Array); i++ &#123;</span><br><span class="line">		<span class="keyword">if</span> data == this.Array[i] &#123;</span><br><span class="line">			<span class="keyword">return</span> i</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 最大堆的向下调整算法</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 注：数组实现的堆中，第N个节点的左孩子的索引值是(2N+1)，右孩子的索引是(2N+2)。</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 参数说明：</span></span><br><span class="line"><span class="comment"> *     start -- 被下调节点的起始位置(一般为0，表示从第1个开始)</span></span><br><span class="line"><span class="comment"> *     end   -- 截至范围(一般为数组中最后一个元素的索引)</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *BinaryHeap)</span> <span class="title">filterdown</span><span class="params">(start, end <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	current := start                <span class="comment">// 当前(current)节点的位置</span></span><br><span class="line">	left := <span class="number">2</span>*current + <span class="number">1</span>           <span class="comment">// 左(left)孩子的位置</span></span><br><span class="line">	tmpValue := this.Array[current] <span class="comment">// 当前(current)节点的大小</span></span><br><span class="line">	<span class="keyword">for</span> left &lt; end &#123;</span><br><span class="line">		<span class="comment">// "left"是左孩子，"left+1"是右孩子</span></span><br><span class="line">		<span class="keyword">if</span> left &lt; end &amp;&amp; this.Array[left] &lt; this.Array[left+<span class="number">1</span>] &#123;</span><br><span class="line">			left++ <span class="comment">// 左右两孩子中选择较大者，即mHeap[left+1]</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> tmpValue &gt;= this.Array[left] &#123; <span class="comment">//调整结束</span></span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			this.Array[current] = this.Array[left]</span><br><span class="line">			current = left</span><br><span class="line">			left = <span class="number">2</span>*left + <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	this.Array[current] = tmpValue</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  删除最大堆的值</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *BinaryHeap)</span> <span class="title">Remove</span><span class="params">(data <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="comment">// 如果"堆"已空，则返回-1</span></span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(this.Array) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 获取data在数组中的索引</span></span><br><span class="line">	index := this.GetIndex(data)</span><br><span class="line">	<span class="keyword">if</span> index == <span class="number">-1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">	&#125;</span><br><span class="line">	size := <span class="built_in">len</span>(this.Array)</span><br><span class="line">	this.Array[index] = this.Array[size<span class="number">-1</span>] <span class="comment">// 用最后元素填补</span></span><br><span class="line">	this.Array = this.Array[:size<span class="number">-1</span>]       <span class="comment">// 删除最后的元素</span></span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(this.Array) &gt; <span class="number">1</span> &#123;               <span class="comment">// 从index号位置开始自上向下调整为最小堆</span></span><br><span class="line">		this.filterdown(index, <span class="built_in">len</span>(this.Array)<span class="number">-1</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * 最大堆的向上调整算法(从start开始向上直到0，调整堆)</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 注：数组实现的堆中，第N个节点的左孩子的索引值是(2N+1)，右孩子的索引是(2N+2)。</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 参数说明：</span></span><br><span class="line"><span class="comment"> *     start -- 被上调节点的起始位置(一般为数组中最后一个元素的索引)</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *BinaryHeap)</span> <span class="title">filterup</span><span class="params">(start <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	current := start                <span class="comment">// 当前(current)节点的位置</span></span><br><span class="line">	parent := (current - <span class="number">1</span>) / <span class="number">2</span>     <span class="comment">// 父(parent)结点的位置</span></span><br><span class="line">	tmpValue := this.Array[current] <span class="comment">// 当前(current)节点的大小</span></span><br><span class="line">	<span class="keyword">for</span> current &gt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> this.Array[parent] &gt;= tmpValue &#123;</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			this.Array[current] = this.Array[parent]</span><br><span class="line">			current = parent</span><br><span class="line">			parent = (parent - <span class="number">1</span>) / <span class="number">2</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	this.Array[current] = tmpValue</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *BinaryHeap)</span> <span class="title">Add</span><span class="params">(data ...<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	size := <span class="built_in">len</span>(this.Array)</span><br><span class="line">	this.Array = <span class="built_in">append</span>(this.Array, data...)</span><br><span class="line">	this.filterup(size)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2020/02/08/LeetCode/Data/图-基本概念/" class="pre-post btn btn-default" title='图-基本概念'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">图-基本概念</span>
+        </a>
+    
+    
+        <a href="/2019/12/16/LeetCode/Data/树-二叉树/" class="next-post btn btn-default" title='二叉树'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">二叉树</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#堆和二叉堆的介绍"><span class="toc-text">堆和二叉堆的介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#堆的定义"><span class="toc-text">堆的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二叉堆的定义"><span class="toc-text">二叉堆的定义</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二叉堆的图文解析"><span class="toc-text">二叉堆的图文解析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#添加"><span class="toc-text">添加</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#删除"><span class="toc-text">删除</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#最大堆完整代码"><span class="toc-text">最大堆完整代码</span></a></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

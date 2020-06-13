@@ -1,0 +1,353 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="Centos">
+
+
+    <meta name="description" content="1.替换源123yum install -y wgetmv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>Centos7开机优化 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="Centos7开机优化">
+            
+	            Centos7开机优化
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/工具/">工具</a> <a class="category-link" href="/categories/工具/Linux/">Linux</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+                    <a class="tag-link" href="/tags/Centos/">Centos</a>
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2017/02/13</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+            <p class="fa fa-exclamation-triangle warning">
+                本文于<strong>1215</strong>天之前发表，文中内容可能已经过时。
+            </p>
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h2 id="1-替换源"><a href="#1-替换源" class="headerlink" title="1.替换源"></a>1.替换源</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum install -y wget</span><br><span class="line">mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</span><br><span class="line">wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-安装增强"><a href="#2-安装增强" class="headerlink" title="2.安装增强"></a>2.安装增强</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">yum install -y gcc gcc-devel gcc-c++ gcc-c++-devel make kernel kernel-devel bzip2 vim wget  #需要的安装包</span><br><span class="line">shutdown -r now  #重启电脑</span><br><span class="line">ln -s /usr/src/kernels/3.10.0(内核版本号/ /usr/src/linux　   ## 增加软连接</span><br><span class="line"><span class="meta">#</span><span class="bash">点击虚拟机设备-&gt;安装增强</span></span><br><span class="line">mount /dev/cdrom /mnt  #挂载增强光盘到系统，提示只读不用管</span><br><span class="line">cd /mnt &amp;&amp;  ./VBoxLinuxAdditions.run</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-挂载"><a href="#3-挂载" class="headerlink" title="3.挂载"></a>3.挂载</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mkdir /root/www &amp;&amp; chmod -R 777 /root/www</span><br><span class="line">mount -t vboxsf docker /root/www   #手动挂载</span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">## 此时如果提示/sbin/mount.vboxsf: mounting failed with the error: No such device，说明内核模块vboxsf未加载，可通过lsmod | grep vboxsf查看（无结果说明未加载）。</span></span></span><br><span class="line">modprobe vboxsf #加载vboxsf模块</span><br><span class="line"><span class="meta">#</span><span class="bash">自动挂载</span></span><br><span class="line">vim /etc/fstab</span><br><span class="line">docker /root/www   vboxsf rw,gid=100,uid=1000,auto /0 0</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-修改主机名"><a href="#4-修改主机名" class="headerlink" title="4.修改主机名"></a>4.修改主机名</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/sysconfig/network</span><br><span class="line">vim ~/.bash_profile</span><br><span class="line">export PS1='[\u@\H \W]$'</span><br><span class="line">source ~/.bash_profile</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-永久关闭防火墙"><a href="#5-永久关闭防火墙" class="headerlink" title="5.永久关闭防火墙"></a>5.永久关闭防火墙</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">chkconfig iptables off 关闭</span><br><span class="line">chkconfig iptables on 开启</span><br><span class="line">service iptables status</span><br></pre></td></tr></table></figure>
+
+<h2 id="7-selinux关闭"><a href="#7-selinux关闭" class="headerlink" title="7.selinux关闭"></a>7.selinux关闭</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">修改/etc/selinux/config</span><br><span class="line">将SELINUX=enforcing改为SELINUX=disabled,</span><br><span class="line">状态 /usr/sbin/sestatus -v</span><br></pre></td></tr></table></figure>
+
+<h2 id="8-SSH客户端超时"><a href="#8-SSH客户端超时" class="headerlink" title="8.SSH客户端超时"></a>8.SSH客户端超时</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/ssh</span><br><span class="line">cp sshd_config sshd_config.bak</span><br><span class="line">sed -i "s/#ClientAliveInterval 0/ClientAliveInterval 60/g" sshd_config</span><br><span class="line">sed -i "s/#ClientAliveCountMax 3/ClientAliveCountMax 3/g" sshd_config</span><br><span class="line">grep ClientAlive sshd_config</span><br><span class="line">diff sshd_config sshd_config.bak</span><br></pre></td></tr></table></figure>
+
+<h2 id="9-yum-install-不可用情况"><a href="#9-yum-install-不可用情况" class="headerlink" title="9.yum install 不可用情况"></a>9.yum install 不可用情况</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- rpm -q epel-release</span><br><span class="line">- rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm  报错[--force --nodeps]</span><br><span class="line">- rpm -q epel-release</span><br><span class="line">- rpm -qR epel-release  </span><br><span class="line">- rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6</span><br><span class="line">- yum install yum-priorities</span><br><span class="line">- ls /etc/yum.repos.d/ | grep epel</span><br></pre></td></tr></table></figure>
+
+<h2 id="10-FTP安装"><a href="#10-FTP安装" class="headerlink" title="10. FTP安装"></a>10. FTP安装</h2><pre><code>- 安装
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum -y install vsftpd</span><br><span class="line">useradd ftpuser</span><br><span class="line">passwd ftpuser (RwxM7yCV)</span><br></pre></td></tr></table></figure>
+
+- 无法访问问题
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@bogon ~]## getsebool -a | grep ftp  </span><br><span class="line">allow_ftpd_anon_write --&gt; off</span><br><span class="line">&lt;!--这里无法访问--&gt;</span><br><span class="line">allow_ftpd_full_access --&gt; off</span><br><span class="line">allow_ftpd_use_cifs --&gt; off</span><br><span class="line">allow_ftpd_use_nfs --&gt; off</span><br><span class="line">&lt;!--这里无法访问--&gt;</span><br><span class="line">ftp_home_dir --&gt; off</span><br><span class="line">ftpd_connect_db --&gt; off</span><br><span class="line">ftpd_use_passive_mode --&gt; off</span><br><span class="line">httpd_enable_ftp_server --&gt; off</span><br><span class="line">tftp_anon_write --&gt; off</span><br></pre></td></tr></table></figure>
+
+- 开启外网访问
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">setsebool -P allow_ftpd_full_access on</span><br><span class="line">setsebool -P ftp_home_dir on</span><br></pre></td></tr></table></figure>
+
+- 关闭匿名和开启被动模式
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">修改/etc/vsftpd/vsftpd.conf 中的改成 anonymous_enable=NO</span><br><span class="line">pasv_min_port=30000</span><br><span class="line">pasv_max_port=30999</span><br><span class="line">service vsftpd stop</span><br></pre></td></tr></table></figure></code></pre><h2 id="11-mysql5-7安装"><a href="#11-mysql5-7安装" class="headerlink" title="11.mysql5.7安装"></a>11.mysql5.7安装</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/src/</span><br><span class="line">wget http://repo.mysql.com/mysql57-community-release-el7-8.noarch.rpm </span><br><span class="line">rpm -ivh mysql57-community-release-el7-8.noarch.rpm </span><br><span class="line">yum -y install mysql-server </span><br><span class="line"></span><br><span class="line">#设置密码和远程访问</span><br><span class="line">grep &quot;password&quot; /var/log/mysqld.log      //查看默认密码</span><br><span class="line">set password=password(&quot;xxxx&quot;);</span><br><span class="line">FLUSH PRIVILEGES;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">use mysql;</span><br><span class="line">set global validate_password_policy=0;</span><br><span class="line">update user set authentication_string = password(&apos;xxxx&apos;), password_expired = &apos;N&apos;, password_last_changed = now() where user = &apos;root&apos;;</span><br><span class="line">GRANT ALL ON *.* TO root@&apos;localhost&apos;  IDENTIFIED BY &apos;xxxx&apos; WITH GRANT OPTION; </span><br><span class="line">update user set host = &apos;%&apos; where user =&apos;root&apos;;</span><br><span class="line">FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果容器需要访问物理机ip，先查看容器的ip地址，直接配置host为物理机mysql,ip即可</p>
+</blockquote>
+<h2 id="12-SSR"><a href="#12-SSR" class="headerlink" title="12.SSR"></a>12.SSR</h2><h3 id="ssr安装"><a href="#ssr安装" class="headerlink" title="ssr安装"></a>ssr安装</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">yum -y install wget</span><br><span class="line">wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/ssr.sh</span><br><span class="line">chmod +x ssr.sh</span><br><span class="line">./ssr.sh</span><br></pre></td></tr></table></figure>
+
+<h3 id="SSR客户端下载"><a href="#SSR客户端下载" class="headerlink" title="SSR客户端下载"></a>SSR客户端下载</h3><ul>
+<li>Windows客户端：<a href="https://github.com/shadowsocksr-backup/shadowsocksr-csharp/releases" target="_blank" rel="noopener">下载地址</a></li>
+<li>Mac客户端：<a href="https://github.com/shadowsocksr-backup/ShadowsocksX-NG/releases" target="_blank" rel="noopener">下载地址</a></li>
+<li>安卓客户端：<a href="https://github.com/shadowsocksr-backup/shadowsocksr-android/releases" target="_blank" rel="noopener">下载地址</a></li>
+<li>iPhone客户端：需要切换北美账号商店，ssr或者potatso Lite客户端等</li>
+<li>docker搭建：<a href="https://www.51it.wang/ll/1137" target="_blank" rel="noopener">地址</a></li>
+</ul>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2017/02/25/Linux/Linux-Ubuntu优化/" class="pre-post btn btn-default" title='Ubuntu开机优化'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">Ubuntu开机优化</span>
+        </a>
+    
+    
+        <a href="/2017/01/25/githubPages-hexo搭建个人博客/" class="next-post btn btn-default" title='githubPages+hexo搭建个人博客'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">githubPages+hexo搭建个人博客</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-替换源"><span class="toc-text">1.替换源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-安装增强"><span class="toc-text">2.安装增强</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-挂载"><span class="toc-text">3.挂载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-修改主机名"><span class="toc-text">4.修改主机名</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-永久关闭防火墙"><span class="toc-text">5.永久关闭防火墙</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-selinux关闭"><span class="toc-text">7.selinux关闭</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-SSH客户端超时"><span class="toc-text">8.SSH客户端超时</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-yum-install-不可用情况"><span class="toc-text">9.yum install 不可用情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-FTP安装"><span class="toc-text">10. FTP安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-mysql5-7安装"><span class="toc-text">11.mysql5.7安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-SSR"><span class="toc-text">12.SSR</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ssr安装"><span class="toc-text">ssr安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SSR客户端下载"><span class="toc-text">SSR客户端下载</span></a></li></ol></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

@@ -1,0 +1,504 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="docker、PHP、Golang、Redis、MySQL、Web面试；">
+
+
+    <meta name="description" content="前后端API对接规范
+
+
+版本
+编写人
+编写时间
+更新内容
+
+
+
+1.0.0
+Abner
+2019年7月8日
+初稿
+
+
+由前端(APP端)和后端一起协定接口规范的内容, 确定每一个接口的地址(U...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>前后端开发规范 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="前后端开发规范">
+            
+	            前后端开发规范
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/前端/">前端</a> <a class="category-link" href="/categories/前端/API规范/">API规范</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2019/07/08</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+            <p class="fa fa-exclamation-triangle warning">
+                本文于<strong>341</strong>天之前发表，文中内容可能已经过时。
+            </p>
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="前后端API对接规范"><a href="#前后端API对接规范" class="headerlink" title="前后端API对接规范"></a>前后端API对接规范</h1><table>
+<thead>
+<tr>
+<th>版本</th>
+<th>编写人</th>
+<th>编写时间</th>
+<th>更新内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1.0.0</td>
+<td>Abner</td>
+<td>2019年7月8日</td>
+<td>初稿</td>
+</tr>
+</tbody></table>
+<p>由前端(APP端)和后端一起协定接口规范的内容, 确定每一个接口的地址(URL), 输入(request)和输出(response), 必要的时候详细注释每一个字段的含义和数据类型.</p>
+<p>具体需要定义哪些接口, 可以按照下面的思路来整理</p>
+<ul>
+<li>资源接口：系统涉及到哪些资源, 按照 RESTful 方式定义的细粒度接口</li>
+<li>操作接口：页面涉及的操作，比如抽奖，领取奖品等，也可以RESTFul 方式定义</li>
+<li>页面接口：页面涉及到接口太多，如果是一个个调用会增加频繁请求，对影响用户感知（首屏加载）和性能的尽量做成聚合接口,对并发量较大的接口，建议采用随机延迟加载方式。</li>
+</ul>
+<h2 id="接口协商要点"><a href="#接口协商要点" class="headerlink" title="接口协商要点"></a>接口协商要点</h2><ul>
+<li>返回统一的数据结构</li>
+<li>查询不到时，即空数据情况下的返回的数据格式</li>
+<li>接口调用业务失败的常用错误码</li>
+<li>接口是否有需要授权</li>
+<li>接口是否有Nginx缓存或者CDN缓存</li>
+<li>返回数据中包含图片，是否包含完整的URL图片地址<ul>
+<li>部分:<code>/path/default.jpg</code></li>
+<li>完整:<code>http://res.kelala.com/path/default.jpg</code></li>
+</ul>
+</li>
+<li>返回数据中的日期格式，是使用时间戳还是格式化好的文字<ul>
+<li>一些语言unix时间戳是千分位，需要注意</li>
+<li>返回给前端的格式化时间应该统一标准，如：<code>2019年7月8日 13:31:24</code> 或者 <code>2019-07-08 13:31:24</code></li>
+</ul>
+</li>
+<li>长整型，如Java的long,mongodb的自增id等，返回给前端产生的数字溢出，建议采用字符串类型</li>
+<li>分页信息定义<ul>
+<li>分页参数page</li>
+<li>分页大小page_size</li>
+<li>总记录数 total</li>
+<li>当前页 current_page</li>
+</ul>
+</li>
+</ul>
+<h2 id="后端接口通用规范"><a href="#后端接口通用规范" class="headerlink" title="后端接口通用规范"></a>后端接口通用规范</h2><h3 id="接口文档标准"><a href="#接口文档标准" class="headerlink" title="接口文档标准"></a>接口文档标准</h3><p>接口数据文档必须包含以下内容</p>
+<ul>
+<li>接口URL地址</li>
+<li>HTTP Method(GET\POST\PUT等)</li>
+<li>请求参数名称、类型、描述、必选、可选标识</li>
+<li>接口返回数据格式、数据字段的意义、类型</li>
+<li>接口正常响应格式</li>
+<li>接口异常响应内容格式（如果有）</li>
+</ul>
+<p><strong>特别注意事项：</strong></p>
+<ol>
+<li><p>服务端接口出现任何变更开发负责人必须通知对应的接口使用人，接口变更未及时通知使用方;</p>
+</li>
+<li><p>接口文档中，除声明HTTP METHOD方法外，还需要区分标明QueryString参数和POST参数，防止调用方出现浏览器缓存、服务端缓存问题。</p>
+</li>
+<li><p>如果接口有缓存设计（CDN缓存、Nginx缓存等），需要在接口文档中标明有缓存，调用方不可使用诸如加随机数参数等参数方式形成缓存穿透，避免此方式造成服务端性能问题和出现故障的。</p>
+</li>
+</ol>
+<h3 id="数据基础格式标准"><a href="#数据基础格式标准" class="headerlink" title="数据基础格式标准"></a>数据基础格式标准</h3><p>数据输出格式如下，所有接口必须按照次格式</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">   error:0,//错误码 ,error=0 表示无错误，error&gt;0表示有错误</span><br><span class="line">   message:"",// 错误详细可读信息</span><br><span class="line">   data:&#123;&#125;// 数据字段，内容由接口提供人定义</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>关于错误码取值范围定义</strong></p>
+<p>错误码固定方法：</p>
+<ul>
+<li>如小于1000以下为保留位数，400错误，500错误，419错误等;</li>
+<li>大于1000的表示公共API调用失败，比如授权1401，第三方系统调用失败1690等;</li>
+<li>大于10000的表示业务或者项目区分，比如模块A 10000<del>19999 区分错误码，模块B 20000</del>29999区分</li>
+</ul>
+<p><strong>关于状态位的定义</strong><br>不允许要求数据使用方在代码里面写死映射关系，应该采取后端返回，例如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	<span class="attr">"data"</span>: &#123;</span><br><span class="line">		<span class="attr">"status"</span>: <span class="number">0</span>,</span><br><span class="line">		<span class="attr">"status_text"</span>: <span class="string">"未审核"</span> </span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">	<span class="attr">"data"</span>: &#123;</span><br><span class="line">		<span class="attr">"status"</span>: <span class="number">1</span>,</span><br><span class="line">		<span class="attr">"status_text"</span>: <span class="string">"审核中"</span> </span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">	<span class="attr">"data"</span>: &#123;</span><br><span class="line">		<span class="attr">"status"</span>: <span class="number">2</span>,</span><br><span class="line">		<span class="attr">"status_text"</span>: <span class="string">"审核通过"</span> </span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据字段内容规范-：安全警告"><a href="#数据字段内容规范-：安全警告" class="headerlink" title="数据字段内容规范 ：安全警告"></a><strong>数据字段内容规范 ：安全警告</strong></h3><ul>
+<li>包含html代码的数据，为了防止跨站攻击，服务端默认对数据内容全部进行HTML编码，编码标准请参考：<a href="https://dev.w3.org/html5/html-author/charref" target="_blank" rel="noopener">转码说明</a>，数据使用方需要对相关数据进行对应编码字符进行显示处理</li>
+<li>过滤涉及业务安全和数据敏感的字段，例如参与人数，中奖概率，中奖限制等字段</li>
+</ul>
+<h2 id="样板示例"><a href="#样板示例" class="headerlink" title="样板示例"></a>样板示例</h2><ul>
+<li>接口名称：获取分类用户(标准请求)</li>
+<li>URL: <a href="http://www.youdomain.com/v1/user/getCategoryUserList" target="_blank" rel="noopener">http://www.youdomain.com/v1/user/getCategoryUserList</a></li>
+<li>HTTP METHOD: GET （Content-Type: application/x-www-form-urlencoded）</li>
+<li>缓存：无 </li>
+<li>鉴权：无</li>
+<li>请求参数:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>请求字段</th>
+<th>类型</th>
+<th>是否必须</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>cate_id</td>
+<td>int</td>
+<td>是</td>
+<td>分类id</td>
+</tr>
+</tbody></table>
+<ul>
+<li>响应：</li>
+</ul>
+<p>成功</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">	<span class="attr">"error"</span>: <span class="number">0</span>,</span><br><span class="line">	<span class="attr">"message"</span>: <span class="string">"校验通过"</span>,</span><br><span class="line">	<span class="attr">"data"</span>: &#123;</span><br><span class="line">		<span class="attr">"cate"</span>: &#123;</span><br><span class="line">			<span class="attr">"1"</span>: &#123;</span><br><span class="line">				<span class="attr">"cate_id"</span>: <span class="string">"1"</span>, <span class="comment">// 分类id</span></span><br><span class="line">				<span class="attr">"cate_name"</span>: <span class="string">"二次元爱好者"</span>, <span class="comment">// 分类名称</span></span><br><span class="line">				<span class="attr">"short_name"</span>: <span class="string">"erciy"</span>, <span class="comment">// 分类url名称</span></span><br><span class="line">				<span class="attr">"orderdisplay"</span>: <span class="string">"2"</span>, <span class="comment">// 分类排序</span></span><br><span class="line">				<span class="attr">"update_time"</span>: <span class="string">"1484550058"</span>, <span class="comment">// 创建时间</span></span><br><span class="line">			&#125;,</span><br><span class="line">			......   </span><br><span class="line">		&#125; </span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>失败：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	<span class="attr">"error"</span>: <span class="number">10001</span>,</span><br><span class="line">	<span class="attr">"message"</span>: <span class="string">"参数错误"</span>,</span><br><span class="line">	<span class="attr">"data"</span>: &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<ul>
+<li>接口名称：新增用户（json对象提交）</li>
+<li>URL: <a href="http://www.youdomain.com/v1/user/addUser" target="_blank" rel="noopener">http://www.youdomain.com/v1/user/addUser</a></li>
+<li>HTTP METHOD: POST （Content-Type: application/json; charset=utf-8）</li>
+<li>缓存：无 </li>
+<li>鉴权：有</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>请求字段</th>
+<th>类型</th>
+<th>是否必须</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>x-csrf-token</td>
+<td>string</td>
+<td>是</td>
+<td>鉴权参数</td>
+</tr>
+</tbody></table>
+<ul>
+<li>请求参数:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>请求字段</th>
+<th>类型</th>
+<th>是否必须</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>username</td>
+<td>string</td>
+<td>是</td>
+<td>用户名</td>
+</tr>
+<tr>
+<td>password</td>
+<td>string</td>
+<td>是</td>
+<td>用户密码</td>
+</tr>
+</tbody></table>
+<ul>
+<li>响应：</li>
+</ul>
+<p>成功</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"error"</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">"message"</span>: <span class="string">"提交成功"</span>,</span><br><span class="line">    <span class="attr">"data"</span>: &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2019/07/12/protobuf/" class="pre-post btn btn-default" title='protobuf'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">protobuf</span>
+        </a>
+    
+    
+        <a href="/2019/06/05/Tools/Docker/Docker-compose/" class="next-post btn btn-default" title='Docker-Compose详解'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">Docker-Compose详解</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前后端API对接规范"><span class="toc-text">前后端API对接规范</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#接口协商要点"><span class="toc-text">接口协商要点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后端接口通用规范"><span class="toc-text">后端接口通用规范</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#接口文档标准"><span class="toc-text">接口文档标准</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据基础格式标准"><span class="toc-text">数据基础格式标准</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据字段内容规范-：安全警告"><span class="toc-text">数据字段内容规范 ：安全警告</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#样板示例"><span class="toc-text">样板示例</span></a></li></ol></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

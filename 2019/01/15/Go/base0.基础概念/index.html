@@ -1,0 +1,438 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="go基础">
+
+
+    <meta name="description" content="内建类型种类
+bool：布尔类型,可选 true|false,默认初始化零值 false
+
+整型8bit=1字节，int(8)表示8个bit位
+
+
+
+类型
+字节
+取值
+
+
+
+(u)int(8)
+...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>Go基础-基本类型 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="Go基础-基本类型">
+            
+	            Go基础-基本类型
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/Golang/">Golang</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+                    <a class="tag-link" href="/tags/go基础/">go基础</a>
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2019/01/15</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+            <p class="fa fa-exclamation-triangle warning">
+                本文于<strong>514</strong>天之前发表，文中内容可能已经过时。
+            </p>
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="内建类型种类"><a href="#内建类型种类" class="headerlink" title="内建类型种类"></a>内建类型种类</h1><ul>
+<li><p>bool：布尔类型,可选 true|false,默认初始化零值 false</p>
+</li>
+<li><p>整型<br>8bit=1字节，int(8)表示8个bit位</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>字节</th>
+<th>取值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>(u)int(8)</td>
+<td>2^0=1</td>
+<td>2^8=-127~128</td>
+</tr>
+<tr>
+<td>(u)int(16)</td>
+<td>2^1=2</td>
+<td>2^16</td>
+</tr>
+<tr>
+<td>(u)int(32)</td>
+<td>2^2=4</td>
+<td>2^32</td>
+</tr>
+<tr>
+<td>(u)int(64)</td>
+<td>2^3=8</td>
+<td>2^64</td>
+</tr>
+<tr>
+<td>(u)int</td>
+<td>跟随操作系统位数(32or64位)</td>
+<td>-</td>
+</tr>
+</tbody></table>
+<p>uintptr:一个足够大的无符号整型， 用来表示任意地址;一个uintptr是一个整数，不是一个引用。把一个Pointer转换为uintptr后，实际是剥离了原有的指针的语义，只取了地址的整数值。<code>p = unsafe.Pointer( uintptr ( p ) + offset )</code></p>
+</li>
+<li><p>byte(uint8) , rune(int32)，string</p>
+<ul>
+<li>byte :最基础字节类型,是 uint8 类型的别名</li>
+<li>rune : Go 中的字符类型,是 int32 的别名</li>
+</ul>
+</li>
+<li><p>string<br>值用 “” 或者 `` 包括, `` 可包含多行字符串,字符串的内容在初始化后，不能被修改，但可重新完全赋值，字符串的操作与数组相同</p>
+</li>
+<li><p>float32 , float64 , complex64 , complex128<br>8bit=1字节，float32表示32个bit位，刚好4个字节</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>字节</th>
+<th>取值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>float32</td>
+<td>4</td>
+<td>-</td>
+</tr>
+<tr>
+<td>float64</td>
+<td>8</td>
+<td>-</td>
+</tr>
+<tr>
+<td>complex64</td>
+<td>8</td>
+<td>-</td>
+</tr>
+<tr>
+<td>complex128</td>
+<td>16</td>
+<td>-</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<hr>
+<h1 id="内建类型特点"><a href="#内建类型特点" class="headerlink" title="内建类型特点"></a>内建类型特点</h1><ul>
+<li>类型转换只有显示转换,不存在任何形式的隐式类型转换</li>
+<li>虽然提供指针类型,但指针本身不能进行任何形式的计算</li>
+<li>变量声明后有默认初始化零值,变量零值视具体类型而定</li>
+</ul>
+<h1 id="init函数特点"><a href="#init函数特点" class="headerlink" title="init函数特点"></a>init函数特点</h1><ol>
+<li>主要作用<ul>
+<li>初始化不能采用初始化表达式初始化的变量。</li>
+<li>程序运行前的注册。</li>
+<li>实现sync.Once功能。</li>
+<li>其他</li>
+</ul>
+</li>
+<li>特点<ul>
+<li>init() 函数是用于程序执行前做包的初始化的函数，比如初始化包里的变量等;</li>
+<li>一个包可以出线多个 init() 函数,一个源文件也可以包含多个 init() 函数；</li>
+<li>同一个包中多个 init() 函数的执行顺序没有明确定义，但是不同包的init函数是根据包导入的依赖关系决定的（看下图）;</li>
+<li>init() 函数在代码中不能被显示调用、不能被引用（赋值给函数变量），否则出现编译错误;</li>
+<li>一个包被引用多次，如 A import B,C import B,A import C，B 被引用多次，但 B 包只会初始化一次；</li>
+<li>引入包，不可出现死循坏。即 A import B,B import A，这种情况编译失败；<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf7dbyzjyvj30qc0bnmyu.jpg" alt="1.png"></li>
+</ul>
+</li>
+</ol>
+<h1 id="type-的使用"><a href="#type-的使用" class="headerlink" title=".(type)的使用"></a>.(type)的使用</h1><p>类型选择，类型选择的语法形如：i.(type)，其中 i 是接口，type 是固定关键字，需要注意的是，<code>只有接口类型才可以使用类型选择</code>   </p>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2019/01/16/Go/base1.iota/" class="pre-post btn btn-default" title='Go基础-iota'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">Go基础-iota</span>
+        </a>
+    
+    
+        <a href="/2018/11/23/LeetCode/Data/Link-栈和队列/" class="next-post btn btn-default" title='栈和队列'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">栈和队列</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#内建类型种类"><span class="toc-text">内建类型种类</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#内建类型特点"><span class="toc-text">内建类型特点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#init函数特点"><span class="toc-text">init函数特点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#type-的使用"><span class="toc-text">.(type)的使用</span></a></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

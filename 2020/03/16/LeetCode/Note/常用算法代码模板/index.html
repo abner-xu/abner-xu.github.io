@@ -1,0 +1,376 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="算法模板">
+
+
+    <meta name="description" content="深度优先12345678910var vistied Setfunc dfs(node,vistied)&#123;    vistied.add(node)    //doSomething ...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>常用算法代码模板 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="常用算法代码模板">
+            
+	            常用算法代码模板
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/数据结构/">数据结构</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+                    <a class="tag-link" href="/tags/算法模板/">算法模板</a>
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2020/03/16</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="深度优先"><a href="#深度优先" class="headerlink" title="深度优先"></a>深度优先</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">var vistied Set</span><br><span class="line">func dfs(node,vistied)&#123;</span><br><span class="line">    vistied.add(node)</span><br><span class="line">    //doSomething</span><br><span class="line">    for next_node in node.chlidren() &#123;</span><br><span class="line">        if next_node  not in vistied &#123;</span><br><span class="line">                dfs(next_node,vistied)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="广度优先"><a href="#广度优先" class="headerlink" title="广度优先"></a>广度优先</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">//广度搜索的模板</span><br><span class="line">func levelOrder(root *TreeNode) [][]int &#123;</span><br><span class="line">	res := make([][]int, 0)</span><br><span class="line">	if root == nil &#123;</span><br><span class="line">		return res</span><br><span class="line">	&#125;</span><br><span class="line">	//存放相邻节点的</span><br><span class="line">	que := make([]*TreeNode, 0)</span><br><span class="line">	que = append(que, root)</span><br><span class="line">	for len(que) &gt; 0 &#123;</span><br><span class="line"></span><br><span class="line">		lvLenght := len(que) //当前层队列有几个数据</span><br><span class="line">		lvArr := make([]int, 0)</span><br><span class="line">		lvQue := make([]*TreeNode, 0)</span><br><span class="line">		for i := 0; i &lt; lvLenght; i++ &#123;</span><br><span class="line">			//弹出数据</span><br><span class="line">			node := que[0]</span><br><span class="line">			que = que[1:]</span><br><span class="line">			lvArr = append(lvArr, node.Val)</span><br><span class="line">			if node.Left != nil &#123;</span><br><span class="line">				lvQue = append(lvQue, node.Left)</span><br><span class="line">			&#125;</span><br><span class="line">			if node.Right != nil &#123;</span><br><span class="line">				lvQue = append(lvQue, node.Right)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		que = append(que, lvQue...)</span><br><span class="line">		res = append(res, lvArr)</span><br><span class="line">	&#125;</span><br><span class="line">	return res</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="二分查找"><a href="#二分查找" class="headerlink" title="二分查找"></a>二分查找</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">int binary_search(int[] nums, int target) &#123;</span><br><span class="line">    int left = 0, right = nums.length - 1; </span><br><span class="line">    while(left &lt;= right) &#123;</span><br><span class="line">        int mid = left + (right - left) / 2;</span><br><span class="line">        if (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + 1;</span><br><span class="line">        &#125; else if (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - 1; </span><br><span class="line">        &#125; else if(nums[mid] == target) &#123;</span><br><span class="line">            // 直接返回</span><br><span class="line">            return mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // 直接返回</span><br><span class="line">    return -1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="二分查找-左边界"><a href="#二分查找-左边界" class="headerlink" title="二分查找-左边界"></a>二分查找-左边界</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">int left_bound(int[] nums, int target) &#123;</span><br><span class="line">    int left = 0, right = nums.length - 1;</span><br><span class="line">    while (left &lt;= right) &#123;</span><br><span class="line">        int mid = left + (right - left) / 2;</span><br><span class="line">        if (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + 1;</span><br><span class="line">        &#125; else if (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - 1;</span><br><span class="line">        &#125; else if (nums[mid] == target) &#123;</span><br><span class="line">            // 别返回，锁定左侧边界</span><br><span class="line">            right = mid - 1;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // 最后要检查 left 越界的情况</span><br><span class="line">    if (left &gt;= nums.length || nums[left] != target)</span><br><span class="line">        return -1;</span><br><span class="line">    return left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="二分查找-右边界"><a href="#二分查找-右边界" class="headerlink" title="二分查找-右边界"></a>二分查找-右边界</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">int right_bound(int[] nums, int target) &#123;</span><br><span class="line">    int left = 0, right = nums.length - 1;</span><br><span class="line">    while (left &lt;= right) &#123;</span><br><span class="line">        int mid = left + (right - left) / 2;</span><br><span class="line">        if (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + 1;</span><br><span class="line">        &#125; else if (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - 1;</span><br><span class="line">        &#125; else if (nums[mid] == target) &#123;</span><br><span class="line">            // 别返回，锁定右侧边界</span><br><span class="line">            left = mid + 1;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // 最后要检查 right 越界的情况</span><br><span class="line">    if (right &lt; 0 || nums[right] != target)</span><br><span class="line">        return -1;</span><br><span class="line">    return right;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="快慢指针"><a href="#快慢指针" class="headerlink" title="快慢指针"></a>快慢指针</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">func hasCycle(head *ListNode) bool &#123;</span><br><span class="line">	if head == nil || head.Next == nil &#123;</span><br><span class="line">		return false</span><br><span class="line">	&#125;</span><br><span class="line">	fast, slow := head.Next, head</span><br><span class="line">	for slow != fast &#123;</span><br><span class="line">		if fast == nil || fast.Next == nil &#123;</span><br><span class="line">			return false</span><br><span class="line">		&#125;</span><br><span class="line">		fast = fast.Next.Next</span><br><span class="line">		slow = slow.Next</span><br><span class="line">	&#125;</span><br><span class="line">	return true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="链表翻转互换"><a href="#链表翻转互换" class="headerlink" title="链表翻转互换"></a>链表翻转互换</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">var prev *ListNode</span><br><span class="line">	curr := head</span><br><span class="line"></span><br><span class="line">	for curr != nil &#123;</span><br><span class="line">		//curr.Next, prev, curr = prev, curr, curr.Next</span><br><span class="line">		next := curr.Next</span><br><span class="line">		curr.Next = prev</span><br><span class="line">		prev = curr</span><br><span class="line">		curr = next</span><br><span class="line">	&#125;</span><br><span class="line">	return prev</span><br></pre></td></tr></table></figure>
+
+<h1 id="回溯算法"><a href="#回溯算法" class="headerlink" title="回溯算法"></a>回溯算法</h1><p>直接上回溯算法框架。解决一个回溯问题，实际上就是一个决策树的遍历过程。你只需要思考 3 个问题：</p>
+<ol>
+<li><p>路径：也就是已经做出的选择。</p>
+</li>
+<li><p>选择列表：也就是你当前可以做的选择。</p>
+</li>
+<li><p>结束条件：也就是到达决策树底层，无法再做选择的条件。<br>代码方面，回溯算法的框架：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">result = []</span><br><span class="line">def backtrack(路径, 选择列表):</span><br><span class="line">    if 满足结束条件:</span><br><span class="line">        result.add(路径)</span><br><span class="line">        return</span><br><span class="line"></span><br><span class="line">for 选择 in 选择列表:</span><br><span class="line">    做选择</span><br><span class="line">    backtrack(路径, 选择列表)</span><br><span class="line">    撤销选择</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>[1,2,3] 所有可能排列组合</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">combinationSum</span><span class="params">(candidates []<span class="keyword">int</span>, target <span class="keyword">int</span>)</span> [][]<span class="title">int</span></span> &#123;</span><br><span class="line">	result := <span class="built_in">make</span>([][]<span class="keyword">int</span>, <span class="number">0</span>)</span><br><span class="line">	track := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>)</span><br><span class="line">	<span class="keyword">var</span> visited = <span class="built_in">make</span>([]<span class="keyword">bool</span>, <span class="built_in">len</span>(candidates))</span><br><span class="line">	backtrack(candidates, track, &amp;result, visited)</span><br><span class="line">	<span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 路径：记录在 track 中</span></span><br><span class="line"><span class="comment">// 选择列表：nums 中的元素</span></span><br><span class="line"><span class="comment">// 结束条件：nums 中的元素全都在 track 中出现</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">backtrack</span><span class="params">(nums []<span class="keyword">int</span>, track []<span class="keyword">int</span>, result *[][]<span class="keyword">int</span>, visited []<span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">	<span class="comment">//触发条件</span></span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(track) == <span class="built_in">len</span>(nums) &#123;</span><br><span class="line">		*result = <span class="built_in">append</span>(*result, track)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(nums); i++ &#123;</span><br><span class="line">		<span class="keyword">if</span> !visited[i] &#123;</span><br><span class="line">			visited[i] = <span class="literal">true</span></span><br><span class="line">			track = <span class="built_in">append</span>(track, nums[i])</span><br><span class="line">			backtrack(nums, track, result, visited)</span><br><span class="line">			track = track[:<span class="built_in">len</span>(track)<span class="number">-1</span>]</span><br><span class="line">			visited[i] = <span class="literal">false</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h1 id="滑动窗口算法"><a href="#滑动窗口算法" class="headerlink" title="滑动窗口算法"></a>滑动窗口算法</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">int left = 0, right = 0;</span><br><span class="line">​</span><br><span class="line">while (right &lt; s.size()) &#123;</span><br><span class="line">    // 增大窗口</span><br><span class="line">    window.add(s[right]);</span><br><span class="line">    right++;</span><br><span class="line">​</span><br><span class="line">    while (window needs shrink) &#123;</span><br><span class="line">        // 缩小窗口</span><br><span class="line">        window.remove(s[left]);</span><br><span class="line">        left++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>滑动窗口算法的思路是这样：<br>1、我们在字符串 S 中使用双指针中的左右指针技巧，初始化 left = right = 0，把索引左闭右开区间 [left, right) 称为一个「窗口」。<br>2、我们先不断地增加 right 指针扩大窗口 [left, right)，直到窗口中的字符串符合要求（包含了 T 中的所有字符）。<br>3、此时，我们停止增加 right，转而不断增加 left 指针缩小窗口 [left, right)，直到窗口中的字符串不再符合要求（不包含 T 中的所有字符了）。同时，每次增加 left，我们都要更新一轮结果。<br>4、重复第 2 和第 3 步，直到 right 到达字符串 S 的尽头。</p>
+<p>这个思路其实也不难，第 2 步相当于在寻找一个「可行解」，然后第 3 步在优化这个「可行解」，最终找到最优解，也就是最短的覆盖子串。左右指针轮流前进，窗口大小增增减减，窗口不断向右滑动，这就是「滑动窗口」这个名字的来历。</p>
+<h1 id="动态规划模板-背包类型问题"><a href="#动态规划模板-背包类型问题" class="headerlink" title="动态规划模板(背包类型问题)"></a>动态规划模板(背包类型问题)</h1><p>第一步要明确两点，「状态」和「选择」。<br>先说状态，如何才能描述一个问题局面？只要给几个物品和一个背包的容量限制，就形成了一个背包问题呀。<strong>所以状态有两个，就是「背包的容量」和「可选择的物品」</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">for 状态1 in 状态1的所有取值：</span><br><span class="line">    for 状态2 in 状态2的所有取值：</span><br><span class="line">        for ...</span><br><span class="line">            dp[状态1][状态2][...] = 择优(选择1，选择2...)</span><br></pre></td></tr></table></figure>
+
+<p>第二步要明确 dp 数组的定义<br>再说选择，也很容易想到啊，对于每件物品，你能选择什么？<strong>选择就是「装进背包」或者「不装进背包」嘛</strong>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">int dp[N+1][W+1]</span><br><span class="line">dp[0][..] = 0</span><br><span class="line">dp[..][0] = 0</span><br><span class="line"></span><br><span class="line">for i in [1..N]:</span><br><span class="line">    for w in [1..W]:</span><br><span class="line">        dp[i][w] = max(</span><br><span class="line">            把物品 i 装进背包,</span><br><span class="line">            不把物品 i 装进背包</span><br><span class="line">        )</span><br><span class="line">return dp[N][W]</span><br></pre></td></tr></table></figure>
+
+<p>第三步，根据「选择」，思考状态转移的逻辑。<br><strong>如果你没有把这第 i 个物品装入背包</strong>，那么很显然，最大价值 <code>dp[i][w] 应该等于 dp[i-1][w]</code>，继承之前的结果。<br><strong>如果你把这第 i 个物品装入了背包</strong>，那么 <code>dp[i][w] 应该等于 dp[i-1][w - wt[i-1]] + val[i-1]</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">for i in [1..N]:</span><br><span class="line">    for w in [1..W]:</span><br><span class="line">        dp[i][w] = max(</span><br><span class="line">            dp[i-1][w],</span><br><span class="line">            dp[i-1][w - wt[i-1]] + val[i-1]</span><br><span class="line">        )</span><br><span class="line">return dp[N][W]</span><br></pre></td></tr></table></figure>
+
+<h1 id="动态规划模板-最长子序列问题"><a href="#动态规划模板-最长子序列问题" class="headerlink" title="动态规划模板(最长子序列问题)"></a>动态规划模板(最长子序列问题)</h1><ul>
+<li>思路一：一个一维的 dp 数组<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">int n = array.length;</span><br><span class="line">int[] dp = new int[n];</span><br><span class="line"></span><br><span class="line">for (int i = 1; i &lt; n; i++) &#123;</span><br><span class="line">    for (int j = 0; j &lt; i; j++) &#123;</span><br><span class="line">        dp[i] = 最值(dp[i], dp[j] + ...)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p><strong><em>在子数组 array[0..i] 中，我们要求的子序列（最长递增子序列）的长度是 dp[i]。</em></strong></p>
+<ul>
+<li><p>思路二：一个二维的 dp 数组：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">int n = arr.length;</span><br><span class="line">int[][] dp = new dp[n][n];</span><br><span class="line"></span><br><span class="line">for (int i = 0; i &lt; n; i++) &#123;</span><br><span class="line">    for (int j = 0; j &lt; n; j++) &#123;</span><br><span class="line">        if (arr[i] == arr[j]) </span><br><span class="line">            dp[i][j] = dp[i][j] + ...</span><br><span class="line">        else</span><br><span class="line">            dp[i][j] = 最值(...)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>涉及两个字符串/数组时</li>
+</ol>
+<p>  <strong><em>在子数组 arr1[0..i] 和子数组 arr2[0..j] 中，我们要求的子序列（最长公共子序列）长度为 dp[i][j]</em></strong></p>
+<ol start="2">
+<li>只涉及一个字符串/数组时</li>
+</ol>
+<p>  <strong><em>在子数组 array[i..j] 中，我们要求的子序列（最长回文子序列）的长度为 dp[i][j]。</em></strong></p>
+</li>
+</ul>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2020/04/11/Go/GMP模型/" class="pre-post btn btn-default" title='Go-GMP模型'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">Go-GMP模型</span>
+        </a>
+    
+    
+        <a href="/2020/02/18/LeetCode/Data/图-深度优先和广度优先(理论)/" class="next-post btn btn-default" title='深度优先和广度优先-理论'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">深度优先和广度优先-理论</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#深度优先"><span class="toc-text">深度优先</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#广度优先"><span class="toc-text">广度优先</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二分查找"><span class="toc-text">二分查找</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二分查找-左边界"><span class="toc-text">二分查找-左边界</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二分查找-右边界"><span class="toc-text">二分查找-右边界</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#快慢指针"><span class="toc-text">快慢指针</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#链表翻转互换"><span class="toc-text">链表翻转互换</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#回溯算法"><span class="toc-text">回溯算法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#滑动窗口算法"><span class="toc-text">滑动窗口算法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#动态规划模板-背包类型问题"><span class="toc-text">动态规划模板(背包类型问题)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#动态规划模板-最长子序列问题"><span class="toc-text">动态规划模板(最长子序列问题)</span></a></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

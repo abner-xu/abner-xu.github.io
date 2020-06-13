@@ -1,0 +1,451 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="面试,TCP,UDP">
+
+
+    <meta name="description" content="UDP 和 TCP 的特点与区别
+用户数据报协议 UDP（User Datagram Protocol）是无连接的，尽最大可能交付，没有拥塞控制，面向报文（对于应用程序传下来的报文不合并也不拆分...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>TCP和UDP | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="TCP和UDP">
+            
+	            TCP和UDP
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/网络/">网络</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+                    <a class="tag-link" href="/tags/TCP/">TCP</a> <a class="tag-link" href="/tags/UDP/">UDP</a> <a class="tag-link" href="/tags/面试/">面试</a>
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2020/05/24</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="UDP-和-TCP-的特点与区别"><a href="#UDP-和-TCP-的特点与区别" class="headerlink" title="UDP 和 TCP 的特点与区别"></a>UDP 和 TCP 的特点与区别</h1><ol>
+<li>用户数据报协议 UDP（User Datagram Protocol）<br>是无连接的，尽最大可能交付，没有拥塞控制，面向报文（对于应用程序传下来的报文不合并也不拆分，只是添加 UDP 首部），支持一对一、一对多、多对一和多对多的交互通信。</li>
+<li>传输控制协议 TCP（Transmission Control Protocol）<br>是面向连接的，提供可靠交付，有流量控制，拥塞控制，提供全双工通信，面向字节流（把应用层传下来的报文看成字节流，把字节流组织成大小不等的数据块），每一条 TCP 连接只能是点对点的（一对一）。</li>
+</ol>
+<hr>
+<h1 id="UDP-、TCP-首部格式"><a href="#UDP-、TCP-首部格式" class="headerlink" title="UDP 、TCP 首部格式"></a>UDP 、TCP 首部格式</h1><p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf3cj1zx0rj30e3055jrf.jpg" alt="1.jpeg"><br>UDP 首部字段只有 8 个字节，包括源端口、目的端口、长度、检验和。12 字节的伪首部是为了计算检验和临时添加的。<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf3cj67cktj30dw095jrv.jpg" alt="2.jpeg"><br>TCP 首部格式比 UDP 复杂。</p>
+<ul>
+<li><p>序号：用于对字节流进行编号，例如序号为 301，表示第一个字节的编号为 301，如果携带的数据长度为 100 字节，那么下一个报文段的序号应为 401。</p>
+</li>
+<li><p>确认号：期望收到的下一个报文段的序号。例如 B 正确收到 A 发送来的一个报文段，序号为 501，携带的数据长度为 200 字节，因此 B 期望下一个报文段的序号为 701，B 发送给 A 的确认报文段中确认号就为 701。</p>
+</li>
+<li><p>数据偏移：指的是数据部分距离报文段起始处的偏移量，实际上指的是首部的长度。</p>
+</li>
+<li><p>控制位：八位从左到右分别是 CWR，ECE，URG，ACK，PSH，RST，SYN，FIN。</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CWR</td>
+<td>CWR 标志与后面的 ECE 标志都用于 IP 首部的 ECN 字段，ECE 标志为 1 时，则通知对方已将拥塞窗口缩小</td>
+</tr>
+<tr>
+<td>ECE</td>
+<td>若其值为 1 则会通知对方，从对方到这边的网络有阻塞。在收到数据包的 IP 首部中 ECN 为 1 时将 TCP 首部中的 ECE 设为 1</td>
+</tr>
+<tr>
+<td>URG</td>
+<td>紧急指针是否有效。为1，表示某一位需要被优先处理</td>
+</tr>
+<tr>
+<td>ACK</td>
+<td>确认号是否有效，一般置为1。</td>
+</tr>
+<tr>
+<td>PSH</td>
+<td>提示接收端应用程序立即从TCP缓冲区把数据读走</td>
+</tr>
+<tr>
+<td>RST</td>
+<td>对方要求重新建立连接，复位</td>
+</tr>
+<tr>
+<td>SYN</td>
+<td>请求建立连接，并在其序列号的字段进行序列号的初始值设定。建立连接，设置为1</td>
+</tr>
+<tr>
+<td>FIN</td>
+<td>希望断开连接</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<ul>
+<li>窗口：窗口值作为接收方让发送方设置其发送窗口的依据。之所以要有这个限制，是因为接收方的数据缓存空间是有限的。      </li>
+</ul>
+<hr>
+<h1 id="TCP-的三次握手（为什么三次？）"><a href="#TCP-的三次握手（为什么三次？）" class="headerlink" title="TCP 的三次握手（为什么三次？）"></a>TCP 的三次握手（为什么三次？）</h1><p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf3e64xaifj30i40bd0tc.jpg" alt="3.jpeg"></p>
+<ol>
+<li>客户端发送一个SYN段，并指明客户端的初始序列号，即ISN(c).</li>
+<li>服务端发送自己的SYN段作为应答，同样指明自己的ISN(s)。为了确认客户端的SYN，将ISN(c)+1作为ACK数值。这样，每发送一个SYN，序列号就会加1. 如果有丢失的情况，则会重传。</li>
+<li>为了确认服务器端的SYN，客户端将ISN(s)+1作为返回的ACK数值。</li>
+</ol>
+<p>为什么三次：<br>客户端和服务端通信前要进行连接，“3次握手”的作用就是双方都能明确自己和对方的收、发能力是正常的。</p>
+<ul>
+<li><p>第一次握手：客户端发送网络包，服务端收到了。这样服务端就能得出结论：客户端的发送能力、服务端的接收能力是正常的。</p>
+</li>
+<li><p>第二次握手：服务端发包，客户端收到了。这样客户端就能得出结论：服务端的接收、发送能力，客户端的接收、发送能力是正常的。 从客户端的视角来看，我接到了服务端发送过来的响应数据包，说明服务端接收到了我在第一次握手时发送的网络包，并且成功发送了响应数据包，这就说明，服务端的接收、发送能力正常。而另一方面，我收到了服务端的响应数据包，说明我第一次发送的网络包成功到达服务端，这样，我自己的发送和接收能力也是正常的。</p>
+</li>
+<li><p>第三次握手：客户端发包，服务端收到了。这样服务端就能得出结论：客户端的接收、发送能力，服务端的发送、接收能力是正常的。 第一、二次握手后，服务端并不知道客户端的接收能力以及自己的发送能力是否正常。而在第三次握手时，服务端收到了客户端对第二次握手作的回应。从服务端的角度，我在第二次握手时的响应数据发送出去了，客户端接收到了。所以，我的发送能力是正常的。而客户端的接收能力也是正常的。</p>
+</li>
+</ul>
+<p>经历了上面的三次握手过程，客户端和服务端都确认了自己的接收、发送能力是正常的。之后就可以正常通信了。</p>
+<hr>
+<h1 id="TCP-的四次挥手（为什么四次？）"><a href="#TCP-的四次挥手（为什么四次？）" class="headerlink" title="TCP 的四次挥手（为什么四次？）"></a>TCP 的四次挥手（为什么四次？）</h1><p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf3eeohxpuj30ik0cvgmp.jpg" alt="4.jpeg"></p>
+<ol>
+<li>客户端发送一个FIN段，并包含一个希望接收者看到的自己当前的序列号u. 同时还包含一个ACK表示确认对方最近一次发过来的数据。 </li>
+<li>服务端将u值加1作为ack序号值，表明收到了上一个包。这时上层的应用程序会被告知另一端发起了关闭操作，通常这将引起应用程序发起自己的关闭操作。 </li>
+<li>服务端发起自己的FIN段和ACK码，ack=u+1, seq=w</li>
+<li>客户端确认。ack=w+1</li>
+</ol>
+<p>为什么建立连接是三次握手，而关闭连接却是四次挥手呢？</p>
+<p>1、TCP连接是双向传输的对等的模式，就是说双方都可以同时向对方发送或接收数据。当有一方要关闭连接时，会发送指令告知对方，我要关闭连接了。</p>
+<p>2、这时对方会回一个ACK，此时一个方向的连接关闭。但是另一个方向仍然可以继续传输数据，也就是说，服务端收到客户端的 FIN 标志，知道客户端想要断开这次连接了，但是，我服务端，我还想发数据呢？我等到发送完了所有的数据后，会发送一个 FIN 段来关闭此方向上的连接。接收方发送 ACK确认关闭连接。</p>
+<p>注意，接收到FIN报文的一方只能回复一个ACK, 它是无法马上返回对方一个FIN报文段的，因为结束数据传输的“指令”是上层应用层给出的，我只是一个“搬运工”，我无法了解“上层的意志”。</p>
+<p>3、客户端发送了 FIN 连接释放报文之后，服务器收到了这个报文，就进入了 CLOSE-WAIT 状态。这个状态是为了让服务器端发送还未传送完毕的数据，传送完毕之后，服务器会发送 FIN 连接释放报文。</p>
+<p>4、因为服务端在 LISTEN 状态下，收到建立连接请求的 SYN 报文后，把 ACK 和 SYN 放在一个报文里发送给客户端。而关闭连接时，当收到对方的 FIN 报文时，仅仅表示对方不再发送数据了但是还能接收数据，己方是否现在关闭发送数据通道，需要上层应用来决定，因此，己方 ACK 和 FIN 一般都会分开发。</p>
+<hr>
+<h1 id="TCP-长连接和短连接的区别"><a href="#TCP-长连接和短连接的区别" class="headerlink" title="TCP 长连接和短连接的区别"></a>TCP 长连接和短连接的区别</h1><ul>
+<li>短连接：Client 向 Server 发送消息，Server 回应 Client，然后一次读写就完成了，这时候双方任何一个都可以发起 close 操作，不过一般都是 Client 先发起 close 操作。短连接一般只会在 Client/Server 间传递一次读写操作。</li>
+</ul>
+<p>短连接的优点：管理起来比较简单，建立存在的连接都是有用的连接，不需要额外的控制手段。</p>
+<ul>
+<li>长连接：Client 与 Server 完成一次读写之后，它们之间的连接并不会主动关闭，后续的读写操作会继续使用这个连接。</li>
+</ul>
+<p>在长连接的应用场景下，Client 端一般不会主动关闭它们之间的连接，Client 与 Server 之间的连接如果一直不关闭的话，随着客户端连接越来越多，Server 压力也越来越大，这时候 Server 端需要采取一些策略，如关闭一些长时间没有读写事件发生的连接，这样可以避免一些恶意连接导致 Server 端服务受损；如果条件再允许可以以客户端为颗粒度，限制每个客户端的最大长连接数，从而避免某个客户端连累后端的服务。</p>
+<hr>
+<h1 id="TCP粘包、拆包及解决办法"><a href="#TCP粘包、拆包及解决办法" class="headerlink" title="TCP粘包、拆包及解决办法"></a>TCP粘包、拆包及解决办法</h1><ol>
+<li>为什么常说 TCP 有粘包和拆包的问题而不说 UDP ？</li>
+</ol>
+<p>由前两节可知，UDP 是基于报文发送的，UDP首部采用了 16bit 来指示 UDP 数据报文的长度，因此在应用层能很好的将不同的数据报文区分开，从而避免粘包和拆包的问题。</p>
+<p>而 TCP 是基于字节流的，虽然应用层和 TCP 传输层之间的数据交互是大小不等的数据块，但是 TCP 并没有把这些数据块区分边界，仅仅是一连串没有结构的字节流；另外从 TCP 的帧结构也可以看出，在 TCP 的首部没有表示数据长度的字段，基于上面两点，在使用 TCP 传输数据时，才有粘包或者拆包现象发生的可能。</p>
+<ol start="2">
+<li>什么是粘包、拆包？<br>假设 Client 向 Server 连续发送了两个数据包，用 packet1 和 packet2 来表示，那么服务端收到的数据可以分为三种情况，现列举如下：</li>
+</ol>
+<ul>
+<li>第一种情况，接收端正常收到两个数据包，即没有发生拆包和粘包的现象。<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf3j1berjkj30fd02hjrl.jpg" alt="1.png"></li>
+<li>第二种情况，接收端只收到一个数据包，但是这一个数据包中包含了发送端发送的两个数据包的信息，这种现象即为粘包。这种情况由于接收端不知道这两个数据包的界限，所以对于接收端来说很难处理。<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf3j1ceww9j30f102hq34.jpg" alt="2.png"></li>
+<li>第三种情况，这种情况有两种表现形式，如下图。接收端收到了两个数据包，但是这两个数据包要么是不完整的，要么就是多出来一块，这种情况即发生了拆包和粘包。这两种情况如果不加特殊处理，对于接收端同样是不好处理的。<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf3j1bbw2ej30fa02jglv.jpg" alt="3.png"><br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf3j1bdbxdj30f902jt8z.jpg" alt="4.png"></li>
+</ul>
+<ol start="3">
+<li>为什么会发生 TCP 粘包、拆包？</li>
+</ol>
+<ul>
+<li>要发送的数据大于 TCP 发送缓冲区剩余空间大小，将会发生拆包。</li>
+<li>待发送数据大于 MSS（最大报文长度），TCP 在传输前将进行拆包。</li>
+<li>要发送的数据小于 TCP 发送缓冲区的大小，TCP 将多次写入缓冲区的数据一次发送出去，将会发生粘包。</li>
+<li>接收数据端的应用层没有及时读取接收缓冲区中的数据，将发生粘包。</li>
+</ul>
+<ol start="4">
+<li>粘包、拆包解决办法<br>由于 TCP 本身是面向字节流的，无法理解上层的业务数据，所以在底层是无法保证数据包不被拆分和重组的，这个问题只能通过上层的应用协议栈设计来解决，根据业界的主流协议的解决方案，归纳如下：</li>
+</ol>
+<ul>
+<li>消息定长：发送端将每个数据包封装为固定长度（不够的可以通过补 0 填充），这样接收端每次接收缓冲区中读取固定长度的数据就自然而然的把每个数据包拆分开来。</li>
+<li>设置消息边界：服务端从网络流中按消息边界分离出消息内容。在包尾增加回车换行符进行分割，例如 FTP 协议。</li>
+<li>将消息分为消息头和消息体：消息头中包含表示消息总长度（或者消息体长度）的字段。</li>
+<li>更复杂的应用层协议比如 Netty 中实现的一些协议都对粘包、拆包做了很好的处理。</li>
+</ul>
+<hr>
+<h1 id="TCP-可靠传输"><a href="#TCP-可靠传输" class="headerlink" title="TCP 可靠传输"></a>TCP 可靠传输</h1><hr>
+<h1 id="TCP-滑动窗口"><a href="#TCP-滑动窗口" class="headerlink" title="TCP 滑动窗口"></a>TCP 滑动窗口</h1><p>窗口是缓存的一部分，用来暂时存放字节流。发送方和接收方各有一个窗口，接收方通过 TCP 报文段中的窗口字段告诉发送方自己的窗口大小，发送方根据这个值和其它信息设置自己的窗口大小。</p>
+<p>发送窗口内的字节都允许被发送，接收窗口内的字节都允许被接收。如果发送窗口左部的字节已经发送并且收到了确认，那么就将发送窗口向右滑动一定距离，直到左部第一个字节不是已发送并且已确认的状态；接收窗口的滑动类似，接收窗口左部字节已经发送确认并交付主机，就向右滑动接收窗口。</p>
+<p>接收窗口只会对窗口内最后一个按序到达的字节进行确认，例如接收窗口已经收到的字节为 {31, 34, 35}，其中 {31} 按序到达，而 {34, 35} 就不是，因此只对字节 31 进行确认。发送方得到一个字节的确认之后，就知道这个字节之前的所有字节都已经被接收。</p>
+<p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf3jf4imr3j30tb0bswgj.jpg" alt="5.jpeg"></p>
+<hr>
+<h1 id="TCP-流量控制"><a href="#TCP-流量控制" class="headerlink" title="TCP 流量控制"></a>TCP 流量控制</h1><hr>
+<h1 id="TCP-拥塞控制"><a href="#TCP-拥塞控制" class="headerlink" title="TCP 拥塞控制"></a>TCP 拥塞控制</h1><hr>
+<h1 id="提供网络利用率"><a href="#提供网络利用率" class="headerlink" title="提供网络利用率"></a>提供网络利用率</h1>
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+    
+        <a href="/2020/04/11/Go/GMP模型/" class="next-post btn btn-default" title='Go-GMP模型'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">Go-GMP模型</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#UDP-和-TCP-的特点与区别"><span class="toc-text">UDP 和 TCP 的特点与区别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#UDP-、TCP-首部格式"><span class="toc-text">UDP 、TCP 首部格式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TCP-的三次握手（为什么三次？）"><span class="toc-text">TCP 的三次握手（为什么三次？）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TCP-的四次挥手（为什么四次？）"><span class="toc-text">TCP 的四次挥手（为什么四次？）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TCP-长连接和短连接的区别"><span class="toc-text">TCP 长连接和短连接的区别</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TCP粘包、拆包及解决办法"><span class="toc-text">TCP粘包、拆包及解决办法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TCP-可靠传输"><span class="toc-text">TCP 可靠传输</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TCP-滑动窗口"><span class="toc-text">TCP 滑动窗口</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TCP-流量控制"><span class="toc-text">TCP 流量控制</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TCP-拥塞控制"><span class="toc-text">TCP 拥塞控制</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#提供网络利用率"><span class="toc-text">提供网络利用率</span></a></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

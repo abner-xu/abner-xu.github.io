@@ -1,0 +1,341 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="docker、PHP、Golang、Redis、MySQL、Web面试；">
+
+
+    <meta name="description" content="1.安装易用的pprofgolang自带的prof包是runtime/pprof，这个是低级别的，需要你手动做一些设置等等周边工作，不利于我们快速上手，利用pprof帮助我们解决实际的问题。这里...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>golang的pprof使用技巧 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="golang的pprof使用技巧">
+            
+	            golang的pprof使用技巧
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/Golang/">Golang</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2019/02/26</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+            <p class="fa fa-exclamation-triangle warning">
+                本文于<strong>472</strong>天之前发表，文中内容可能已经过时。
+            </p>
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="1-安装易用的pprof"><a href="#1-安装易用的pprof" class="headerlink" title="1.安装易用的pprof"></a>1.安装易用的pprof</h1><p>golang自带的prof包是runtime/pprof，这个是低级别的，需要你手动做一些设置等等周边工作，不利于我们快速上手，利用pprof帮助我们解决实际的问题。这里推荐davecheney封装的pprof，它可以1行代码，让你用上pprof，专心解决自己的代码问题，下载：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get github.com/pkg/profile</span><br></pre></td></tr></table></figure>
+
+<h1 id="2-安装graphviz"><a href="#2-安装graphviz" class="headerlink" title="2.安装graphviz"></a>2.安装graphviz</h1><p>pprof生成的prof文件时二进制的，需要把这个二进制的文件转换为我们人类可读的，graphviz可以帮助我们把二进制的prof文件转换为图像。Mac安装：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install graphviz</span><br></pre></td></tr></table></figure>
+
+<h1 id="3-修改main函数"><a href="#3-修改main函数" class="headerlink" title="3.修改main函数"></a>3.修改main函数</h1><p>只需要为hi.go增加这一行，defer profile.Start().Stop()，程序运行时，默认就会记录cpu数据</p>
+<h1 id="4-编译运行你的函数"><a href="#4-编译运行你的函数" class="headerlink" title="4.编译运行你的函数"></a>4.编译运行你的函数</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"github.com/pkg/profile"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> profile.Start().Stop()</span><br><span class="line">	sl:=makeSlice()</span><br><span class="line">	fmt.Printf(<span class="string">"sum=%d\n"</span>,sumSlice(sl))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">makeSlice</span><span class="params">()</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">	sl := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">10000000</span>)</span><br><span class="line">	<span class="keyword">for</span> idx := <span class="keyword">range</span> sl &#123;</span><br><span class="line">		sl[idx] = idx</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> sl</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sumSlice</span><span class="params">(sl []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	sum := <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> _, x := <span class="keyword">range</span> sl &#123;</span><br><span class="line">		sum += x</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> sum</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">go build hi.go</span><br><span class="line">./hi</span><br></pre></td></tr></table></figure>
+
+<p>应当看到类似的结果，它输出了生成的cpu.pprof的路径：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">2019/02/26 23:24:22 profile: cpu profiling enabled, /var/folders/zy/d8yskqjj09q21y7jnc0vbsqh0000gn/T/profile152894194/cpu.pprof  </span><br><span class="line">sum=49999995000000  </span><br><span class="line">2019/02/26 23:24:22 profile: cpu profiling disabled, /var/folders/zy/d8yskqjj09q21y7jnc0vbsqh0000gn/T/profile152894194/cpu.pprof</span><br></pre></td></tr></table></figure>
+
+<h1 id="5-可视化prof"><a href="#5-可视化prof" class="headerlink" title="5.可视化prof"></a>5.可视化prof</h1><p>可视化有多种方式，可以转换为text、pdf、svg等等。text命令是</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go tool pprof --text /path/to/yourbinary /var/path/to/cpu.pprof</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> tool pprof --text ./hi /<span class="keyword">var</span>/folders/zy/d8yskqjj09q21y7jnc0vbsqh0000gn/T/profile626723859/cpu.pprof</span><br><span class="line">File: hi</span><br><span class="line">Type: cpu</span><br><span class="line">Time: Feb <span class="number">26</span>, <span class="number">2019</span> at <span class="number">11</span>:<span class="number">29</span>pm (CST)</span><br><span class="line">Duration: <span class="number">203.53</span>ms, Total samples = <span class="number">100</span>ms (<span class="number">49.13</span>%)</span><br><span class="line">Showing nodes accounting <span class="keyword">for</span> <span class="number">100</span>ms, <span class="number">100</span>% of <span class="number">100</span>ms total</span><br><span class="line">      flat  flat%   sum%        cum   cum%</span><br><span class="line">      <span class="number">60</span>ms <span class="number">60.00</span>% <span class="number">60.00</span>%       <span class="number">60</span>ms <span class="number">60.00</span>%  runtime.usleep</span><br><span class="line">      <span class="number">30</span>ms <span class="number">30.00</span>% <span class="number">90.00</span>%       <span class="number">30</span>ms <span class="number">30.00</span>%  main.makeSlice</span><br><span class="line">      <span class="number">10</span>ms <span class="number">10.00</span>%   <span class="number">100</span>%       <span class="number">10</span>ms <span class="number">10.00</span>%  runtime.nanotime</span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>%   <span class="number">100</span>%       <span class="number">30</span>ms <span class="number">30.00</span>%  main.main</span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>%   <span class="number">100</span>%       <span class="number">10</span>ms <span class="number">10.00</span>%  runtime.gcBgMarkWorker</span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>%   <span class="number">100</span>%       <span class="number">70</span>ms <span class="number">70.00</span>%  runtime.gcBgMarkWorker.func2</span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>%   <span class="number">100</span>%       <span class="number">70</span>ms <span class="number">70.00</span>%  runtime.gcDrain</span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>%   <span class="number">100</span>%       <span class="number">30</span>ms <span class="number">30.00</span>%  runtime.main</span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>%   <span class="number">100</span>%       <span class="number">70</span>ms <span class="number">70.00</span>%  runtime.markroot</span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>%   <span class="number">100</span>%       <span class="number">70</span>ms <span class="number">70.00</span>%  runtime.markroot.func1</span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>%   <span class="number">100</span>%       <span class="number">60</span>ms <span class="number">60.00</span>%  runtime.mstart</span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>%   <span class="number">100</span>%       <span class="number">60</span>ms <span class="number">60.00</span>%  runtime.osyield</span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>%   <span class="number">100</span>%       <span class="number">70</span>ms <span class="number">70.00</span>%  runtime.scang</span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>%   <span class="number">100</span>%       <span class="number">70</span>ms <span class="number">70.00</span>%  runtime.systemstack</span><br></pre></td></tr></table></figure>
+
+<p>生成pdf图</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go tool pprof --pdf ./hi /var/folders/zy/d8yskqjj09q21y7jnc0vbsqh0000gn/T/profile626723859/cpu.pprof &gt; cpu.pdf</span><br></pre></td></tr></table></figure>
+
+<h1 id="6-获取内存ppfo"><a href="#6-获取内存ppfo" class="headerlink" title="6.获取内存ppfo"></a>6.获取内存ppfo</h1><p>如果你掌握了cpu pprof，mem pprof轻而易举就能拿下，只需要改1行代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">defer</span> profile.Start(profile.MemProfile).Stop()</span><br></pre></td></tr></table></figure>
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2019/02/27/Redis/redis总结/" class="pre-post btn btn-default" title='redis总结'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">redis总结</span>
+        </a>
+    
+    
+        <a href="/2019/02/20/Redis/缓存穿透-雪崩-击穿的解决方法/" class="next-post btn btn-default" title='缓存穿透、雪崩、击穿的解决方法'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">缓存穿透、雪崩、击穿的解决方法</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-安装易用的pprof"><span class="toc-text">1.安装易用的pprof</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-安装graphviz"><span class="toc-text">2.安装graphviz</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-修改main函数"><span class="toc-text">3.修改main函数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-编译运行你的函数"><span class="toc-text">4.编译运行你的函数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-可视化prof"><span class="toc-text">5.可视化prof</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6-获取内存ppfo"><span class="toc-text">6.获取内存ppfo</span></a></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

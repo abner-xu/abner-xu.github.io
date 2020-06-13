@@ -1,0 +1,463 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="面试">
+
+
+    <meta name="description" content="基本概念Redis性能如此高的原因，我总结了如下几点：
+
+纯内存操作
+单线程
+高效的数据结构
+合理的数据编码
+其他方面的优化
+
+在 Redis 中，常用的几种数据结构和应用场景如下：
+
+Stri...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>单线程的redis为什么快 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="单线程的redis为什么快">
+            
+	            单线程的redis为什么快
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/Redis/">Redis</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+                    <a class="tag-link" href="/tags/面试/">面试</a>
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2019/02/28</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+            <p class="fa fa-exclamation-triangle warning">
+                本文于<strong>470</strong>天之前发表，文中内容可能已经过时。
+            </p>
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><p>Redis性能如此高的原因，我总结了如下几点：</p>
+<ol>
+<li>纯内存操作</li>
+<li>单线程</li>
+<li>高效的数据结构</li>
+<li>合理的数据编码</li>
+<li>其他方面的优化</li>
+</ol>
+<p>在 Redis 中，常用的几种数据结构和应用场景如下：</p>
+<ol>
+<li>String：缓存、计数器、分布式锁等。</li>
+<li>List：链表、队列、微博关注人时间轴列表等。</li>
+<li>Hash：用户信息、Hash 表等。</li>
+<li>Set：去重、赞、踩、共同好友等。</li>
+<li>Zset：访问量排行榜、点击量排行榜等。</li>
+<li>HyperLogLog: 网站UV,独立IP计算等，主要也是一些去重计算，对数据精度要求不高，主要由于计算数据空间是固定的</li>
+<li>Geo：GEO(地理位置)的支持，主要是对经纬度一个位置计算等特性</li>
+</ol>
+<p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gdop1n2k6zj30hs0djju6.jpg" alt="2.png"></p>
+<hr>
+<h1 id="内部数据结构"><a href="#内部数据结构" class="headerlink" title="内部数据结构"></a>内部数据结构</h1><p>redis的底层数据结构有以下7种，包括<code>简单动态字符串(SDS)，链表、字典、跳跃表、整数集合、压缩列表、对象</code>。<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gdooy0gmemj30hs08ct8x.jpg" alt="1.jpeg"></p>
+<hr>
+<h1 id="简单动态字符串-SDS"><a href="#简单动态字符串-SDS" class="headerlink" title="简单动态字符串(SDS)"></a>简单动态字符串(SDS)</h1><p>Redis 是用 C 语言开发完成的，但在 Redis 字符串中，并没有使用 C 语言中的字符串，而是用一种称为 SDS（Simple Dynamic String）的结构体来保存字符串。<br>在redis数据库里，包含字符串值的键值对在底层都是由SDS实现的。除了用来保存数据库中的字符串值之外，sds还被用来作缓冲区（buffer）：AOF（一种持久化策略）模块中的AOF缓冲区，以及客户端状态中的输入缓冲区，都是由SDS实现的。</p>
+<div align="center"><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0xzlkq5x1j309w06iaag.jpg"></div>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">attribute__</span> ((__<span class="title">packed__</span>)) <span class="title">sdshdr64</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint64_t</span> len; <span class="comment">/*  记录buff数组中已使用字节的数量 */</span>   </span><br><span class="line">    <span class="keyword">uint64_t</span> <span class="built_in">free</span>; <span class="comment">/* 记录未使用字节数量*/</span></span><br><span class="line">    <span class="keyword">char</span> buf[]; <span class="comment">/*存储实际内容*/</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>例如：执行命令 set key value，key 和 value 都是一个 SDS 类型的结构存储在内存中。</p>
+<h2 id="SDS-与-C-字符串的区别"><a href="#SDS-与-C-字符串的区别" class="headerlink" title="SDS 与 C 字符串的区别"></a>SDS 与 C 字符串的区别</h2><ul>
+<li><p>常数时间内获得字符串长度:<br>C 字符串本身不记录长度信息，每次获取长度信息都需要遍历整个字符串，复杂度为 O(n)；C 字符串遍历时遇到’\0‘ 时结束。<br>SDS 中 len 字段保存着字符串的长度，所以总能在常数时间内获取字符串长度，复杂度是 O(1)。</p>
+</li>
+<li><p>避免缓冲区溢出<br>假设在内存中有两个紧挨着的两个字符串，s1=”xxxxx”和 s2=”yyyyy”<br>由于在内存上紧紧相连，当我们对 s1 进行扩充的时候，将 s1=“xxxxxzzzzz”后，由于没有进行相应的内存重新分配，导致 s1 把 s2 覆盖掉，导致 s2 被莫名其妙的修改。<br>但 SDS 的 API 对 zfc 修改时首先会检查空间是否足够，若不充足则会分配新空间，避免了缓冲区溢出问题。</p>
+</li>
+</ul>
+<h2 id="减少字符串修改时带来的内存重新分配的次数"><a href="#减少字符串修改时带来的内存重新分配的次数" class="headerlink" title="减少字符串修改时带来的内存重新分配的次数"></a>减少字符串修改时带来的内存重新分配的次数</h2><p>由于C语言修改字符需要重新分配空间<br>而SDS实现了预分配和惰性释放<br>预分配规则：SDS空间进行扩充时，会分配足够的内存空间还会分配额外未使用的空间。如果对 SDS 修改后，len 的长度小于 1M，那么程序将分配和 len 相同长度的未使用空间。举个例子，如果 len=10，重新分配后，buf 的实际长度会变为 10(已使用空间)+10(额外空间)+1(空字符)=21。如果对 SDS 修改后 len 长度大于 1M，那么程序将分配 1M 的未使用空间。</p>
+<p>惰性空间释放：当对 SDS 进行缩短操作时，程序并不会回收多余的内存空间，而是使用 free 字段将这些字节数量记录下来不释放，后面如果需要 append 操作，则直接使用 free 中未使用的空间，减少了内存的分配。</p>
+<hr>
+<h1 id="3-字典-Hash"><a href="#3-字典-Hash" class="headerlink" title="3.字典(Hash)"></a>3.字典(Hash)</h1><p>Redis底层hash结构如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dict</span>&#123;</span></span><br><span class="line">      dictType *type;</span><br><span class="line">    <span class="keyword">void</span> *privdata;</span><br><span class="line">    dictht ht[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">int</span> trehashidx;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictht</span>&#123;</span></span><br><span class="line">    <span class="comment">//哈希表数组</span></span><br><span class="line">    dectEntrt **table;</span><br><span class="line">    <span class="comment">//哈希表大小</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="built_in">size</span>;</span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> sizemask;</span><br><span class="line">    <span class="comment">//哈希表已有节点数量</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> used;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重要的两个字段是 dictht 和 trehashidx</p>
+<h2 id="Rehash"><a href="#Rehash" class="headerlink" title="Rehash"></a>Rehash</h2><blockquote>
+<p>Rehash解释：随着操作的不断执行， 哈希表保存的键值对会逐渐地增多或者减少， 为了让哈希表的负载因子（load factor）维持在一个合理的范围之内， 当哈希表保存的键值对数量太多或者太少时， 程序需要对哈希表的大小进行相应的扩展或者收缩。扩展和收缩哈希表的工作可以通过执行 rehash （重新散列）操作来完成</p>
+</blockquote>
+<p>由上段代码，我们可知 dict 中存储了一个 dictht 的数组，长度为 2，表明这个数据结构中实际存储着两个哈希表 ht[0] 和 ht[1]，为什么要存储两张 hash 表呢？<br>当然是为了Rehash,Rehash的过程</p>
+<ul>
+<li>为 ht[1] 分配空间。如果是扩容操作，ht[1] 的大小为第一个大于等于 ht[0].used*2 的 2^n；如果是缩容操作，ht[1] 的大小为第一个大于等于 ht[0].used 的 2^n。</li>
+<li>将 ht[0] 中的键值 Rehash 到 ht[1] 中。</li>
+<li>当 ht[0] 全部迁移到 ht[1] 中后，释放 ht[0]，将 ht[1] 置为 ht[0]，并为 ht[1] 创建一张新表，为下次 Rehash 做准备。</li>
+</ul>
+<h2 id="渐进式-Rehash"><a href="#渐进式-Rehash" class="headerlink" title="渐进式 Rehash"></a>渐进式 Rehash</h2><p>上面提到的如果ht[0]全部移动到ht[1]中，如果数据量小很快，如果数据量很大则会有影响使用<br>所以redis采用了分多次、渐进式的迁移策略</p>
+<ul>
+<li>为 ht[1] 分配空间，让字典同时拥有 ht[0] 和 ht[1] 两个哈希表。</li>
+<li>字典中维护一个 rehashidx，并将它置为 0，表示 Rehash 开始。</li>
+<li>在 Rehash 期间，每次对字典操作时，程序还顺便将 ht[0] 在 rehashidx 索引上的所有键值对 rehash 到 ht[1] 中，当 Rehash 完成后，将 rehashidx 属性+1。当全部 rehash 完成后，将 rehashidx 置为 -1，表示 rehash 完成。<br>注意，由于维护了两张 Hash 表，所以在 Rehash 的过程中内存会增长。另外，在 Rehash 过程中，字典会同时使用 ht[0] 和 ht[1]。</li>
+</ul>
+<p>所以在删除、查找、更新时会在两张表中操作，在查询时会先在第一张表中查询，如果第一张表中没有，则会在第二张表中查询。但新增时一律会在 ht[1] 中进行，确保 ht[0] 中的数据只会减少不会增加。</p>
+<hr>
+<h1 id="4-Zset底层"><a href="#4-Zset底层" class="headerlink" title="4. Zset底层"></a>4. Zset底层</h1><p>zset底层的存储结构包括ziplist或skiplist，在同时满足以下两个条件的时候使用ziplist，其他时候使用skiplist，两个条件如下：</p>
+<ul>
+<li>有序集合保存的元素数量小于128个</li>
+<li>有序集合保存的所有元素的长度小于64字节</li>
+</ul>
+<p>当ziplist作为zset的底层存储结构时候，每个集合元素使用两个紧挨在一起的压缩列表节点来保存，第一个节点保存元素的成员，第二个元素保存元素的分值。</p>
+<p>当skiplist作为zset的底层存储结构的时候，使用skiplist按序保存元素及分值，使用dict来保存元素和分值的映射关系。</p>
+<p>ziplist数据结构<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf4hntkfa6j30ym0dgwgk.jpg" alt="1.png"></p>
+<p>skiplist数据结构<br> skiplist作为zset的存储结构，整体存储结构如下图，核心点主要是包括一个dict对象和一个skiplist对象。dict保存key/value，key为元素，value为分值；skiplist保存的有序的元素列表，每个元素包括元素和分值。两种数据结构下的元素指向相同的位置。</p>
+<p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf4hop6qq9j30wx0k3dhq.jpg" alt="2.png"></p>
+<hr>
+<h1 id="5-Set底层"><a href="#5-Set底层" class="headerlink" title="5. Set底层"></a>5. Set底层</h1><p>set的底层存储intset和hashtable是存在编码转换的，使用intset存储必须满足下面两个条件，否则使用hashtable，条件如下：</p>
+<ul>
+<li>结合对象保存的所有元素都是整数值</li>
+<li>集合对象保存的元素数量不超过512个</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">intset</span> &#123;</span></span><br><span class="line">    <span class="comment">// 编码方式</span></span><br><span class="line">    <span class="keyword">uint32_t</span> encoding;</span><br><span class="line">    <span class="comment">// 集合包含的元素数量</span></span><br><span class="line">    <span class="keyword">uint32_t</span> length;</span><br><span class="line">    <span class="comment">// 保存元素的数组</span></span><br><span class="line">    <span class="keyword">int8_t</span> contents[];</span><br><span class="line">&#125; intset;</span><br></pre></td></tr></table></figure>
+
+<p>set的单个元素的添加过程，首先如果已经是hashtable的编码，那么我们就走正常的hashtable的元素添加，如果原来是intset的情况，那么我们就需要进行如下判断：</p>
+<ul>
+<li>如果能够转成int的对象（isObjectRepresentableAsLongLong），那么就用intset保存。</li>
+<li>如果用intset保存的时候，如果长度超过512（REDIS_SET_MAX_INTSET_ENTRIES）就转为hashtable编码。</li>
+</ul>
+<hr>
+<h1 id="List底层"><a href="#List底层" class="headerlink" title="List底层"></a>List底层</h1><p>redis list数据结构底层采用压缩列表ziplist或linkedlist两种数据结构进行存储，首先以ziplist进行存储，在不满足ziplist的存储要求后转换为linkedlist列表。<br> 当列表对象同时满足以下两个条件时，列表对象使用ziplist进行存储，否则用linkedlist存储。</p>
+<ul>
+<li>列表对象保存的所有字符串元素的长度小于64字节</li>
+<li>列表对象保存的元素数量小于512个。</li>
+</ul>
+<hr>
+<h1 id="编码转化"><a href="#编码转化" class="headerlink" title="编码转化"></a>编码转化</h1><p>Redis 使用对象（redisObject）来表示数据库中的键值，当我们在 Redis 中创建一个键值对时，至少创建两个对象，一个对象是用做键值对的键对象，另一个是键值对的值对象。</p>
+<p>例如我们执行 SET MSG XXX 时，键值对的键是一个包含了字符串“MSG“的对象，键值对的值对象是包含字符串”XXX”的对象。</p>
+<p>redisObject 的结构如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">redisObject</span>&#123;</span></span><br><span class="line">    <span class="comment">//类型</span></span><br><span class="line">   <span class="keyword">unsigned</span> type:<span class="number">4</span>;</span><br><span class="line">   <span class="comment">//编码</span></span><br><span class="line">   <span class="keyword">unsigned</span> encoding:<span class="number">4</span>;</span><br><span class="line">   <span class="comment">//指向底层数据结构的指针</span></span><br><span class="line">   <span class="keyword">void</span> *ptr;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line"> &#125;robj;</span><br></pre></td></tr></table></figure>
+
+<p>其中 type 字段记录了对象的类型，包含字符串对象、列表对象、哈希对象、集合对象、有序集合对象。<br>ptr 指针字段指向对象底层实现的数据结构，而这些数据结构是由 encoding 字段决定的，每种对象至少有两种数据编码：</p>
+<div align="center"><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0y3ppam19j30u00h37ct.jpg"></div>
+可以通过 object encoding key 来查看对象所使用
+
+<h2 id="String-对象的编码转化"><a href="#String-对象的编码转化" class="headerlink" title="String 对象的编码转化"></a>String 对象的编码转化</h2><p>String 对象的编码可以是 int 或 raw，对于 String 类型的键值，如果我们存储的是纯数字，Redis 底层采用的是 int 类型的编码，如果其中包括非数字，则会立即转为 raw 编码：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; set str 1</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; object encoding str</span><br><span class="line">"int"</span><br><span class="line">127.0.0.1:6379&gt; set str 1a</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; object encoding str</span><br><span class="line">"raw"</span><br><span class="line">127.0.0.1:6379&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="List-对象的编码转化"><a href="#List-对象的编码转化" class="headerlink" title="List 对象的编码转化"></a>List 对象的编码转化</h2><p>List 对象的编码可以是ziplist 或 linkedlist，对于 List 类型的键值，当列表对象同时满足以下两个条件时，采用 ziplist 编码：</p>
+<ul>
+<li>列表对象保存的所有字符串元素的长度都小于 64 字节。</li>
+<li>列表对象保存的元素个数小于 512 个。<br>如果不满足这两个条件的任意一个，就会转化为 linkedlist 编码。注意：这两个条件是可以修改的，在 redis.conf 中：<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">list-max-ziplist-entries 512</span><br><span class="line">list-max-ziplist-value 64</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="Set-类型的编码转化"><a href="#Set-类型的编码转化" class="headerlink" title="Set 类型的编码转化"></a>Set 类型的编码转化</h2><p>Set 对象的编码可以是 intset 或 hashtable，intset 编码的结构对象使用整数集合作为底层实现，把所有元素都保存在一个整数集合里面。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; sadd set 1 2 3</span><br><span class="line">(integer) 3</span><br><span class="line">127.0.0.1:6379&gt; object encoding set</span><br><span class="line">"intset"</span><br><span class="line">127.0.0.1:6379&gt;</span><br></pre></td></tr></table></figure>
+
+<p>如果 set 集合中保存了非整数类型的数据时，Redis 会将 intset 转化为 hashtable：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; sadd set 1 2 3</span><br><span class="line">(integer) 3</span><br><span class="line">127.0.0.1:6379&gt; object encoding set</span><br><span class="line">"intset"</span><br><span class="line">127.0.0.1:6379&gt; sadd set a</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; object encoding set</span><br><span class="line">"hashtable"</span><br><span class="line"> 127.0.0.1:6379&gt;</span><br></pre></td></tr></table></figure>
+
+<p>当 Set 对象同时满足以下两个条件时，对象采用 intset 编码：</p>
+<ul>
+<li>保存的所有元素都是整数值（小数不行）。</li>
+<li>Set 对象保存的所有元素个数小于 512 个。<br>不能满足这两个条件的任意一个，Set 都会采用 hashtable 存储。注意：第两个条件是可以修改的，在 redis.conf 中：<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set-max-intset-entries 512</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="Hash-对象的编码转化"><a href="#Hash-对象的编码转化" class="headerlink" title="Hash 对象的编码转化"></a>Hash 对象的编码转化</h2><p>Hash 对象的编码可以是 ziplist 或 hashtable，当 Hash 以 ziplist 编码存储的时候，保存同一键值对的两个节点总是紧挨在一起，键节点在前，值节点在后：<br>当 Hash 对象同时满足以下两个条件时，Hash 对象采用 ziplist 编码：</p>
+<ul>
+<li>Hash 对象保存的所有键值对的键和值的字符串长度均小于 64 字节。</li>
+<li>Hash 对象保存的键值对数量小于 512 个。<br>如果不满足以上条件的任意一个，ziplist 就会转化为 hashtable 编码。注意：这两个条件是可以修改的，在 redis.conf 中：<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hash-max-ziplist-entries 512</span><br><span class="line">hash-max-ziplist-value 64</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="Zset-对象的编码转化"><a href="#Zset-对象的编码转化" class="headerlink" title="Zset 对象的编码转化"></a>Zset 对象的编码转化</h2><p>Zset 对象的编码可以是 ziplist 或 zkiplist，当采用 ziplist 编码存储时，每个集合元素使用两个紧挨在一起的压缩列表来存储。</p>
+<p>第一个节点存储元素的成员，第二个节点存储元素的分值，并且按分值大小从小到大有序排列。</p>
+<p>当 Zset 对象同时满足一下两个条件时，采用 ziplist 编码：</p>
+<ul>
+<li>Zset 保存的元素个数小于 128。</li>
+<li>Zset 元素的成员长度都小于 64 字节。<br>如果不满足以上条件的任意一个，ziplist 就会转化为 zkiplist 编码。注意：这两个条件是可以修改的，在 redis.conf 中：<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">zset-max-ziplist-entries 128</span><br><span class="line">zset-max-ziplist-value 64</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2019/03/01/nginx总结/" class="pre-post btn btn-default" title='nginx总结'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">nginx总结</span>
+        </a>
+    
+    
+        <a href="/2019/02/27/Redis/redis总结/" class="next-post btn btn-default" title='redis总结'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">redis总结</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#基本概念"><span class="toc-text">基本概念</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#内部数据结构"><span class="toc-text">内部数据结构</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#简单动态字符串-SDS"><span class="toc-text">简单动态字符串(SDS)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#SDS-与-C-字符串的区别"><span class="toc-text">SDS 与 C 字符串的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#减少字符串修改时带来的内存重新分配的次数"><span class="toc-text">减少字符串修改时带来的内存重新分配的次数</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-字典-Hash"><span class="toc-text">3.字典(Hash)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Rehash"><span class="toc-text">Rehash</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#渐进式-Rehash"><span class="toc-text">渐进式 Rehash</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-Zset底层"><span class="toc-text">4. Zset底层</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-Set底层"><span class="toc-text">5. Set底层</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#List底层"><span class="toc-text">List底层</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#编码转化"><span class="toc-text">编码转化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#String-对象的编码转化"><span class="toc-text">String 对象的编码转化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#List-对象的编码转化"><span class="toc-text">List 对象的编码转化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Set-类型的编码转化"><span class="toc-text">Set 类型的编码转化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hash-对象的编码转化"><span class="toc-text">Hash 对象的编码转化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zset-对象的编码转化"><span class="toc-text">Zset 对象的编码转化</span></a></li></ol></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

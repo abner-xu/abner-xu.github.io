@@ -1,0 +1,352 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="图">
+
+
+    <meta name="description" content="1、深度优先搜索介绍图的深度优先搜索(Depth First Search)，和树的先序遍历比较类似。
+它的思想：假设初始状态是图中所有顶点均未被访问，则从某个顶点v出发，首先访问该顶点，然后依...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>深度优先和广度优先-理论 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="深度优先和广度优先-理论">
+            
+	            深度优先和广度优先-理论
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/数据结构/">数据结构</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+                    <a class="tag-link" href="/tags/图/">图</a>
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2020/02/18</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="1、深度优先搜索介绍"><a href="#1、深度优先搜索介绍" class="headerlink" title="1、深度优先搜索介绍"></a>1、深度优先搜索介绍</h1><p>图的深度优先搜索(Depth First Search)，和树的先序遍历比较类似。</p>
+<p>它的思想：假设初始状态是图中所有顶点均未被访问，则从某个顶点v出发，首先访问该顶点，然后依次从它的各个未被访问的邻接点出发深度优先搜索遍历图，直至图中所有和v有路径相通的顶点都被访问到。 若此时尚有其他顶点未被访问到，则另选一个未被访问的顶点作起始点，重复上述过程，直至图中所有顶点都被访问到为止。</p>
+<p>显然，深度优先搜索是一个递归的过程。</p>
+<p>#1.1 深度优先的代码模板</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">var vistied Set</span><br><span class="line">func dfs(node,vistied)&#123;</span><br><span class="line">    vistied.add(node)</span><br><span class="line">    //doSomething</span><br><span class="line">    for next_node in node.chlidren() &#123;</span><br><span class="line">        if next_node  not in vistied &#123;</span><br><span class="line">                dfs(next_node,vistied)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="2、深度优先图解"><a href="#2、深度优先图解" class="headerlink" title="2、深度优先图解"></a>2、深度优先图解</h1><h2 id="2-1-无向图的深度优先搜索"><a href="#2-1-无向图的深度优先搜索" class="headerlink" title="2.1 无向图的深度优先搜索"></a>2.1 无向图的深度优先搜索</h2><p>下面以”无向图”为例，来对深度优先搜索进行演示。</p>
+<div align="center"><img src="http://ww1.sinaimg.cn/large/007lnJOlly1gbp2xll06nj308f08fwf1.jpg"></div>
+
+<p>对上面的图G1进行深度优先遍历，从顶点A开始。</p>
+<div align="center"><img src="http://ww1.sinaimg.cn/large/007lnJOlly1gc0p8swr0mj30c409h0tw.jpg"></div>
+
+<p>第1步：访问A。<br>第2步：访问(A的邻接点)C。<br>    在第1步访问A之后，接下来应该访问的是A的邻接点，即”C,D,F”中的一个。但在本文的实现中，顶点ABCDEFG是按照顺序存储，C在”D和F”的前面，因此，先访问C。<br>第3步：访问(C的邻接点)B。<br>    在第2步访问C之后，接下来应该访问C的邻接点，即”B和D”中一个(A已经被访问过，就不算在内)。而由于B在D之前，先访问B。<br>第4步：访问(C的邻接点)D。<br>    在第3步访问了C的邻接点B之后，B没有未被访问的邻接点；因此，返回到访问C的另一个邻接点D。<br>第5步：访问(A的邻接点)F。<br>    前面已经访问了A，并且访问完了”A的邻接点B的所有邻接点(包括递归的邻接点在内)”；因此，此时返回到访问A的另一个邻接点F。<br>第6步：访问(F的邻接点)G。<br>第7步：访问(G的邻接点)E。</p>
+<p>因此访问顺序是：A -&gt; C -&gt; B -&gt; D -&gt; F -&gt; G -&gt; E</p>
+<h2 id="2-2-有向图的深度优先搜索"><a href="#2-2-有向图的深度优先搜索" class="headerlink" title="2.2 有向图的深度优先搜索"></a>2.2 有向图的深度优先搜索</h2><p>下面以”有向图”为例，来对深度优先搜索进行演示。</p>
+<div align="center"><img src="http://ww1.sinaimg.cn/large/007lnJOlly1gbp34sljjij308f08yq3k.jpg"></div>
+对上面的图G2进行深度优先遍历，从顶点A开始。
+<div align="center"><img src="http://ww1.sinaimg.cn/large/007lnJOlly1gc0pg2nd8ij308f0a0gmt.jpg"></div>
+
+<p>第1步：访问A。<br>第2步：访问B。<br>    在访问了A之后，接下来应该访问的是A的出边的另一个顶点，即顶点B。<br>第3步：访问C。<br>    在访问了B之后，接下来应该访问的是B的出边的另一个顶点，即顶点C,E,F。在本文实现的图中，顶点ABCDEFG按照顺序存储，因此先访问C。<br>第4步：访问E。<br>    接下来访问C的出边的另一个顶点，即顶点E。<br>第5步：访问D。<br>    接下来访问E的出边的另一个顶点，即顶点B,D。顶点B已经被访问过，因此访问顶点D。<br>第6步：访问F。<br>    接下应该回溯”访问A的出边的另一个顶点F”。<br>第7步：访问G。</p>
+<p>因此访问顺序是：A -&gt; B -&gt; C -&gt; E -&gt; D -&gt; F -&gt; G</p>
+<h1 id="3-广度优先搜索介绍"><a href="#3-广度优先搜索介绍" class="headerlink" title="3 广度优先搜索介绍"></a>3 广度优先搜索介绍</h1><p>广度优先搜索算法(Breadth First Search)，又称为”宽度优先搜索”或”横向优先搜索”，简称BFS。</p>
+<p>它的思想是：从图中某顶点v出发，在访问了v之后依次访问v的各个未曾访问过的邻接点，然后分别从这些邻接点出发依次访问它们的邻接点，并使得“先被访问的顶点的邻接点先于后被访问的顶点的邻接点被访问，直至图中所有已被访问的顶点的邻接点都被访问到。如果此时图中尚有顶点未被访问，则需要另选一个未曾被访问过的顶点作为新的起始点，重复上述过程，直至图中所有顶点都被访问到为止。</p>
+<p>换句话说，广度优先搜索遍历图的过程是以v为起点，由近至远，依次访问和v有路径相通且路径长度为1,2…的顶点。</p>
+<h2 id="3-1-广度搜索的模板"><a href="#3-1-广度搜索的模板" class="headerlink" title="3.1 广度搜索的模板"></a>3.1 广度搜索的模板</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">//广度搜索的模板</span><br><span class="line">func BFS(graph,start,end)&#123;</span><br><span class="line">	queue:=[]</span><br><span class="line">	var visited  Set</span><br><span class="line">	queue.append([start])</span><br><span class="line">	visited.add(start)</span><br><span class="line">	while !queue.isEmpty()&#123;</span><br><span class="line">		node=queue.pop()</span><br><span class="line">		visited.add(node)</span><br><span class="line">		doSomething(node)  //节点进行一些操作</span><br><span class="line">		nodes:=generate_related_node(node) //去取出当前节点的后继节点，方法</span><br><span class="line">		queue.push(nodes)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="4-广度优先搜索图解"><a href="#4-广度优先搜索图解" class="headerlink" title="4 广度优先搜索图解"></a>4 广度优先搜索图解</h1><h2 id="4-1-无向图的广度优先搜索"><a href="#4-1-无向图的广度优先搜索" class="headerlink" title="4.1 无向图的广度优先搜索"></a>4.1 无向图的广度优先搜索</h2><p>下面以”无向图”为例，来对广度优先搜索进行演示。还是以上面的图G1为例进行说明。</p>
+<div align="center"><img src="http://ww1.sinaimg.cn/large/007lnJOlly1gc1j945xd8j30eq0e70us.jpg"></div>
+
+<p>第1步：访问A。<br>第2步：依次访问C,D,F。<br>    在访问了A之后，接下来访问A的邻接点。前面已经说过，在本文实现中，顶点ABCDEFG按照顺序存储的，C在”D和F”的前面，因此，先访问C。再访问完C之后，再依次访问D,F。<br>第3步：依次访问B,G。<br>    在第2步访问完C,D,F之后，再依次访问它们的邻接点。首先访问C的邻接点B，再访问F的邻接点G。<br>第4步：访问E。<br>    在第3步访问完B,G之后，再依次访问它们的邻接点。只有G有邻接点E，因此访问G的邻接点E。</p>
+<p>因此访问顺序是：A -&gt; C -&gt; D -&gt; F -&gt; B -&gt; G -&gt; E</p>
+<h2 id="4-2-有向图的广度优先搜索"><a href="#4-2-有向图的广度优先搜索" class="headerlink" title="4.2 有向图的广度优先搜索"></a>4.2 有向图的广度优先搜索</h2><p>下面以”有向图”为例，来对广度优先搜索进行演示。还是以上面的图G2为例进行说明。</p>
+<div align="center"><img src="http://ww1.sinaimg.cn/large/007lnJOlly1gc1k4yj8yrj30fs0cndi3.jpg"></div>
+
+<p>第1步：访问A。<br>第2步：访问B。<br>第3步：依次访问C,E,F。<br>    在访问了B之后，接下来访问B的出边的另一个顶点，即C,E,F。前面已经说过，在本文实现中，顶点ABCDEFG按照顺序存储的，因此会先访问C，再依次访问E,F。<br>第4步：依次访问D,G。<br>    在访问完C,E,F之后，再依次访问它们的出边的另一个顶点。还是按照C,E,F的顺序访问，C的已经全部访问过了，那么就只剩下E,F；先访问E的邻接点D，再访问F的邻接点G。</p>
+<p>因此访问顺序是：A -&gt; B -&gt; C -&gt; E -&gt; F -&gt; D -&gt; G</p>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2020/03/16/LeetCode/Note/常用算法代码模板/" class="pre-post btn btn-default" title='常用算法代码模板'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">常用算法代码模板</span>
+        </a>
+    
+    
+        <a href="/2020/02/15/LeetCode/Data/图-广度和深度搜索(代码)/" class="next-post btn btn-default" title='广度和深度搜索代码'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">广度和深度搜索代码</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1、深度优先搜索介绍"><span class="toc-text">1、深度优先搜索介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2、深度优先图解"><span class="toc-text">2、深度优先图解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-无向图的深度优先搜索"><span class="toc-text">2.1 无向图的深度优先搜索</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-有向图的深度优先搜索"><span class="toc-text">2.2 有向图的深度优先搜索</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-广度优先搜索介绍"><span class="toc-text">3 广度优先搜索介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-广度搜索的模板"><span class="toc-text">3.1 广度搜索的模板</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-广度优先搜索图解"><span class="toc-text">4 广度优先搜索图解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1-无向图的广度优先搜索"><span class="toc-text">4.1 无向图的广度优先搜索</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-2-有向图的广度优先搜索"><span class="toc-text">4.2 有向图的广度优先搜索</span></a></li></ol></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

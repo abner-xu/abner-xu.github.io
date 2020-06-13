@@ -1,0 +1,332 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="面试,PHP异常">
+
+
+    <meta name="description" content="1. 异常1.1 抛出异常当一个异常被抛出后代码会立即停止执行，其后的代码将不会继续执行，PHP 会尝试查找匹配的 “catch” 代码块。如果一个异常没有被捕获，而且又没用使用set_exce...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>php错误和异常处理总结 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="php错误和异常处理总结">
+            
+	            php错误和异常处理总结
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/PHP/">PHP</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+                    <a class="tag-link" href="/tags/PHP异常/">PHP异常</a> <a class="tag-link" href="/tags/面试/">面试</a>
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2019/03/10</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+            <p class="fa fa-exclamation-triangle warning">
+                本文于<strong>461</strong>天之前发表，文中内容可能已经过时。
+            </p>
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="1-异常"><a href="#1-异常" class="headerlink" title="1. 异常"></a>1. 异常</h1><h2 id="1-1-抛出异常"><a href="#1-1-抛出异常" class="headerlink" title="1.1 抛出异常"></a>1.1 抛出异常</h2><p>当一个异常被抛出后代码会立即停止执行，其后的代码将不会继续执行，PHP 会尝试查找匹配的 “catch” 代码块。如果一个异常没有被捕获，而且又没用使用<font color="red">set_exception_handler()</font>作相应的处理的话，那么 PHP 将会产生一个严重的错误，并且输出未能捕获异常(Uncaught Exception …)的提示信息。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">throw</span> <span class="keyword">new</span> <span class="keyword">Exception</span>(<span class="string">"this is a exception"</span>);<span class="comment">//使用throw抛出异常</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="1-2-捕获异常"><a href="#1-2-捕获异常" class="headerlink" title="1.2 捕获异常"></a>1.2 捕获异常</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  <span class="keyword">throw</span> <span class="keyword">new</span> <span class="keyword">Exception</span>(<span class="string">"Error Processing Request"</span>);</span><br><span class="line">  $pdo = <span class="keyword">new</span> PDO(<span class="string">"mysql://host=wrong_host;dbname=wrong_name"</span>);</span><br><span class="line">&#125; <span class="keyword">catch</span> (PDOException $e) &#123;</span><br><span class="line">  <span class="keyword">echo</span> <span class="string">"pdo error!"</span>;</span><br><span class="line">&#125; <span class="keyword">catch</span>(<span class="keyword">Exception</span> $e)&#123;</span><br><span class="line">  <span class="keyword">echo</span> <span class="string">"exception!"</span>;</span><br><span class="line">&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">  <span class="keyword">echo</span> <span class="string">"end!"</span>;<span class="comment">//finally是在捕获到任何类型的异常后都会运行的一段代码</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//运行结果：exception！end！</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="1-3-异常处理"><a href="#1-3-异常处理" class="headerlink" title="1.3 异常处理"></a>1.3 异常处理</h2><p>那么我们应该如何捕获每个可能抛出的异常呢？PHP允许我们注册一个全局异常处理程序，捕获所有<font color="red">未被捕获的异常</font>。异常处理程序使用<font color="red">set_exception_handler()</font>函数注册（这里使用匿名函数）。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">set_exception_handler(<span class="function"><span class="keyword">function</span> <span class="params">(Exception $e)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">"我自己定义的异常处理"</span>.$e-&gt;getMessage();</span><br><span class="line">&#125;);</span><br><span class="line"><span class="keyword">throw</span> <span class="keyword">new</span> <span class="keyword">Exception</span>(<span class="string">"this is a exception"</span>);</span><br><span class="line"> </span><br><span class="line"><span class="comment">//运行结果：我自己定义的异常处理this is a exception</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="2-错误"><a href="#2-错误" class="headerlink" title="2. 错误"></a>2. 错误</h1><h2 id="2-1-错误处理"><a href="#2-1-错误处理" class="headerlink" title="2.1 错误处理"></a>2.1 错误处理</h2><p>与异常处理程序一样，我们也可以使用<font color="red">set_error_handler()</font>注册全局错误处理程序，使用自己的逻辑方式拦截并处理PHP错误。我们要在错误处理程序中调用die()或exit()函数。如果不调用，PHP脚本会从出错的地方继续向下执行。如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">set_error_handler(<span class="function"><span class="keyword">function</span> <span class="params">($errno,$errstr,$errfile,$errline)</span>//常用的四个参数</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">"错误等级："</span>.$errno.<span class="string">"&lt;br&gt;错误信息："</span>.$errstr.<span class="string">"&lt;br&gt;错误的文件名："</span>.$errfile.<span class="string">"&lt;br&gt;错误的行号："</span>.$errline;</span><br><span class="line">	<span class="keyword">exit</span>();</span><br><span class="line">&#125;);</span><br><span class="line"> </span><br><span class="line">trigger_error(<span class="string">"this is a error"</span>);<span class="comment">//手动触发的错误</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">echo</span> <span class="string">'正常'</span>; </span><br><span class="line"></span><br><span class="line"><span class="comment">// 运行结果：</span></span><br><span class="line"><span class="comment">// 错误等级：1024</span></span><br><span class="line"><span class="comment">// 错误信息：this is a error</span></span><br><span class="line"><span class="comment">// 错误的文件名：/Users/toby/Desktop/www/Exception.php</span></span><br><span class="line"><span class="comment">// 错误的行号：33</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-2-错误转成异常"><a href="#2-2-错误转成异常" class="headerlink" title="2.2 错误转成异常"></a>2.2 错误转成异常</h2><p>我们可以把PHP错误转换为异常（并不是所有的错误都可以转换,只能转换php.ini文件中error_reporting指令设置的错误），使用处理异常的现有流程处理错误。这里我们使用set_error_handler()函数将错误信息托管至ErrorException（它是Exception的子类），进而交给现有的异常处系统处理。如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">set_exception_handler(<span class="function"><span class="keyword">function</span> <span class="params">(Exception $e)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">"我自己定义的异常处理"</span>.$e-&gt;getMessage();</span><br><span class="line">&#125;);</span><br><span class="line"> </span><br><span class="line">set_error_handler(<span class="function"><span class="keyword">function</span> <span class="params">($errno, $errstr, $errfile, $errline )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">throw</span> <span class="keyword">new</span> ErrorException($errstr, <span class="number">0</span>, $errno, $errfile, $errline);<span class="comment">//转换为异常</span></span><br><span class="line">&#125;);</span><br><span class="line"> </span><br><span class="line">trigger_error(<span class="string">"this is a error"</span>);<span class="comment">//自行触发错误</span></span><br></pre></td></tr></table></figure>
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2019/05/10/Go/相对路径问题/" class="pre-post btn btn-default" title='Go相对路径问题'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">Go相对路径问题</span>
+        </a>
+    
+    
+        <a href="/2019/03/09/php垃圾回收/" class="next-post btn btn-default" title='php垃圾回收引发的一些底层了解'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">php垃圾回收引发的一些底层了解</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-异常"><span class="toc-text">1. 异常</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-抛出异常"><span class="toc-text">1.1 抛出异常</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-捕获异常"><span class="toc-text">1.2 捕获异常</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-异常处理"><span class="toc-text">1.3 异常处理</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-错误"><span class="toc-text">2. 错误</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-错误处理"><span class="toc-text">2.1 错误处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-错误转成异常"><span class="toc-text">2.2 错误转成异常</span></a></li></ol></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

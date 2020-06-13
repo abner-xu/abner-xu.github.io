@@ -1,0 +1,359 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="图">
+
+
+    <meta name="description" content="图的定义定义：图(graph)是由一些点(vertex)和这些点之间的连线(edge)所组成的；其中，点通常被成为”顶点(vertex)”，而点与点之间的连线则被成为”边或弧”(edege)。通...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>图-基本概念 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="图-基本概念">
+            
+	            图-基本概念
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/数据结构/">数据结构</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+                    <a class="tag-link" href="/tags/图/">图</a>
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2020/02/08</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="图的定义"><a href="#图的定义" class="headerlink" title="图的定义"></a>图的定义</h1><p>定义：图(graph)是由一些点(vertex)和这些点之间的连线(edge)所组成的；其中，点通常被成为”顶点(vertex)”，而点与点之间的连线则被成为”边或弧”(edege)。通常记为，G=(V,E)。</p>
+<h1 id="图的种类"><a href="#图的种类" class="headerlink" title="图的种类"></a>图的种类</h1><p>根据边是否有方向，将图可以划分为：无向图和有向图。</p>
+<h2 id="无向图"><a href="#无向图" class="headerlink" title="无向图"></a>无向图</h2><div align="center">![1.jpg](http://ww1.sinaimg.cn/large/007lnJOlly1gbp2xll06nj308f08fwf1.jpg)</div>
+
+<p>上面的图G0是无向图，无向图的所有的边都是不区分方向的。G0=(V1,{E1})。其中，<br>(01) V1={A,B,C,D,E,F}。 V1表示由”A,B,C,D,E,F”几个顶点组成的集合。<br>(02) E1={(A,B),(A,C),(B,C),(B,E),(B,F),(C,F), (C,D),(E,F),(C,E)}。 E1是由边(A,B),边(A,C)…等等组成的集合。其中，(A,C)表示由顶点A和顶点C连接成的边。</p>
+<h2 id="有向图"><a href="#有向图" class="headerlink" title="有向图"></a>有向图</h2><div align="center">![2.jpg](http://ww1.sinaimg.cn/large/007lnJOlly1gbp34sljjij308f08yq3k.jpg)</div>
+
+<p>上面的图G2是有向图。和无向图不同，有向图的所有的边都是有方向的！ G2=(V2,{A2})。其中，<br>(01) V2={A,C,B,F,D,E,G}。 V2表示由”A,B,C,D,E,F,G”几个顶点组成的集合。<br>(02) <code>A2={&lt;A,B&gt;,&lt;B,C&gt;,&lt;B,F&gt;,&lt;B,E&gt;,&lt;C,E&gt;,&lt;E,D&gt;,&lt;D,C&gt;,&lt;E,B&gt;,&lt;F,G&gt;}</code>。 E1是由矢量&lt;<code>A,B&gt;</code>,矢量<code>&lt;B,C&gt;...</code>等等组成的集合。其中，矢量<code>&lt;A,C)</code>表示由”顶点A”指向”顶点C”的有向边。</p>
+<hr>
+<h1 id="邻接点和度"><a href="#邻接点和度" class="headerlink" title="邻接点和度"></a>邻接点和度</h1><h2 id="邻接点"><a href="#邻接点" class="headerlink" title="邻接点"></a>邻接点</h2><p>一条边上的两个顶点叫做邻接点。<br>例如，上面无向图G0中的顶点A和顶点C就是邻接点。<br>在有向图中，除了邻接点之外；还有”入边”和”出边”的概念。<br>顶点的入边，是指以该顶点为终点的边。而顶点的出边，则是指以该顶点为起点的边。<br>例如，上面有向图G2中的B和E是邻接点；&lt;B,E&gt;是B的出边，还是E的入边。</p>
+<h2 id="度"><a href="#度" class="headerlink" title="度"></a>度</h2><p>在无向图中，某个顶点的度是邻接到该顶点的边(或弧)的数目。<br>例如，上面无向图G0中顶点A的度是2。<br>在有向图中，度还有”入度”和”出度”之分。<br>某个顶点的入度，是指以该顶点为终点的边的数目。而顶点的出度，则是指以该顶点为起点的边的数目。<br>顶点的度=入度+出度。<br>例如，上面有向图G2中，顶点B的入度是2，出度是3；顶点B的度=2+3=5。</p>
+<h2 id="路径和回路"><a href="#路径和回路" class="headerlink" title="路径和回路"></a>路径和回路</h2><ul>
+<li>路径：如果顶点(Vm)到顶点(Vn)之间存在一个顶点序列。则表示Vm到Vn是一条路径。</li>
+<li>路径长度：路径中”边的数量”。</li>
+<li>简单路径：若一条路径上顶点不重复出现，则是简单路径。</li>
+<li>回路：若路径的第一个顶点和最后一个顶点相同，则是回路。</li>
+<li>简单回路：第一个顶点和最后一个顶点相同，其它各顶点都不重复的回路则是简单回路。</li>
+</ul>
+<h2 id="连通图和连通分量"><a href="#连通图和连通分量" class="headerlink" title="连通图和连通分量"></a>连通图和连通分量</h2><ul>
+<li>连通图：对无向图而言，任意两个顶点之间都存在一条无向路径，则称该无向图为连通图。 对有向图而言，若图中任意两个顶点之间都存在一条有向路径，则称该有向图为强连通图。</li>
+<li>连通分量：非连通图中的各个连通子图称为该图的连通分量。</li>
+</ul>
+<h2 id="权"><a href="#权" class="headerlink" title="权"></a>权</h2><p>在学习”哈夫曼树”的时候，了解过”权”的概念。图中权的概念与此类似。</p>
+<div align="center">![1.jpg](http://ww1.sinaimg.cn/large/007lnJOlly1gbp4fje3fhj308f08f750.jpg)</div>
+
+<h1 id="图的存储结构"><a href="#图的存储结构" class="headerlink" title="图的存储结构"></a>图的存储结构</h1><p>图的存储结构，常用的是”邻接矩阵”和”邻接表”。</p>
+<h2 id="邻接矩阵"><a href="#邻接矩阵" class="headerlink" title="邻接矩阵"></a>邻接矩阵</h2><p>邻接矩阵是指用矩阵来表示图。它是采用矩阵来描述图中顶点之间的关系(及弧或边的权)。<br>假设图中顶点数为n，则邻接矩阵定义为：</p>
+<div align="center"><![1.jpg](http://ww1.sinaimg.cn/large/007lnJOlly1gbp5jqxsw5j30bl0350t7.jpg)</div>
+
+<p>下面通过示意图来进行解释。</p>
+<div align="center">![1.jpg](http://ww1.sinaimg.cn/large/007lnJOlly1gbp5jqzli7j30lk08yac8.jpg)</div>
+
+<p>图中的G1是无向图和它对应的邻接矩阵。</p>
+<div align="center">![1.jpg](http://ww1.sinaimg.cn/large/007lnJOlly1gbp5jr2yy6j30l108yjtk.jpg)</div>
+
+<p>图中的G2是无向图和它对应的邻接矩阵。<br>通常采用两个数组来实现邻接矩阵：一个一维数组用来保存顶点信息，一个二维数组来用保存边的信息。<br>邻接矩阵的缺点就是比较耗费空间。</p>
+<h2 id="邻接表"><a href="#邻接表" class="headerlink" title="邻接表"></a>邻接表</h2><p>邻接表是图的一种链式存储表示方法。它是改进后的”邻接矩阵”，它的缺点是不方便判断两个顶点之间是否有边，但是相对邻接矩阵来说更省空间。</p>
+<div align="center">![1.jpg](http://ww1.sinaimg.cn/large/007lnJOlly1gbp5oq9oxuj30n409hq54.jpg)</div>
+
+<p>图中的G1是无向图和它对应的邻接矩阵。</p>
+<div align="center">![1.jpg](http://ww1.sinaimg.cn/large/007lnJOlly1gbp5opwpx7j30lk09hq4x.jpg)c</div>
+
+
+
+</div>
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2020/02/15/LeetCode/Data/图-广度和深度搜索(代码)/" class="pre-post btn btn-default" title='广度和深度搜索代码'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">广度和深度搜索代码</span>
+        </a>
+    
+    
+        <a href="/2020/01/14/LeetCode/Data/堆-二叉堆/" class="next-post btn btn-default" title='二叉堆'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">二叉堆</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#图的定义"><span class="toc-text">图的定义</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#图的种类"><span class="toc-text">图的种类</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#无向图"><span class="toc-text">无向图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#有向图"><span class="toc-text">有向图</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#邻接点和度"><span class="toc-text">邻接点和度</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#邻接点"><span class="toc-text">邻接点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#度"><span class="toc-text">度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#路径和回路"><span class="toc-text">路径和回路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连通图和连通分量"><span class="toc-text">连通图和连通分量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#权"><span class="toc-text">权</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#图的存储结构"><span class="toc-text">图的存储结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#邻接矩阵"><span class="toc-text">邻接矩阵</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#邻接表"><span class="toc-text">邻接表</span></a></li></ol></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

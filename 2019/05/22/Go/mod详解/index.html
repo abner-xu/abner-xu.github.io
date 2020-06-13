@@ -1,0 +1,393 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="docker、PHP、Golang、Redis、MySQL、Web面试；">
+
+
+    <meta name="description" content="go mod的介绍我们以前用 go get 获取依赖其实是有潜在危险的，因为我们不确定最新版依赖是否会破坏掉我们项目对依赖包的使用方式，即当前项目可能会出现不兼容最新依赖包的问题。随着 go1....">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>go modules 详解 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="go modules 详解">
+            
+	            go modules 详解
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/Golang/">Golang</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2019/05/22</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+            <p class="fa fa-exclamation-triangle warning">
+                本文于<strong>388</strong>天之前发表，文中内容可能已经过时。
+            </p>
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="go-mod的介绍"><a href="#go-mod的介绍" class="headerlink" title="go mod的介绍"></a>go mod的介绍</h1><p>我们以前用 go get 获取依赖其实是有潜在危险的，因为我们不确定最新版依赖是否会破坏掉我们项目对依赖包的使用方式，即当前项目可能会出现不兼容最新依赖包的问题。随着 go1.11 的发布，go 给我们带来了 module 新特性，这是 Go 语言新的一套依赖管理系统。</p>
+<p>在默认情况下，$GOPATH 默认情况下是不支持 go mudules 的，我们需要在项目目录下手动执行以下命令：<code>$ export GO111MODULE=on</code>,这也表明了 go 要利用 modules 机制消灭 $GOPATH 的决心啊！</p>
+<p>GO111MODULE可以设置为三个字符串值之一：off，on或auto（默认值）</p>
+<ul>
+<li>off : go命令从不使用新模块支持。它查找vendor 目录和GOPATH以查找依赖关系;也就是继续使用“GOPATH模式”。</li>
+<li>on : go命令需要使用模块，go 会忽略 $GOPATH 和 vendor 文件夹，只根据go.mod下载依赖。</li>
+<li>auto 或未设置: go命令根据当前目录启用或禁用模块支持。仅当当前目录位于$GOPATH/src之外并且其本身包含go.mod文件或位于包含go.mod文件的目录下时，才启用模块支持。</li>
+</ul>
+<p>演示使用教程</p>
+<ul>
+<li><p>创建项目,为了配合 go modules 机制，我们 $GOPATH 以外的目录创建一个 testmod 的包：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir testmod</span><br><span class="line">$ cd testmod</span><br><span class="line"></span><br><span class="line">$ echo &apos;package testmod</span><br><span class="line">		import &quot;fmt&quot;</span><br><span class="line">	func Hi(name string) string &#123;</span><br><span class="line">        return fmt.Sprintf(&quot;Hi, %s&quot;, name)</span><br><span class="line">&#125;&apos; &gt;&gt; testmod.go</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>初始化module</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ go mod init github.com/objcoding/testmod</span><br><span class="line">#这里如果是从git下来的，可以直接进入项目里面执行go init</span><br><span class="line">go: creating new go.mod: module github.com/objcoding/testmod</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>推送到 github 仓库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git init</span><br><span class="line">$ git add *</span><br><span class="line">$ git commit -am &quot;First commit&quot;</span><br><span class="line">$ git push -u origin master</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<hr>
+<h1 id="go-mudules-版本规则"><a href="#go-mudules-版本规则" class="headerlink" title="go mudules 版本规则"></a>go mudules 版本规则</h1><p>go modules 是一个版本化依赖管理系统，版本需要遵循一些规则，比如版本号需要遵循以下格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vX.Y.Z-pre.0.yyyymmddhhmmss-abcdefabcdef</span><br><span class="line">vX.0.0-yyyymmddhhmmss-abcdefabcdef</span><br><span class="line">vX.Y.(Z+1)-0.yyyymmddhhmmss-abcdefabcdef</span><br><span class="line">vX.Y.Z</span><br></pre></td></tr></table></figure>
+
+<p>vX.Y.Z 是我们仓库打的标签版本，也就是 go modules 是根据仓库标签来确定版本号的，因此我们发布版本时，需要给我们的仓库打上一个标签版本号。</p>
+<p>也就是版本号 + 时间戳 +hash，我们自己指定版本时只需要指定版本号即可，没有版本 tag 的则需要找到对应 commit 的时间和 hash 值。</p>
+<p>还有一个重要的规则是，版本 0 和 1，最好需要有不同的依赖路径，如：v1.0.0 和 v2.0.0 是有不同的依赖路径，下面会详细介绍一下这个版本规则。</p>
+<hr>
+<h1 id="发布版本"><a href="#发布版本" class="headerlink" title="发布版本"></a>发布版本</h1><p>了解了 go modules 的版本规则后，现在我们发布一下该项目的版本：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git tag v1.0.0</span><br><span class="line">$ git push --tags</span><br></pre></td></tr></table></figure>
+
+<p>这时我们最好还需要创建一条 v1 分支，以便我们在其它分支写代码不会影响到 v1.0.0 版本：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b v1</span><br><span class="line">$ git push -u origin v1</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="升级版本"><a href="#升级版本" class="headerlink" title="升级版本"></a>升级版本</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git commit -m &quot;update testmod&quot; testmod.go</span><br><span class="line">$ git tag v1.0.1</span><br><span class="line">$ git push --tags origin v1</span><br></pre></td></tr></table></figure>
+
+<p>现在我们的 项目已经升级到 v1.0.1 版本了，我们可以有多种方式获取这个版本依赖，go1.11 中，go get 拥有了很多新特性，我们可以直接通过以下命令获取 v1.01 版本依赖：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ go get github.com/objcoding/testmod@v1.0.1</span><br><span class="line">或者</span><br><span class="line">$ go mod edit -require=&quot;github.com/objcoding/testmod@v1.0.1&quot;</span><br><span class="line">$ go mod tidy</span><br></pre></td></tr></table></figure>
+
+<p>go mod edit -require 可以主动修改 go.md 文件中依赖的版本号，然后通过 go mod tidy 对版本进行更新，它会自动清理掉不需要的依赖项，同时可以将依赖项更新到当前版本。</p>
+<h1 id="主要版本升级"><a href="#主要版本升级" class="headerlink" title="主要版本升级"></a>主要版本升级</h1><p>上面版本规则说了，版本 0 和 1，即大版本更新，最好需要有不同的依赖路径，如：v1.0.0 和 v2.0.0 是有不同的依赖路径，那么用 go modules 怎么实现呢，我们可以通过修改 go.mod 文件第一行添加新路径：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cd testmod</span><br><span class="line">$ echo &apos;module github.com/objcoding/testmod/v2&apos; &gt;&gt; go.mod</span><br></pre></td></tr></table></figure>
+
+<p>然后我们修改 testmod 函数 Hi()：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ cd testmod</span><br><span class="line"></span><br><span class="line">$ echo &apos;package testmod</span><br><span class="line">import (</span><br><span class="line">	&quot;fmt&quot;</span><br><span class="line">	&quot;errors&quot;</span><br><span class="line">)</span><br><span class="line">func Hi(name, lang string) (string, error) &#123;</span><br><span class="line">	switch lang &#123;</span><br><span class="line">	case &quot;en&quot;:</span><br><span class="line">		return fmt.Sprintf(&quot;Hi, %s!&quot;, name), nil</span><br><span class="line">	default:</span><br><span class="line">		return &quot;&quot;, errors.New(&quot;unknown language&quot;)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;&apos; &gt;&gt; testmod.go</span><br></pre></td></tr></table></figure>
+
+<p>这时，Hi() 方法将不兼容 v1 版本，我们需要新建一个 v2.0.0 版本，还是老样子，我们最好在 v2.0.0 版本新建一条 v2 分分支，将 v2.0.0 版本的代码写到这条分支中（这只是一个规范，实际上你将代码也写到任何分支中都行，go并没有这个规范）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ git add *</span><br><span class="line">$ git checkout -b v2</span><br><span class="line">$ git commit testmod.go -m &quot;v2.0.0&quot;</span><br><span class="line">$ git tag v2.0.0</span><br><span class="line">$ git push --tags origin v2</span><br></pre></td></tr></table></figure>
+
+<p>然后我们修改代码中的版本import,为v2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line">import (</span><br><span class="line">    &quot;fmt&quot;</span><br><span class="line">  	&quot;github.com/objcoding/testmod/v2&quot;</span><br><span class="line">)</span><br><span class="line">func main() &#123;</span><br><span class="line">    fmt.Println(testmod.Hi(&quot;zch&quot;, &quot;en&quot;))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后执行<code>go mod tidy</code>，go mod 会自动更新到v2.0.0版本</p>
+<hr>
+<h1 id="go-modules-命令大全"><a href="#go-modules-命令大全" class="headerlink" title="go modules 命令大全"></a>go modules 命令大全</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">go help modules</span><br><span class="line"></span><br><span class="line">go mod命令</span><br><span class="line"></span><br><span class="line">download    download modules to local cache (下载依赖的module到本地cache))</span><br><span class="line">edit        edit go.mod from tools or scripts (编辑go.mod文件)</span><br><span class="line">graph       print module requirement graph (打印模块依赖图))</span><br><span class="line">init        initialize new module in current directory (再当前文件夹下初始化一个新的module, 创建go.mod文件))</span><br><span class="line">tidy        add missing and remove unused modules (增加丢失的module，去掉未用的module)</span><br><span class="line">vendor      make vendored copy of dependencies (将依赖复制到vendor下)</span><br><span class="line">verify      verify dependencies have expected content (校验依赖)</span><br><span class="line">why         explain why packages or modules are needed (解释为什么需要依赖)</span><br><span class="line"></span><br><span class="line">初始化mod</span><br><span class="line"></span><br><span class="line">go mod init [module]可以创建一个go.mod，只有一行信息module。</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="goland支持go-mod"><a href="#goland支持go-mod" class="headerlink" title="goland支持go mod"></a>goland支持go mod</h1><p><img src="http://ww1.sinaimg.cn/large/aaba1596ly1g39dvp55v3j20li09f0tq.jpg" alt="go mode"></p>
+<hr>
+<h1 id="go-翻墙"><a href="#go-翻墙" class="headerlink" title="go 翻墙"></a>go 翻墙</h1><p>swag安装为例</p>
+<p>mac/linux swag 安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">## 127.0.0.1:1087 是 ssr的hhtp代理</span><br><span class="line">$ git config --global http.proxy &quot;127.0.0.1:1087&quot;</span><br><span class="line">$ http_proxy=127.0.0.1:1087 go get -u -v github.com/swaggo/swag/cmd/swag</span><br><span class="line">$ git config --global --unset-all http.proxy</span><br><span class="line">$ git config --global --unset-all https.proxy</span><br><span class="line">$ cd $GOPATH/src/github.com/swaggo/swag/cmd/swag</span><br><span class="line">$ go install</span><br><span class="line">$ swag -v #验证是否安装成功</span><br></pre></td></tr></table></figure>
+
+<p>window goget.bat文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@echo off</span><br><span class="line"></span><br><span class="line">set http_proxy=socks5://127.0.0.1:1080</span><br><span class="line">set https_proxy=socks5://127.0.0.1:1080</span><br><span class="line"></span><br><span class="line">go get -u -v %*</span><br><span class="line"></span><br><span class="line">echo ...</span><br><span class="line"></span><br><span class="line">pause</span><br></pre></td></tr></table></figure>
+
+<p>git bash上用goget.bat url就行了~</p>
+<hr>
+<h1 id="自建GOPROXY-server"><a href="#自建GOPROXY-server" class="headerlink" title="自建GOPROXY server"></a>自建GOPROXY server</h1><p>项目地址 <a href="https://github.com/gomods/athens" target="_blank" rel="noopener">https://github.com/gomods/athens</a><br>Athens可以用来在公司内部建立自己的私有go mod服务器，或者在公网建立一个对外公开的GOPROXY server。</p>
+<h1 id="可用镜像"><a href="#可用镜像" class="headerlink" title="可用镜像"></a>可用镜像</h1><ul>
+<li>阿里云:<a href="https://mirrors.aliyun.com/goproxy/" target="_blank" rel="noopener">https://mirrors.aliyun.com/goproxy/</a></li>
+<li>go代理:<a href="https://goproxy.io" target="_blank" rel="noopener">https://goproxy.io</a></li>
+<li>go代理:<a href="https://goproxy.cn" target="_blank" rel="noopener">https://goproxy.cn</a></li>
+</ul>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2019/05/28/ssh-script/" class="pre-post btn btn-default" title='ssh-script《ssh连接脚本》'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">ssh-script《ssh连接脚本》</span>
+        </a>
+    
+    
+        <a href="/2019/05/18/Go/项目打包发布/" class="next-post btn btn-default" title='基于Scratch创建最小且安全的golang docker镜像'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">基于Scratch创建最小且安全的golang docker镜像</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#go-mod的介绍"><span class="toc-text">go mod的介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#go-mudules-版本规则"><span class="toc-text">go mudules 版本规则</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#发布版本"><span class="toc-text">发布版本</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#升级版本"><span class="toc-text">升级版本</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#主要版本升级"><span class="toc-text">主要版本升级</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#go-modules-命令大全"><span class="toc-text">go modules 命令大全</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#goland支持go-mod"><span class="toc-text">goland支持go mod</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#go-翻墙"><span class="toc-text">go 翻墙</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#自建GOPROXY-server"><span class="toc-text">自建GOPROXY server</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#可用镜像"><span class="toc-text">可用镜像</span></a></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

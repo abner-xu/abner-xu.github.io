@@ -1,0 +1,437 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="Ubuntu">
+
+
+    <meta name="description" content="安装openssh-server
+sudo apt-get install openssh-server vim git
+
+替换国内源
+sudo cp /etc/apt/sources.list...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>Ubuntu开机优化 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="Ubuntu开机优化">
+            
+	            Ubuntu开机优化
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/工具/">工具</a> <a class="category-link" href="/categories/工具/Linux/">Linux</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+                    <a class="tag-link" href="/tags/Ubuntu/">Ubuntu</a>
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2017/02/25</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+            <p class="fa fa-exclamation-triangle warning">
+                本文于<strong>1203</strong>天之前发表，文中内容可能已经过时。
+            </p>
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h4 id="安装openssh-server"><a href="#安装openssh-server" class="headerlink" title="安装openssh-server"></a>安装openssh-server</h4><ul>
+<li>sudo apt-get install openssh-server vim git</li>
+</ul>
+<h4 id="替换国内源"><a href="#替换国内源" class="headerlink" title="替换国内源"></a>替换国内源</h4><ul>
+<li>sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup </li>
+<li>sudo vim /etc/apt/sources.list</li>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">deb http://mirrors.aliyun.com/ubuntu/ trusty main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ trusty-security main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ trusty-updates main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ trusty-proposed main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ trusty-backports main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ trusty main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ trusty-security main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ trusty-updates main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ trusty-proposed main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ trusty-backports main restricted universe multiverse</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h4 id="删除libreoffice"><a href="#删除libreoffice" class="headerlink" title="删除libreoffice"></a>删除libreoffice</h4><ul>
+<li>sudo apt-get remove libreoffice</li>
+</ul>
+<h4 id="删除Amazon的链接"><a href="#删除Amazon的链接" class="headerlink" title="删除Amazon的链接"></a>删除Amazon的链接</h4><ul>
+<li>sudo apt-get remove unity-webapps-common</li>
+</ul>
+<h4 id="删掉基本不用的自带软件（用的时候再装也来得及）"><a href="#删掉基本不用的自带软件（用的时候再装也来得及）" class="headerlink" title="删掉基本不用的自带软件（用的时候再装也来得及）"></a>删掉基本不用的自带软件（用的时候再装也来得及）</h4><ul>
+<li>sudo apt-get  remove   libreoffice-common   unity-webapps-common thunderbird totem rhythmbox  simple-scan gnome-mahjongg aisleriot gnome-mines cheese transmission-common gnome-orca gnome-sudoku webbrowser-app onboard deja-dup</li>
+</ul>
+<h4 id="删除自带的软件中心"><a href="#删除自带的软件中心" class="headerlink" title="删除自带的软件中心"></a>删除自带的软件中心</h4><ul>
+<li>sudo apt-get remove software-center</li>
+</ul>
+<h4 id="删除自带的图片编辑软件"><a href="#删除自带的图片编辑软件" class="headerlink" title="删除自带的图片编辑软件"></a>删除自带的图片编辑软件</h4><ul>
+<li>sudo apt-get remove imagemagick</li>
+</ul>
+<h4 id="关闭dash在线资源搜索"><a href="#关闭dash在线资源搜索" class="headerlink" title="关闭dash在线资源搜索"></a>关闭dash在线资源搜索</h4><ul>
+<li>gsettings set com.canonical.Unity.Lenses remote-content-search ‘none’</li>
+</ul>
+<hr>
+<h4 id="gdebi安装deb包更好的软件"><a href="#gdebi安装deb包更好的软件" class="headerlink" title="gdebi安装deb包更好的软件"></a>gdebi安装deb包更好的软件</h4><ul>
+<li>sudo apt-get install gdebi</li>
+</ul>
+<h4 id="rpm安装"><a href="#rpm安装" class="headerlink" title="rpm安装"></a>rpm安装</h4><ul>
+<li>sudo apt-get install alien ##alien默认没有安装，所以首先要安装它</li>
+<li>sudo alien xxxx.rpm ##将rpm转换位deb，完成后会生成一个同名的xxxx.deb</li>
+<li>sudo dpkg -i xxxx.deb ##安装</li>
+</ul>
+<h4 id="安装App-Grid软件中心"><a href="#安装App-Grid软件中心" class="headerlink" title="安装App Grid软件中心"></a>安装App Grid软件中心</h4><ul>
+<li>sudo add-apt-repository ppa:appgrid/stable</li>
+<li>sudo apt-get update &amp;&amp; sudo apt-get install appgrid</li>
+</ul>
+<h4 id="微信"><a href="#微信" class="headerlink" title="微信"></a>微信</h4><p><a href="https://github.com/geeeeeeeeek/electronic-wechat/releases" target="_blank" rel="noopener">微信客户端</a></p>
+<h4 id="设置时间使用UTC"><a href="#设置时间使用UTC" class="headerlink" title="设置时间使用UTC"></a>设置时间使用UTC</h4><ul>
+<li>sudo vim /etc/default/rcS  ###将UTC=no改为UTC=yes</li>
+</ul>
+<h4 id="安装Chrome"><a href="#安装Chrome" class="headerlink" title="安装Chrome"></a>安装Chrome</h4><ul>
+<li>sudo add-apt-repository  ppa:chromium-daily/stable</li>
+<li>sudo apt-get install chromium-browser chromium-browser-l10n</li>
+</ul>
+<h4 id="安装搜狗输入法"><a href="#安装搜狗输入法" class="headerlink" title="安装搜狗输入法"></a>安装搜狗输入法</h4><ul>
+<li>vim /etc/apt/sources.list.d/ubuntukylin.list文件，加入ubuntu kylin的apt源</li>
+<li>deb <a href="http://archive.ubuntukylin.com:10006/ubuntukylin" target="_blank" rel="noopener">http://archive.ubuntukylin.com:10006/ubuntukylin</a> trusty main</li>
+<li>sudo apt-get update</li>
+<li>sudo apt-get install sogoupinyin</li>
+</ul>
+<h4 id="安装WPS-Office"><a href="#安装WPS-Office" class="headerlink" title="安装WPS Office"></a>安装WPS Office</h4><ul>
+<li>sudo apt-get install wps-office</li>
+</ul>
+<h4 id="Java"><a href="#Java" class="headerlink" title="Java"></a>Java</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo vim ~/.bashrc</span><br><span class="line">export JAVA_HOME=/home/abner/jdk1.8.0</span><br><span class="line">export JRE_HOME=$&#123;JAVA_HOME&#125;/jre  </span><br><span class="line">export CLASSPATH=.:$&#123;JAVA_HOME&#125;/lib:$&#123;JRE_HOME&#125;/lib  </span><br><span class="line">export PATH=$&#123;JAVA_HOME&#125;/bin:$PATH</span><br><span class="line">source ~/.bashrc</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装Sublime-Text-3"><a href="#安装Sublime-Text-3" class="headerlink" title="安装Sublime Text 3"></a>安装Sublime Text 3</h4><ul>
+<li>sudo add-apt-repository ppa:webupd8team/sublime-text-3</li>
+<li>sudo apt-get update</li>
+<li>sudo apt-get install sublime-text</li>
+</ul>
+<h4 id="安装经典菜单指示器"><a href="#安装经典菜单指示器" class="headerlink" title="安装经典菜单指示器"></a>安装经典菜单指示器</h4><ul>
+<li>sudo add-apt-repository ppa:diesch/testing</li>
+<li>sudo apt-get update</li>
+<li>sudo apt-get install classicmenu-indicator</li>
+</ul>
+<h4 id="安装系统指示器SysPeek"><a href="#安装系统指示器SysPeek" class="headerlink" title="安装系统指示器SysPeek"></a>安装系统指示器SysPeek</h4><ul>
+<li>sudo add-apt-repository ppa:nilarimogard/webupd8</li>
+<li>sudo apt-get update</li>
+<li>sudo apt-get install syspeek</li>
+</ul>
+<h4 id="自定义DHCP网络的DNS-Server-IP地址"><a href="#自定义DHCP网络的DNS-Server-IP地址" class="headerlink" title="自定义DHCP网络的DNS Server IP地址"></a>自定义DHCP网络的DNS Server IP地址</h4><ul>
+<li>sudo vim /etc/dhcp/dhclient.conf文件，在第21行#prepend domain-name-servers 127.0.0.1;下一行添加如下2行使用aliyun和114的DNS</li>
+<li>prepend domain-name-servers 114.114.114.114;</li>
+<li>prepend domain-name-servers 223.5.5.5;</li>
+<li>这样可以优先使用aliyun的dns，次要使用114的DNS。</li>
+</ul>
+<h4 id="安装axel-多线程下载工具"><a href="#安装axel-多线程下载工具" class="headerlink" title="安装axel(多线程下载工具)"></a>安装axel(多线程下载工具)</h4><ul>
+<li>sudo apt-get install axel</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">常见用法</span></span><br><span class="line">直接下载这个文件</span><br><span class="line">axel http://www.baidu.com/img/bdlogo.gif</span><br><span class="line">多线程下载这个文件（10个线程）：</span><br><span class="line">axel -n 10 http://www.baidu.com/img/bdlogo.gif</span><br><span class="line">指定输出目录：</span><br><span class="line">axel -o ~/Pictures/ http://www.baidu.com/img/bdlogo.gif</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装ExFat文件系统驱动"><a href="#安装ExFat文件系统驱动" class="headerlink" title="安装ExFat文件系统驱动"></a>安装ExFat文件系统驱动</h4><ul>
+<li>sudo apt-get install exfat-fuse</li>
+</ul>
+<h4 id="安装unrar"><a href="#安装unrar" class="headerlink" title="安装unrar"></a>安装unrar</h4><ul>
+<li>sudo apt-get install unrar</li>
+<li>使用方法：unrar x test.rar</li>
+</ul>
+<h4 id="安装美化主题"><a href="#安装美化主题" class="headerlink" title="安装美化主题"></a>安装美化主题</h4><ul>
+<li>sudo apt-get install unity-tweak-tool</li>
+<li>sudo apt-get install unity-webapps-common</li>
+<li>下载主题包<a href="https://github.com/anmoljagetia/Flatabulous/archive/master.zip" target="_blank" rel="noopener">https://github.com/anmoljagetia/Flatabulous/archive/master.zip</a> 解压到/usr/share/themes目录下。</li>
+<li>sudo add-apt-repository ppa:noobslab/icons &amp;&amp; sudo apt-get update &amp;&amp; sudo apt-get install ultra-flat-icon</li>
+<li>安装好之后，打开Ubuntu Tweak 工具，主题选择Flatabulous，icons主题选择ultra-flat-icons</li>
+</ul>
+<h4 id="ZSH-OHMYZSH"><a href="#ZSH-OHMYZSH" class="headerlink" title="ZSH_OHMYZSH"></a>ZSH_OHMYZSH</h4><ul>
+<li>sudo apt-get install zsh</li>
+<li>wget –no-check-certificate <a href="https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh" target="_blank" rel="noopener">https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh</a> -O - | sh</li>
+<li>chsh -s /bin/zsh</li>
+<li>sudo reboot</li>
+</ul>
+<h4 id="node-js"><a href="#node-js" class="headerlink" title="node.js"></a>node.js</h4><ul>
+<li>curl -sL <a href="https://deb.nodesource.com/setup_8.x" target="_blank" rel="noopener">https://deb.nodesource.com/setup_8.x</a> | sudo -E bash -</li>
+<li>sudo apt-get install -y nodejs</li>
+</ul>
+<hr>
+<h4 id="双击软件都无法打开"><a href="#双击软件都无法打开" class="headerlink" title="双击软件都无法打开"></a>双击软件都无法打开</h4><ul>
+<li>sudo rm /home/sophie/.gnome2 -rf</li>
+</ul>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2017/12/25/Tools/Docker/Docker-搭建可一键部署的多域名LNMP环境/" class="pre-post btn btn-default" title='Docker搭建可一键部署的多域名LNMP环境'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">Docker搭建可一键部署的多域名LNMP环境</span>
+        </a>
+    
+    
+        <a href="/2017/02/13/Linux/Linux-Centos7优化/" class="next-post btn btn-default" title='Centos7开机优化'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">Centos7开机优化</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装openssh-server"><span class="toc-text">安装openssh-server</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#替换国内源"><span class="toc-text">替换国内源</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#删除libreoffice"><span class="toc-text">删除libreoffice</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#删除Amazon的链接"><span class="toc-text">删除Amazon的链接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#删掉基本不用的自带软件（用的时候再装也来得及）"><span class="toc-text">删掉基本不用的自带软件（用的时候再装也来得及）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#删除自带的软件中心"><span class="toc-text">删除自带的软件中心</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#删除自带的图片编辑软件"><span class="toc-text">删除自带的图片编辑软件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#关闭dash在线资源搜索"><span class="toc-text">关闭dash在线资源搜索</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#gdebi安装deb包更好的软件"><span class="toc-text">gdebi安装deb包更好的软件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#rpm安装"><span class="toc-text">rpm安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装App-Grid软件中心"><span class="toc-text">安装App Grid软件中心</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#微信"><span class="toc-text">微信</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#设置时间使用UTC"><span class="toc-text">设置时间使用UTC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装Chrome"><span class="toc-text">安装Chrome</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装搜狗输入法"><span class="toc-text">安装搜狗输入法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装WPS-Office"><span class="toc-text">安装WPS Office</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Java"><span class="toc-text">Java</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装Sublime-Text-3"><span class="toc-text">安装Sublime Text 3</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装经典菜单指示器"><span class="toc-text">安装经典菜单指示器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装系统指示器SysPeek"><span class="toc-text">安装系统指示器SysPeek</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#自定义DHCP网络的DNS-Server-IP地址"><span class="toc-text">自定义DHCP网络的DNS Server IP地址</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装axel-多线程下载工具"><span class="toc-text">安装axel(多线程下载工具)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装ExFat文件系统驱动"><span class="toc-text">安装ExFat文件系统驱动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装unrar"><span class="toc-text">安装unrar</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装美化主题"><span class="toc-text">安装美化主题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ZSH-OHMYZSH"><span class="toc-text">ZSH_OHMYZSH</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#node-js"><span class="toc-text">node.js</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#双击软件都无法打开"><span class="toc-text">双击软件都无法打开</span></a></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

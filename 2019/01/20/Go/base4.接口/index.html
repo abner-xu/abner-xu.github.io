@@ -1,0 +1,382 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="go基础">
+
+
+    <meta name="description" content="什么是接口在一些面向对象的编程语言中，例如 Java、PHP 等，接口定义了对象的行为，只指定了对象应该做什么。行为的具体实现取决于对象。
+在 Go 语言中，接口是一组方法的集合，但不包含方法的...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>Go基础-接口 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="Go基础-接口">
+            
+	            Go基础-接口
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/Golang/">Golang</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+                    <a class="tag-link" href="/tags/go基础/">go基础</a>
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2019/01/20</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+            <p class="fa fa-exclamation-triangle warning">
+                本文于<strong>509</strong>天之前发表，文中内容可能已经过时。
+            </p>
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="什么是接口"><a href="#什么是接口" class="headerlink" title="什么是接口"></a>什么是接口</h1><p>在一些面向对象的编程语言中，例如 Java、PHP 等，接口定义了对象的行为，只指定了对象应该做什么。行为的具体实现取决于对象。</p>
+<p>在 Go 语言中，接口是一组方法的集合，但不包含方法的实现、是抽象的，接口中也不能包含变量。当一个类型 T 提供了接口中所有方法的定义时，就说 T 实现了接口。接口指定类型应该有哪些方法，类型决定如何去实现这些方法。</p>
+<hr>
+<h1 id="接口声明"><a href="#接口声明" class="headerlink" title="接口声明"></a>接口声明</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Shape <span class="keyword">interface</span> &#123;</span><br><span class="line">    Area() <span class="keyword">float32</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的代码定义了接口类型 Shape，接口中包含了一个不带参数、返回值为 float32  的方法 Area()。任何实现了方法 Area() 的类型 T，我们就说它实现了接口 Shape。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> s Shape</span><br><span class="line">    fmt.Println(<span class="string">"value of s is"</span>, s)</span><br><span class="line">    fmt.Printf(<span class="string">"type of s is %T\n"</span>, s)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//output</span></span><br><span class="line">value of s is &lt;<span class="literal">nil</span>&gt;</span><br><span class="line"><span class="keyword">type</span> of s is &lt;<span class="literal">nil</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="接口的类型值"><a href="#接口的类型值" class="headerlink" title="接口的类型值"></a>接口的类型值</h1><h4 id="静态类型和动态类型"><a href="#静态类型和动态类型" class="headerlink" title="静态类型和动态类型"></a>静态类型和动态类型</h4><ul>
+<li>变量的类型在声明时指定、且不能改变，称为<code>静态类型</code>。</li>
+<li>接口类型的静态值就是接口本身。</li>
+<li>接口没有静态值，它指向的是动态值。</li>
+<li>接口类型的变量存的是实现接口的类型的值。该值就是接口的动态值，实现接口的类型就是接口的动态类型。<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Iname <span class="keyword">interface</span> &#123;</span><br><span class="line">    Mname()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> St1 <span class="keyword">struct</span> &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(St1)</span> <span class="title">Mname</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line"><span class="keyword">type</span> St2 <span class="keyword">struct</span> &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(St2)</span> <span class="title">Mname</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> i Iname = St1&#123;&#125;</span><br><span class="line">    fmt.Printf(<span class="string">"type is %T\n"</span>,i)</span><br><span class="line">    fmt.Printf(<span class="string">"value is %v\n"</span>,i)</span><br><span class="line">    i = St2&#123;&#125;</span><br><span class="line">    fmt.Printf(<span class="string">"type is %T\n"</span>,i)</span><br><span class="line">    fmt.Printf(<span class="string">"value is %v\n"</span>,i)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//output </span></span><br><span class="line"><span class="keyword">type</span> is main.St1</span><br><span class="line">value is &#123;&#125;</span><br><span class="line"><span class="keyword">type</span> is main.St2</span><br><span class="line">value is &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>变量<code>i</code>的静态类型是<code>Iname</code>,是不能改变的。动态类型却是不固定的。第一次分配是 <code>St1</code> 第二次是<code>St2</code>,动态值都是<code>空结构体</code><br>有时候，接口的动态类型又称为<code>具体类型</code>，当访问的时候，返回的是底层的动态值类型</p>
+<h4 id="nil值"><a href="#nil值" class="headerlink" title="nil值"></a>nil值</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Iname <span class="keyword">interface</span> &#123;</span><br><span class="line">    Mname()</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> St <span class="keyword">struct</span> &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(St)</span> <span class="title">Mname</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> t *St</span><br><span class="line">    <span class="keyword">if</span> t == <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">"t is nil"</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">"t is not nil"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> i Iname = t</span><br><span class="line">    fmt.Printf(<span class="string">"%T\n"</span>, i)</span><br><span class="line">    <span class="keyword">if</span> i == <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">"i is nil"</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">"i is not nil"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Printf(<span class="string">"i is nil pointer:%v"</span>,i == (*St)(<span class="literal">nil</span>))</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//output</span></span><br><span class="line">t is <span class="literal">nil</span></span><br><span class="line">*main.St</span><br><span class="line">i is not <span class="literal">nil</span></span><br><span class="line">i is <span class="literal">nil</span> pointer:<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p><code>当且仅当动态值和动态类型都为 nil 时，接口类型值才为 nil</code>。上面的代码，给变量 i  赋值之后，i 的动态值是 nil，但是动态类型却是 *St， i 是一个 nil 指针，所以条件不成立。</p>
+<p>Go语言规范：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> x <span class="keyword">interface</span>&#123;&#125;  <span class="comment">// x is nil and has static type interface&#123;&#125;</span></span><br><span class="line"><span class="keyword">var</span> v *T           <span class="comment">// v has value nil, static type *T</span></span><br><span class="line">x = <span class="number">42</span>             <span class="comment">// x has value 42 and dynamic type int</span></span><br><span class="line">x = v              <span class="comment">// x has value (*T)(nil) and dynamic type *T</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="实现接口"><a href="#实现接口" class="headerlink" title="实现接口"></a>实现接口</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Shape <span class="keyword">interface</span> &#123;</span><br><span class="line">    Area() <span class="keyword">float32</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Rect <span class="keyword">struct</span> &#123;</span><br><span class="line">    width  <span class="keyword">float32</span></span><br><span class="line">    height <span class="keyword">float32</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//结构体实现了接口</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r Rect)</span> <span class="title">Area</span><span class="params">()</span> <span class="title">float32</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> r.width * r.height</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> s Shape</span><br><span class="line">    s = Rect&#123;<span class="number">5.0</span>, <span class="number">4.0</span>&#125;</span><br><span class="line">    r := Rect&#123;<span class="number">5.0</span>, <span class="number">4.0</span>&#125;</span><br><span class="line">    fmt.Printf(<span class="string">"type of s is %T\n"</span>, s)</span><br><span class="line">    fmt.Printf(<span class="string">"value of s is %v\n"</span>, s)</span><br><span class="line">    fmt.Println(<span class="string">"area of rectange s"</span>, s.Area())</span><br><span class="line">    fmt.Println(<span class="string">"s == r is"</span>, s == r)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//output</span></span><br><span class="line"><span class="keyword">type</span> of s is main.Rect</span><br><span class="line">value of s is &#123;<span class="number">5</span> <span class="number">4</span>&#125;</span><br><span class="line">area of rectange s <span class="number">20</span></span><br><span class="line">s == r is <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="空接口"><a href="#空接口" class="headerlink" title="空接口"></a>空接口</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Println</span><span class="params">(a ...<span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> MyString <span class="keyword">string</span></span><br><span class="line"><span class="keyword">type</span> Rect <span class="keyword">struct</span> &#123;</span><br><span class="line">    width  <span class="keyword">float32</span></span><br><span class="line">    height <span class="keyword">float32</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">explain</span><span class="params">(i <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">    fmt.Printf(<span class="string">"type of s is %T\n"</span>, i)</span><br><span class="line">    fmt.Printf(<span class="string">"value of s is %v\n\n"</span>, i)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    ms := MyString(<span class="string">"Seekload"</span>)</span><br><span class="line">    r := Rect&#123;<span class="number">5.0</span>, <span class="number">4.0</span>&#125;</span><br><span class="line">    explain(ms)</span><br><span class="line">    explain(r)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//output</span></span><br><span class="line"><span class="keyword">type</span> of s is main.MyString</span><br><span class="line">value of s is Seekload</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> of s is main.Rect</span><br><span class="line">value of s is &#123;<span class="number">5</span> <span class="number">4</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的代码，创建了自定义的字符串类型 MyString 、结构体 Rect 和 explain() 函数。explain() 函数的形参是空接口，所以可以接收任意类型的值。</p>
+<hr>
+<h1 id="实现多个接口"><a href="#实现多个接口" class="headerlink" title="实现多个接口"></a>实现多个接口</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Shape <span class="keyword">interface</span> &#123;</span><br><span class="line">	Area() <span class="keyword">float32</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">type</span> Object <span class="keyword">interface</span> &#123;</span><br><span class="line">	Perimeter() <span class="keyword">float32</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Circle <span class="keyword">struct</span> &#123;</span><br><span class="line">	radius <span class="keyword">float32</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c Circle)</span> <span class="title">Area</span><span class="params">()</span> <span class="title">float32</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> math.Pi * (c.radius * c.radius)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c Circle)</span> <span class="title">Perimeter</span><span class="params">()</span> <span class="title">float32</span></span> &#123;</span><br><span class="line">   <span class="keyword">return</span> <span class="number">2</span> * math.Pi * c.radius</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    c := Circle&#123;<span class="number">3</span>&#125;</span><br><span class="line">    <span class="keyword">var</span> s Shape = c</span><br><span class="line">    <span class="keyword">var</span> p Object = c</span><br><span class="line">    fmt.Println(<span class="string">"area: "</span>, s.Area())</span><br><span class="line">    fmt.Println(<span class="string">"perimeter: "</span>, p.Perimeter())</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//output</span></span><br><span class="line">area:  <span class="number">28.274334</span></span><br><span class="line">perimeter:  <span class="number">18.849556</span></span><br></pre></td></tr></table></figure>
+
+<p>如果修改</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fmt.Println(<span class="string">"area: "</span>, p.Area())</span><br><span class="line">fmt.Println(<span class="string">"perimeter: "</span>, s.Perimeter())</span><br><span class="line"><span class="comment">//output</span></span><br><span class="line">p.Area undefined (<span class="keyword">type</span> Object has no field or method Area)</span><br><span class="line">s.Perimeter undefined (<span class="keyword">type</span> Shape has no field or method Perimeter)</span><br></pre></td></tr></table></figure>
+
+<p>因为 s 的静态类型是 Shape，而 p 的静态类型是 Object，此问题可以使用<code>类型断言</code></p>
+<hr>
+<h1 id="类型断言"><a href="#类型断言" class="headerlink" title="类型断言"></a>类型断言</h1><p>类型断言可以用来获取接口的底层值，通常的语法：<code>i.(Type)</code>，其中 i 是接口，Type 是类型或接口。编译时会自动检测 i 的动态类型与 Type 是否一致。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Shape <span class="keyword">interface</span> &#123;</span><br><span class="line">	Area() <span class="keyword">float32</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">type</span> Object <span class="keyword">interface</span> &#123;</span><br><span class="line">	Perimeter() <span class="keyword">float32</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Circle <span class="keyword">struct</span> &#123;</span><br><span class="line">	radius <span class="keyword">float32</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c Circle)</span> <span class="title">Area</span><span class="params">()</span> <span class="title">float32</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> math.Pi * (c.radius * c.radius)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c Circle)</span> <span class="title">Perimeter</span><span class="params">()</span> <span class="title">float32</span></span> &#123;</span><br><span class="line">   <span class="keyword">return</span> <span class="number">2</span> * math.Pi * c.radius</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> s Shape = Circle&#123;<span class="number">3</span>&#125;</span><br><span class="line">    c := s.(Circle)</span><br><span class="line">    <span class="keyword">var</span> p Object = c</span><br><span class="line">    fmt.Printf(<span class="string">"%T\n"</span>,c)</span><br><span class="line">    fmt.Printf(<span class="string">"%v\n"</span>,c)</span><br><span class="line">    fmt.Println(<span class="string">"area: "</span>, c.Area())</span><br><span class="line">    fmt.Println(<span class="string">"perimeter: "</span>, c.Perimeter())</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//output</span></span><br><span class="line">main.Circle</span><br><span class="line">&#123;<span class="number">3</span>&#125;</span><br><span class="line">area:  <span class="number">28.274334</span></span><br><span class="line">perimeter:  <span class="number">18.849556</span></span><br></pre></td></tr></table></figure>
+
+<p>上面的代码，我们可以通过 c 访问接口 s 的底层值，也可以通过 c 分别调用方法 Area() 和 Perimeter()，这就解决了上面遇到的问题。<br><code>在语法 i.(Type) 中，如果 Type 没有实现 i 所属的接口，编译的时候会报错；或者 i 的动态值不是 Type，则会报 panic 错误</code>。怎么解决呢？可以使用下面的语法:<code>value, ok := i.(Type)</code></p>
+<hr>
+<h1 id="类型选择"><a href="#类型选择" class="headerlink" title="类型选择"></a>类型选择</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">switchType</span><span class="params">(i <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">     <span class="keyword">switch</span> i.(<span class="keyword">type</span>) &#123;</span><br><span class="line">     <span class="keyword">case</span> <span class="keyword">string</span>:</span><br><span class="line">         fmt.Printf(<span class="string">"string and value is %s\n"</span>, i.(<span class="keyword">string</span>))</span><br><span class="line">     <span class="keyword">case</span> <span class="keyword">int</span>:</span><br><span class="line">         fmt.Printf(<span class="string">"int and value is %d\n"</span>, i.(<span class="keyword">int</span>))</span><br><span class="line">     <span class="keyword">default</span>:</span><br><span class="line">         fmt.Printf(<span class="string">"Unknown type\n"</span>)</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    switchType(<span class="string">"Seekload"</span>)</span><br><span class="line">    switchType(<span class="number">27</span>)</span><br><span class="line">    switchType(<span class="literal">true</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//output</span></span><br><span class="line"><span class="keyword">string</span> and value is Seekload</span><br><span class="line"><span class="keyword">int</span> and value is <span class="number">27</span></span><br><span class="line">Unknown <span class="keyword">type</span></span><br></pre></td></tr></table></figure>
+
+<p><code>注意：只有接口类型才可以进行类型选择</code>。其他类型，例如 int、string等是不能</p>
+<hr>
+<h1 id="接口嵌套"><a href="#接口嵌套" class="headerlink" title="接口嵌套"></a>接口嵌套</h1><p>Go 语言中，接口不能去实现别的接口也不能继承，但是可以通过嵌套接口创建新接口</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Math <span class="keyword">interface</span> &#123;</span><br><span class="line">	Shape</span><br><span class="line">	Object</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> Shape <span class="keyword">interface</span> &#123;</span><br><span class="line">	Area() <span class="keyword">float32</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Object <span class="keyword">interface</span> &#123;</span><br><span class="line">	Perimeter() <span class="keyword">float32</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Circle <span class="keyword">struct</span> &#123;</span><br><span class="line">	radius <span class="keyword">float32</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c Circle)</span> <span class="title">Area</span><span class="params">()</span> <span class="title">float32</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> math.Pi * (c.radius * c.radius)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c Circle)</span> <span class="title">Perimeter</span><span class="params">()</span> <span class="title">float32</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">2</span> * math.Pi * c.radius</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    c := Circle&#123;<span class="number">3</span>&#125;</span><br><span class="line">    <span class="keyword">var</span> m Math = c</span><br><span class="line">    fmt.Printf(<span class="string">"%T\n"</span>, m )</span><br><span class="line">    fmt.Println(<span class="string">"area: "</span>, m.Area())</span><br><span class="line">    fmt.Println(<span class="string">"perimeter: "</span>, m.Perimeter())</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//output</span></span><br><span class="line">main.Circle</span><br><span class="line">area:  <span class="number">28.274334</span></span><br><span class="line">perimeter:  <span class="number">18.849556</span></span><br></pre></td></tr></table></figure>
+
+<p>上面的代码，通过嵌套接口 Shape 和 Object，创建了新的接口 Math。任何类型如果实现了接口 Shape 和 Object 定义的方法，则说类型也实现了接口 Math，例如我们创建的结构体 Circle。<br>主函数里面，定义了接口类型的变量 m，动态类型是结构体 Circle，注意下方法 Area 和  Perimeter 的调用方式，类似与访问嵌套结构体的成员。</p>
+<hr>
+<h1 id="使用指针接收者和值接收者实现接口"><a href="#使用指针接收者和值接收者实现接口" class="headerlink" title="使用指针接收者和值接收者实现接口"></a>使用指针接收者和值接收者实现接口</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Shape <span class="keyword">interface</span> &#123;</span><br><span class="line">	Area() <span class="keyword">float32</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> Circle <span class="keyword">struct</span> &#123;</span><br><span class="line">	radius <span class="keyword">float32</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> Square <span class="keyword">struct</span> &#123;</span><br><span class="line">	side <span class="keyword">float32</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c Circle)</span> <span class="title">Area</span><span class="params">()</span> <span class="title">float32</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> math.Pi * (c.radius * c.radius)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Square)</span> <span class="title">Area</span><span class="params">()</span> <span class="title">float32</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> s.side*s.side</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> s Shape</span><br><span class="line">    c1 := Circle&#123;<span class="number">3</span>&#125;</span><br><span class="line">    s = c1</span><br><span class="line">    fmt.Printf(<span class="string">"%v\n"</span>,s.Area())</span><br><span class="line"></span><br><span class="line">    c2 := Circle&#123;<span class="number">4</span>&#125;</span><br><span class="line">    s = &amp;c2</span><br><span class="line">    fmt.Printf(<span class="string">"%v\n"</span>,s.Area())</span><br><span class="line"></span><br><span class="line">    c3 := Square&#123;<span class="number">3</span>&#125;</span><br><span class="line">    <span class="comment">//s = c3</span></span><br><span class="line">    s = &amp;c3</span><br><span class="line">    fmt.Printf(<span class="string">"%v\n"</span>,s.Area())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的代码，结构体 Circle 通过值接收者实现了接口 Shape。值接收者的方法可以使用值或者指针调用，所以上面的 c1 和 c2 的调用方式是合法的。</p>
+<p>结构体 Square 通过指针接收者实现了接口 Shape。如果将上方注释部分打开的话，编译就会出错：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cannot use c3 (<span class="keyword">type</span> Square) as <span class="keyword">type</span> Shape in assignment:</span><br><span class="line">Square does not implement Shape (Area method has pointer receiver)</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2019/02/20/Redis/缓存穿透-雪崩-击穿的解决方法/" class="pre-post btn btn-default" title='缓存穿透、雪崩、击穿的解决方法'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">缓存穿透、雪崩、击穿的解决方法</span>
+        </a>
+    
+    
+        <a href="/2019/01/18/Go/base3.切片/" class="next-post btn btn-default" title='Go基础-切片'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">Go基础-切片</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#什么是接口"><span class="toc-text">什么是接口</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#接口声明"><span class="toc-text">接口声明</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#接口的类型值"><span class="toc-text">接口的类型值</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#静态类型和动态类型"><span class="toc-text">静态类型和动态类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#nil值"><span class="toc-text">nil值</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#实现接口"><span class="toc-text">实现接口</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#空接口"><span class="toc-text">空接口</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#实现多个接口"><span class="toc-text">实现多个接口</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#类型断言"><span class="toc-text">类型断言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#类型选择"><span class="toc-text">类型选择</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#接口嵌套"><span class="toc-text">接口嵌套</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#使用指针接收者和值接收者实现接口"><span class="toc-text">使用指针接收者和值接收者实现接口</span></a></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>
