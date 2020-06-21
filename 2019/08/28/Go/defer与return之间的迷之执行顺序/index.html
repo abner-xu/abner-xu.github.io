@@ -19,8 +19,8 @@
     <meta name="keywords" content="docker、PHP、Golang、Redis、MySQL、Web面试；">
 
 
-    <meta name="description" content="偶然间发现了一个有意思的地方：在使用defer时，匿名返回值的函数和命名返回值的函数的返回结果是不一样的。具体见如下代码:
-12345678910111213141516171819202122...">
+    <meta name="description" content="执行顺序偶然间发现了一个有意思的地方：在使用defer时，匿名返回值的函数和命名返回值的函数的返回结果是不一样的。具体见如下代码:
+1234567891011121314151617181920...">
 
 
 
@@ -197,7 +197,7 @@
     </div>
     
     <div class="post-body post-content">
-        <p>偶然间发现了一个有意思的地方：在使用<code>defer</code>时，匿名返回值的函数和命名返回值的函数的返回结果是不一样的。具体见如下代码:</p>
+        <h1 id="执行顺序"><a href="#执行顺序" class="headerlink" title="执行顺序"></a>执行顺序</h1><p>偶然间发现了一个有意思的地方：在使用<code>defer</code>时，匿名返回值的函数和命名返回值的函数的返回结果是不一样的。具体见如下代码:</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f1</span><span class="params">()</span> <span class="params">(r <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		r++</span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="keyword">return</span> r</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f2</span><span class="params">()</span> <span class="params">(r <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	t := <span class="number">5</span></span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		t = t + <span class="number">5</span></span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="keyword">return</span> t</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f3</span><span class="params">()</span> <span class="params">(r <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">(r <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">		r = r + <span class="number">5</span></span><br><span class="line">	&#125;(r)</span><br><span class="line">	<span class="keyword">return</span> r</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f4</span><span class="params">(a <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">(r <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">		a = a + <span class="number">5</span></span><br><span class="line">	&#125;(a)</span><br><span class="line">	<span class="keyword">return</span> a</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"> 	fmt.Println(f1())</span><br><span class="line"> 	fmt.Println(f2())</span><br><span class="line"> 	fmt.Println(f3())</span><br><span class="line"> 	fmt.Println(f4(<span class="number">1</span>))</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//output </span></span><br><span class="line"><span class="number">1</span></span><br><span class="line"><span class="number">5</span></span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">1</span></span><br></pre></td></tr></table></figure>
 
 <ul>
@@ -224,6 +224,9 @@
 <li>执行defer函数；</li>
 <li>return携带返回值返回。</li>
 </ul>
+<h1 id="return-之后的-defer"><a href="#return-之后的-defer" class="headerlink" title="return 之后的 defer"></a>return 之后的 defer</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="keyword">bool</span> = <span class="literal">true</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span>&#123;</span><br><span class="line">        fmt.Println(<span class="string">"1"</span>)</span><br><span class="line">    &#125;()</span><br><span class="line">    <span class="keyword">if</span> a == <span class="literal">true</span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">"2"</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span>&#123;</span><br><span class="line">        fmt.Println(<span class="string">"3"</span>)</span><br><span class="line">    &#125;()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><em>defer 关键字后面的函数或者方法想要执行必须先注册，return 之后的 defer 是不能注册的， 也就不能执行后面的函数或方法。</em></p>
 
     </div>
     
@@ -241,15 +244,15 @@
 
 <div class="article-nav prev-next-wrap clearfix">
     
-        <a href="/2019/08/28/Go/defer的坑/" class="pre-post btn btn-default" title='Go 中 defer坑'>
+        <a href="/2019/08/28/Go/错误处理方案/" class="pre-post btn btn-default" title='Go-错误(error)处理方案'>
             <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
-            <span class="hidden-xs">Go 中 defer坑</span>
+            <span class="hidden-xs">Go-错误(error)处理方案</span>
         </a>
     
     
-        <a href="/2019/08/28/Go/channel总结/" class="next-post btn btn-default" title='Go-channel总结'>
+        <a href="/2019/08/28/Go/defer的坑/" class="next-post btn btn-default" title='Go 中 defer坑'>
             <span class="hidden-lg">下一篇</span>
-            <span class="hidden-xs">Go-channel总结</span><i class="fa fa-angle-right fa-fw"></i>
+            <span class="hidden-xs">Go 中 defer坑</span><i class="fa fa-angle-right fa-fw"></i>
         </a>
     
 </div>
@@ -271,7 +274,7 @@
     <div class="widget">
         <h3 class="title">文章目录</h3>
         
-            <p>暂无目录</p>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#执行顺序"><span class="toc-text">执行顺序</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#return-之后的-defer"><span class="toc-text">return 之后的 defer</span></a></li></ol>
         
     </div>
 </aside>
