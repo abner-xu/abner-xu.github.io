@@ -1,9 +1,10 @@
-<!DOCTYPE HTML>
 <html lang="zh-CN">
 <head><meta name="generator" content="Hexo 3.9.0">
     <!--Setting-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="referrer" content="same-origin">
+    <meta name="referrer" content="no-referrer">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <meta http-equiv="Cache-Control" content="no-transform">
@@ -99,7 +100,7 @@
 <![endif]-->
 
 <body>
-    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <header class="main-header"  style="background-image:url(http://ww2.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
     <div class="main-header-box">
         <a class="header-avatar" href="/" title='abner'>
             <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
@@ -198,6 +199,10 @@
 </div>
             
             
+            <p class="fa fa-exclamation-triangle warning">
+                本文于<strong>621</strong>天之前发表，文中内容可能已经过时。
+            </p>
+        
     </div>
     
     <div class="post-body post-content">
@@ -208,7 +213,7 @@
 <li>服务端-&gt;消费端出现网络抖动等问题的重发(下半场): 为了保证业务幂等性，业务消息体中，必须有一个biz-id，作为去重和幂等的依据，这个业务ID的特性是：对于同一个业务场景，全局唯一、由业务消息发送方生成，业务相关，对MQ透明、由业务消息消费方负责判重，以保证幂等，常见的有订单id,业务唯一id等</li>
 </ul>
 </li>
-<li><p>顺序消息问题<br>问题场景1：业务上产生三条消息，分别是对数据的增加、修改、删除，而如果没有保证顺序消费，结果可能是删除、修改、增加，本来数据最终要删除，最后结果变成增加<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf4n8253kpj31wm0ietcm.jpg" alt="1.png"></p>
+<li><p>顺序消息问题<br>问题场景1：业务上产生三条消息，分别是对数据的增加、修改、删除，而如果没有保证顺序消费，结果可能是删除、修改、增加，本来数据最终要删除，最后结果变成增加<br><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gf4n8253kpj31wm0ietcm.jpg" alt="1.png"></p>
 <p>解决方案,需要保证以下几点:</p>
 <ul>
 <li>发送的顺序消息，必须保证在投递到同一个队列，且这个消费者只能有一个（独占模式）</li>
@@ -237,7 +242,7 @@
 </li>
 </ul>
 </li>
-<li><p>镜像队列（集群模式可启用）：<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf4p4x7b4mj30sm0o0acg.jpg" alt="1.jpg"></p>
+<li><p>镜像队列（集群模式可启用）：<br><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gf4p4x7b4mj30sm0o0acg.jpg" alt="1.jpg"></p>
 <ul>
 <li>在镜像队列集群模式中，对某个queue来说，只有master对外提供服务，而其他slave只提供备份服务，在master所在节点不可用时，选出一个slave作为新的master继续对外提供服务。通常是加入时间最长的选中为新的master</li>
 <li>镜像队列不能作为负载均衡使用，因为每个声明和消息操作都要在所有节点复制一遍。</li>

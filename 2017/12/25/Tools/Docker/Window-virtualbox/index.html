@@ -1,0 +1,368 @@
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="referrer" content="same-origin">
+    <meta name="referrer" content="no-referrer">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="Docker">
+
+
+    <meta name="description" content="windows下工具安装
+centos下载：下载
+virtual-box下载: 下载
+git下载:下载
+
+拉取安装目录
+地址1：http://gitlab.kerlala.com:8888/xu...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>window下基于virtual-box的 docker LNMP环境搭建 | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww2.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="window下基于virtual-box的 docker LNMP环境搭建">
+            
+	            window下基于virtual-box的 docker LNMP环境搭建
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/工具/">工具</a> <a class="category-link" href="/categories/工具/Docker/">Docker</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+                    <a class="tag-link" href="/tags/Docker/">Docker</a>
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2017/12/25</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+            <p class="fa fa-exclamation-triangle warning">
+                本文于<strong>1239</strong>天之前发表，文中内容可能已经过时。
+            </p>
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <h2 id="windows下工具安装"><a href="#windows下工具安装" class="headerlink" title="windows下工具安装"></a>windows下工具安装</h2><ol>
+<li>centos下载：<a href="https://mirrors.aliyun.com/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-2003.iso" target="_blank" rel="noopener">下载</a></li>
+<li>virtual-box下载: <a href="https://dl.softmgr.qq.com/original/System/VirtualBox-6.1.16-140961-Win.exe" target="_blank" rel="noopener">下载</a></li>
+<li>git下载:<a href="https://dl.softmgr.qq.com/original/Development/Git-2.29.0-64-bit.exe" target="_blank" rel="noopener">下载</a></li>
+</ol>
+<h2 id="拉取安装目录"><a href="#拉取安装目录" class="headerlink" title="拉取安装目录"></a>拉取安装目录</h2><ul>
+<li>地址1：<a href="http://gitlab.kerlala.com:8888/xuchen/docker" target="_blank" rel="noopener">http://gitlab.kerlala.com:8888/xuchen/docker</a></li>
+</ul>
+<p>或者</p>
+<ul>
+<li>地址2：<a href="mailto:git@gitlab.kerlala.com" target="_blank" rel="noopener">git@gitlab.kerlala.com</a>:xuchen/docker.git</li>
+</ul>
+<p>例如拉取到E盘work目录<br><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gk2xepcx5xj30gt0h5753.jpg" alt="0.png"></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone git@gitlab.kerlala.com:xuchen/docker.git</span><br></pre></td></tr></table></figure>
+
+<h2 id="虚拟机安装操作系统"><a href="#虚拟机安装操作系统" class="headerlink" title="虚拟机安装操作系统"></a>虚拟机安装操作系统</h2><ol>
+<li>新建虚拟机<br><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gk2xfxuv69j30so0hrgmc.jpg" alt="1.png"></li>
+<li>新建注意事项<br>这里建议选80G动态空间，因为一旦虚拟机磁盘满了，迁移非常容易崩<br><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gk2xh29b57j30d40cqt8v.jpg" alt="2.png"></li>
+<li>操作系统安装，选择安装磁盘，安装过程（略）<br><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gk2xjisinzj30i80fot94.jpg" alt="3.png"></li>
+<li>进入系统，开启centos网卡<ol>
+<li>root用户进入虚拟机开启网卡，<code>vi /etc/sysconfig/network-scripts/ifcfg-enp0s3</code> ,部分网卡可能不是<code>enp0s3</code>，使用table键补全，查看即可</li>
+<li>进入后，修改<code>ONBOOT=no</code>为yes,保存退出,重启虚拟机</li>
+</ol>
+</li>
+</ol>
+<h2 id="配置端口"><a href="#配置端口" class="headerlink" title="配置端口"></a>配置端口</h2><p><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gk2y762t2uj31il0mxwg9.jpg" alt="4.png"></p>
+<h2 id="安装docker"><a href="#安装docker" class="headerlink" title="安装docker"></a>安装docker</h2><ol>
+<li>使用git bash上传本地<code>docker</code>文件夹中的shell脚本。<code>scp install.sh root@127.0.0.1:/root</code></li>
+<li>登录虚拟机<code>ssh root@127.0.0.1</code></li>
+<li>安装<ol>
+<li><code>vi install</code></li>
+<li><code>:set ff=unix</code> 保存退出</li>
+<li><code>./install</code> 根据提示 输入 1，完成后<code>关闭虚拟机软件</code></li>
+</ol>
+</li>
+<li>重新打开虚拟机软件，进行如下图操作设置<br><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gk3025p1z6j30wv0r840b.jpg" alt="5.png"><br>启动虚拟机，选择如下配置<br><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gk306sxhsyj30jg0csabw.jpg" alt="6.png"></li>
+<li>登录虚拟机， <code>./install</code> 根据提示 输入 2，完成步骤2安装,重启虚拟机    </li>
+</ol>
+<h2 id="启动docker"><a href="#启动docker" class="headerlink" title="启动docker"></a>启动docker</h2><ol>
+<li><code>docker-composer up -d</code>容器启动</li>
+<li>host配置<code>www.site1.com</code>，查看phpinfo()输出正常即可    </li>
+</ol>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2017/12/25/Tools/Docker/Docker-搭建可一键部署的多域名LNMP环境/" class="pre-post btn btn-default" title='Docker搭建可一键部署的多域名LNMP环境'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">Docker搭建可一键部署的多域名LNMP环境</span>
+        </a>
+    
+    
+        <a href="/2017/02/25/Linux/Linux-Ubuntu优化/" class="next-post btn btn-default" title='Ubuntu开机优化'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">Ubuntu开机优化</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#windows下工具安装"><span class="toc-text">windows下工具安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#拉取安装目录"><span class="toc-text">拉取安装目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#虚拟机安装操作系统"><span class="toc-text">虚拟机安装操作系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置端口"><span class="toc-text">配置端口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装docker"><span class="toc-text">安装docker</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#启动docker"><span class="toc-text">启动docker</span></a></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

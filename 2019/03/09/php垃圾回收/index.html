@@ -1,9 +1,10 @@
-<!DOCTYPE HTML>
 <html lang="zh-CN">
 <head><meta name="generator" content="Hexo 3.9.0">
     <!--Setting-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="referrer" content="same-origin">
+    <meta name="referrer" content="no-referrer">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <meta http-equiv="Cache-Control" content="no-transform">
@@ -97,7 +98,7 @@ Zend引擎：Zend整体用纯C实现，是PHP的内核部分，它将php代码�
 <![endif]-->
 
 <body>
-    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <header class="main-header"  style="background-image:url(http://ww2.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
     <div class="main-header-box">
         <a class="header-avatar" href="/" title='abner'>
             <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
@@ -197,18 +198,18 @@ Zend引擎：Zend整体用纯C实现，是PHP的内核部分，它将php代码�
             
             
             <p class="fa fa-exclamation-triangle warning">
-                本文于<strong>470</strong>天之前发表，文中内容可能已经过时。
+                本文于<strong>801</strong>天之前发表，文中内容可能已经过时。
             </p>
         
     </div>
     
     <div class="post-body post-content">
-        <h1 id="底层的运行原理和机制"><a href="#底层的运行原理和机制" class="headerlink" title="底层的运行原理和机制"></a>底层的运行原理和机制</h1><h2 id="四层体系架构图"><a href="#四层体系架构图" class="headerlink" title="四层体系架构图"></a>四层体系架构图</h2><p><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0wp6w9yegj30ee0epdi4.jpg" alt="底层"></p>
+        <h1 id="底层的运行原理和机制"><a href="#底层的运行原理和机制" class="headerlink" title="底层的运行原理和机制"></a>底层的运行原理和机制</h1><h2 id="四层体系架构图"><a href="#四层体系架构图" class="headerlink" title="四层体系架构图"></a>四层体系架构图</h2><p><img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0wp6w9yegj30ee0epdi4.jpg" alt="底层"></p>
 <p>Zend引擎：Zend整体用纯C实现，是PHP的内核部分，它将php代码翻译(词法、语法解析等一系列编译过程)为可执行opcode的 处理并实现相应的处理方法、实现了基本的数据结构(如hashtable、oo)、内存分配及管理、提供了相应的api方法供外部调用，是一切的核心，所 有的外围功能均围绕Zend实现。</p>
 <p>Extensions：围绕着Zend引擎，extensions通过组件式的方式提供各种基础服务，我们常见的各种内置函数(如array 系列)、标准库等都是通过extension来实现，用户也可以根据需要实现自己的extension以达到功能扩展、性能优化等目的(如贴吧正在使用的 PHP中间层、富文本解析就是extension的典型应用)。</p>
 <p>Sapi：Sapi全称是Server Application Programming Interface，也就是服务端应用编程接口，Sapi通过一系列钩子函数，使得PHP可以和外围交互数据，这是PHP非常优雅和成功的一个设计，通过 sapi成功的将PHP本身和上层应用解耦隔离，PHP可以不再考虑如何针对不同应用进行兼容，而应用本身也可以针对自己的特点实现不同的处理方式。</p>
 <p>上层应用：这就是我们平时编写的PHP程序，通过不同的sapi方式得到各种各样的应用模式，如通过webserver实现web应用、在命令行下以脚本方式运行等等。</p>
-<h1 id="PHP执行的几个阶段"><a href="#PHP执行的几个阶段" class="headerlink" title="PHP执行的几个阶段"></a>PHP执行的几个阶段</h1><p><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0whssv186j30u01ev0w1.jpg" alt="阶段"></p>
+<h1 id="PHP执行的几个阶段"><a href="#PHP执行的几个阶段" class="headerlink" title="PHP执行的几个阶段"></a>PHP执行的几个阶段</h1><p><img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0whssv186j30u01ev0w1.jpg" alt="阶段"></p>
 <blockquote>
 <p>PHP 是一门托管型语言，在 PHP 编程中，程序员不需要手工处理内存资源的分配与释放（使用 C 编写 PHP 或 Zend 扩展除外），这就意味着 PHP 本身实现了垃圾回收机制（Garbage Collection）。在<a href="http://php.net/manual/zh/features.gc.php" target="_blank" rel="noopener">PHP官方网站</a>可以看到对垃圾回收机制的介绍。</p>
 </blockquote>

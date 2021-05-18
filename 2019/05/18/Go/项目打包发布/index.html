@@ -1,9 +1,10 @@
-<!DOCTYPE HTML>
 <html lang="zh-CN">
 <head><meta name="generator" content="Hexo 3.9.0">
     <!--Setting-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="referrer" content="same-origin">
+    <meta name="referrer" content="no-referrer">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <meta http-equiv="Cache-Control" content="no-transform">
@@ -97,7 +98,7 @@
 <![endif]-->
 
 <body>
-    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <header class="main-header"  style="background-image:url(http://ww2.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
     <div class="main-header-box">
         <a class="header-avatar" href="/" title='abner'>
             <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
@@ -195,7 +196,7 @@
             
             
             <p class="fa fa-exclamation-triangle warning">
-                本文于<strong>400</strong>天之前发表，文中内容可能已经过时。
+                本文于<strong>731</strong>天之前发表，文中内容可能已经过时。
             </p>
         
     </div>
@@ -218,7 +219,7 @@
 
 <h3 id="go-mod模式项目包管理，加快构建速度"><a href="#go-mod模式项目包管理，加快构建速度" class="headerlink" title="go mod模式项目包管理，加快构建速度"></a>go mod模式项目包管理，加快构建速度</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ENV         GOPROXY https://goproxy.io   #设置代理，国内的墙你懂的</span><br><span class="line">ENV         GO111MODULE on  #开启go mod 模式  ，老版本GO111MODULE=auto 默认是自动</span><br><span class="line">WORKDIR     /go/cache  # 设置包的下载目录</span><br><span class="line">ADD         go.mod .</span><br><span class="line">ADD         go.sum .</span><br><span class="line">RUN         go mod download</span><br></pre></td></tr></table></figure>
 
-<p><img src="http://ww1.sinaimg.cn/large/aaba1596ly1g35sornlfqj20j70fl0ub.jpg" alt></p>
+<p><img src="http://ww2.sinaimg.cn/large/aaba1596ly1g35sornlfqj20j70fl0ub.jpg" alt></p>
 <h3 id="CGO编译使用"><a href="#CGO编译使用" class="headerlink" title="CGO编译使用"></a>CGO编译使用</h3><p>由于scratch是空镜像，</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -ldflags=&quot;-w -s&quot; -o server</span><br></pre></td></tr></table></figure>
 
@@ -228,7 +229,7 @@
 </ul>
 <h3 id="制作golang运行的容器"><a href="#制作golang运行的容器" class="headerlink" title="制作golang运行的容器"></a>制作golang运行的容器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">FROM        scratch AS prod #镜像版本</span><br><span class="line">COPY        --from=builder /etc/passwd /etc/passwd  #这里需要使用appuer账号信息</span><br><span class="line">COPY        --from=builder /usr/share/zoneinfo /usr/share/zoneinfo #时区</span><br><span class="line">COPY        --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ #SSL证书文件</span><br><span class="line">COPY        --from=builder /go/src/ginx/config /app/config #应用配置文件</span><br><span class="line">COPY        --from=builder /go/src/ginx/server /app #应用二进制文件</span><br><span class="line">USER        appuser #运行用户</span><br><span class="line">EXPOSE      9000 #暴露端口</span><br><span class="line">CMD         [&quot;/app/server&quot;, &quot;-e=prod&quot;] #运行应用，传入运行参数</span><br></pre></td></tr></table></figure>
 
-<h3 id="阿里云加速翻墙速度"><a href="#阿里云加速翻墙速度" class="headerlink" title="阿里云加速翻墙速度"></a>阿里云加速翻墙速度</h3><p>1、创建镜像仓库<br><img src="http://ww1.sinaimg.cn/large/aaba1596ly1g35tf5x503j20t10rb770.jpg" alt><br>2、填写仓库信息<br><img src="http://ww1.sinaimg.cn/large/aaba1596ly1g35tf5x503j20t10rb770.jpg" alt><br>3、选择仓库<code>管理</code>，进行配置仓库<br>4、选择git仓库版本，这里本人是放在github上，所以选择github，进行授权，选择自己的仓库和项目，配置如下具体dockerfile文件根据自己仓库路径配置<br><img src="http://ww1.sinaimg.cn/large/aaba1596ly1g35tiibz9wj20zb0l90uz.jpg" alt><br>5、选择构建即可</p>
+<h3 id="阿里云加速翻墙速度"><a href="#阿里云加速翻墙速度" class="headerlink" title="阿里云加速翻墙速度"></a>阿里云加速翻墙速度</h3><p>1、创建镜像仓库<br><img src="http://ww2.sinaimg.cn/large/aaba1596ly1g35tf5x503j20t10rb770.jpg" alt><br>2、填写仓库信息<br><img src="http://ww2.sinaimg.cn/large/aaba1596ly1g35tf5x503j20t10rb770.jpg" alt><br>3、选择仓库<code>管理</code>，进行配置仓库<br>4、选择git仓库版本，这里本人是放在github上，所以选择github，进行授权，选择自己的仓库和项目，配置如下具体dockerfile文件根据自己仓库路径配置<br><img src="http://ww2.sinaimg.cn/large/aaba1596ly1g35tiibz9wj20zb0l90uz.jpg" alt><br>5、选择构建即可</p>
 
     </div>
     

@@ -1,9 +1,10 @@
-<!DOCTYPE HTML>
 <html lang="zh-CN">
 <head><meta name="generator" content="Hexo 3.9.0">
     <!--Setting-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="referrer" content="same-origin">
+    <meta name="referrer" content="no-referrer">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <meta http-equiv="Cache-Control" content="no-transform">
@@ -97,7 +98,7 @@
 <![endif]-->
 
 <body>
-    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <header class="main-header"  style="background-image:url(http://ww2.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
     <div class="main-header-box">
         <a class="header-avatar" href="/" title='abner'>
             <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
@@ -197,7 +198,7 @@
             
             
             <p class="fa fa-exclamation-triangle warning">
-                本文于<strong>333</strong>天之前发表，文中内容可能已经过时。
+                本文于<strong>664</strong>天之前发表，文中内容可能已经过时。
             </p>
         
     </div>
@@ -273,10 +274,10 @@
 </ul>
 <h1 id="如何解决ES集群的脑裂问题"><a href="#如何解决ES集群的脑裂问题" class="headerlink" title="如何解决ES集群的脑裂问题"></a>如何解决ES集群的脑裂问题</h1><p>所谓集群脑裂，是指 Elasticsearch 集群中的节点（比如共 20 个），其中的 10 个选了一个 master，另外 10 个选了另一个 master 的情况。</p>
 <p>当集群 master 候选数量不小于 3 个时，可以通过设置最少投票通过数量（discovery.zen.minimum_master_nodes）超过所有候选节点一半以上来解决脑裂问题；<br>当候选数量为两个时，只能修改为唯一的一个 master 候选，其他作为 data 节点，避免脑裂问题。</p>
-<h1 id="详细描述一下ES索引文档的过程？"><a href="#详细描述一下ES索引文档的过程？" class="headerlink" title="详细描述一下ES索引文档的过程？"></a>详细描述一下ES索引文档的过程？</h1><p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf4yt7tfgej30km0argmj.jpg" alt="1.png"></p>
+<h1 id="详细描述一下ES索引文档的过程？"><a href="#详细描述一下ES索引文档的过程？" class="headerlink" title="详细描述一下ES索引文档的过程？"></a>详细描述一下ES索引文档的过程？</h1><p><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gf4yt7tfgej30km0argmj.jpg" alt="1.png"></p>
 <p>第一步：客户端向集群某节点写入数据，发送请求。（如果没有指定路由/协调节点，请求的节点扮演协调节点的角色。）<br>第二步：协调节点接受到请求后，默认使用文档 ID 参与计算（也支持通过 routing），得到该文档属于哪个分片。随后请求会被转到另外的节点。路由算法：根据文档id或路由计算目标的分片id shard = hash(document_id) % (num_of_primary_shards)<br>第三步：当分片所在的节点接收到来自协调节点的请求后，会将请求写入到 Memory Buffer，然后定时（默认是每隔 1 秒）写入到F ilesystem Cache，这个从 Momery Buffer 到 Filesystem Cache 的过程就叫做 refresh；<br>第四步：当然在某些情况下，存在 Memery Buffer 和 Filesystem Cache 的数据可能会丢失，ES 是通过 translog 的机制来保证数据的可靠性的。其实现机制是接收到请求后，同时也会写入到 translog 中，当 Filesystem cache 中的数据写入到磁盘中时，才会清除掉，这个过程叫做 flush；<br>第五步：在 flush 过程中，内存中的缓冲将被清除，内容被写入一个新段，段的 fsync 将创建一个新的提交点，并将内容刷新到磁盘，旧的 translog 将被删除并开始一个新的 translog。<br>第六步：flush 触发的时机是定时触发（默认 30 分钟）或者 translog 变得太大（默认为 512 M）时。</p>
 <h1 id="在并发情况下，ES如果保证读写一致？"><a href="#在并发情况下，ES如果保证读写一致？" class="headerlink" title="在并发情况下，ES如果保证读写一致？"></a>在并发情况下，ES如果保证读写一致？</h1><p>可以通过版本号使用乐观并发控制，以确保新版本不会被旧版本覆盖，由应用层来处理具体的冲突；<br>另外对于写操作，一致性级别支持quorum/one/all，默认为quorum，即只有当大多数分片可用时才允许写操作。但即使大多数可用，也可能存在因为网络等原因导致写入副本失败，这样该副本被认为故障，分片将会在一个不同的节点上重建。<br>对于读操作，可以设置replication为sync(默认)，这使得操作在主分片和副本分片都完成后才会返回；如果设置replication为async时，也可以通过设置搜索请求参数_preference为primary来查询主分片，确保文档是最新版本。</p>
-<h1 id="lucence内部结构"><a href="#lucence内部结构" class="headerlink" title="lucence内部结构"></a>lucence内部结构</h1><p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf4j65m4p3j30ft0d90t5.jpg" alt="1.jpeg"></p>
+<h1 id="lucence内部结构"><a href="#lucence内部结构" class="headerlink" title="lucence内部结构"></a>lucence内部结构</h1><p><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gf4j65m4p3j30ft0d90t5.jpg" alt="1.jpeg"></p>
 
     </div>
     

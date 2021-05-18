@@ -1,9 +1,10 @@
-<!DOCTYPE HTML>
 <html lang="zh-CN">
 <head><meta name="generator" content="Hexo 3.9.0">
     <!--Setting-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="referrer" content="same-origin">
+    <meta name="referrer" content="no-referrer">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <meta http-equiv="Cache-Control" content="no-transform">
@@ -106,7 +107,7 @@ Stri...">
 <![endif]-->
 
 <body>
-    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <header class="main-header"  style="background-image:url(http://ww2.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
     <div class="main-header-box">
         <a class="header-avatar" href="/" title='abner'>
             <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
@@ -206,7 +207,7 @@ Stri...">
             
             
             <p class="fa fa-exclamation-triangle warning">
-                本文于<strong>478</strong>天之前发表，文中内容可能已经过时。
+                本文于<strong>809</strong>天之前发表，文中内容可能已经过时。
             </p>
         
     </div>
@@ -230,12 +231,12 @@ Stri...">
 <li>HyperLogLog: 网站UV,独立IP计算等，主要也是一些去重计算，对数据精度要求不高，主要由于计算数据空间是固定的</li>
 <li>Geo：GEO(地理位置)的支持，主要是对经纬度一个位置计算等特性</li>
 </ol>
-<p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gdop1n2k6zj30hs0djju6.jpg" alt="2.png"></p>
+<p><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gdop1n2k6zj30hs0djju6.jpg" alt="2.png"></p>
 <hr>
-<h1 id="内部数据结构"><a href="#内部数据结构" class="headerlink" title="内部数据结构"></a>内部数据结构</h1><p>redis的底层数据结构有以下7种，包括<code>简单动态字符串(SDS)，链表、字典、跳跃表、整数集合、压缩列表、对象</code>。<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gdooy0gmemj30hs08ct8x.jpg" alt="1.jpeg"></p>
+<h1 id="内部数据结构"><a href="#内部数据结构" class="headerlink" title="内部数据结构"></a>内部数据结构</h1><p>redis的底层数据结构有以下7种，包括<code>简单动态字符串(SDS)，链表、字典、跳跃表、整数集合、压缩列表、对象</code>。<br><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gdooy0gmemj30hs08ct8x.jpg" alt="1.jpeg"></p>
 <hr>
 <h1 id="简单动态字符串-SDS"><a href="#简单动态字符串-SDS" class="headerlink" title="简单动态字符串(SDS)"></a>简单动态字符串(SDS)</h1><p>Redis 是用 C 语言开发完成的，但在 Redis 字符串中，并没有使用 C 语言中的字符串，而是用一种称为 SDS（Simple Dynamic String）的结构体来保存字符串。<br>在redis数据库里，包含字符串值的键值对在底层都是由SDS实现的。除了用来保存数据库中的字符串值之外，sds还被用来作缓冲区（buffer）：AOF（一种持久化策略）模块中的AOF缓冲区，以及客户端状态中的输入缓冲区，都是由SDS实现的。</p>
-<div align="center"><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0xzlkq5x1j309w06iaag.jpg"></div>
+<div align="center"><img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0xzlkq5x1j309w06iaag.jpg"></div>
 
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">attribute__</span> ((__<span class="title">packed__</span>)) <span class="title">sdshdr64</span> &#123;</span></span><br><span class="line">    <span class="keyword">uint64_t</span> len; <span class="comment">/*  记录buff数组中已使用字节的数量 */</span>   </span><br><span class="line">    <span class="keyword">uint64_t</span> <span class="built_in">free</span>; <span class="comment">/* 记录未使用字节数量*/</span></span><br><span class="line">    <span class="keyword">char</span> buf[]; <span class="comment">/*存储实际内容*/</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
@@ -250,7 +251,7 @@ Stri...">
 <p>惰性空间释放：当对 SDS 进行缩短操作时，程序并不会回收多余的内存空间，而是使用 free 字段将这些字节数量记录下来不释放，后面如果需要 append 操作，则直接使用 free 中未使用的空间，减少了内存的分配。</p>
 <hr>
 <h1 id="3-字典-Hash"><a href="#3-字典-Hash" class="headerlink" title="3.字典(Hash)"></a>3.字典(Hash)</h1><p>Redis底层hash结构如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dict</span>&#123;</span></span><br><span class="line">      dictType *type;</span><br><span class="line">    <span class="keyword">void</span> *privdata;</span><br><span class="line">    dictht ht[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">int</span> trehashidx;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictht</span>&#123;</span></span><br><span class="line">    <span class="comment">//哈希表数组</span></span><br><span class="line">    dectEntrt **table;</span><br><span class="line">    <span class="comment">//哈希表大小</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="built_in">size</span>;</span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> sizemask;</span><br><span class="line">    <span class="comment">//哈希表已有节点数量</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> used;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dict</span>&#123;</span></span><br><span class="line">      dictType *type;</span><br><span class="line">    <span class="keyword">void</span> *privdata;</span><br><span class="line">    dictht ht[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">int</span> trehashidx;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictht</span>&#123;</span></span><br><span class="line">    <span class="comment">//哈希表数组</span></span><br><span class="line">    dectEntrt **table;</span><br><span class="line">    <span class="comment">//哈希表大小</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> size;</span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> sizemask;</span><br><span class="line">    <span class="comment">//哈希表已有节点数量</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> used;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>重要的两个字段是 dictht 和 trehashidx</p>
 <h2 id="Rehash"><a href="#Rehash" class="headerlink" title="Rehash"></a>Rehash</h2><blockquote>
@@ -277,9 +278,9 @@ Stri...">
 </ul>
 <p>当ziplist作为zset的底层存储结构时候，每个集合元素使用两个紧挨在一起的压缩列表节点来保存，第一个节点保存元素的成员，第二个元素保存元素的分值。</p>
 <p>当skiplist作为zset的底层存储结构的时候，使用skiplist按序保存元素及分值，使用dict来保存元素和分值的映射关系。</p>
-<p>ziplist数据结构<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf4hntkfa6j30ym0dgwgk.jpg" alt="1.png"></p>
+<p>ziplist数据结构<br><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gf4hntkfa6j30ym0dgwgk.jpg" alt="1.png"></p>
 <p>skiplist数据结构<br> skiplist作为zset的存储结构，整体存储结构如下图，核心点主要是包括一个dict对象和一个skiplist对象。dict保存key/value，key为元素，value为分值；skiplist保存的有序的元素列表，每个元素包括元素和分值。两种数据结构下的元素指向相同的位置。</p>
-<p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf4hop6qq9j30wx0k3dhq.jpg" alt="2.png"></p>
+<p><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gf4hop6qq9j30wx0k3dhq.jpg" alt="2.png"></p>
 <hr>
 <h1 id="5-Set底层"><a href="#5-Set底层" class="headerlink" title="5. Set底层"></a>5. Set底层</h1><p>set的底层存储intset和hashtable是存在编码转换的，使用intset存储必须满足下面两个条件，否则使用hashtable，条件如下：</p>
 <ul>
@@ -306,7 +307,7 @@ Stri...">
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">redisObject</span>&#123;</span></span><br><span class="line">    <span class="comment">//类型</span></span><br><span class="line">   <span class="keyword">unsigned</span> type:<span class="number">4</span>;</span><br><span class="line">   <span class="comment">//编码</span></span><br><span class="line">   <span class="keyword">unsigned</span> encoding:<span class="number">4</span>;</span><br><span class="line">   <span class="comment">//指向底层数据结构的指针</span></span><br><span class="line">   <span class="keyword">void</span> *ptr;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line"> &#125;robj;</span><br></pre></td></tr></table></figure>
 
 <p>其中 type 字段记录了对象的类型，包含字符串对象、列表对象、哈希对象、集合对象、有序集合对象。<br>ptr 指针字段指向对象底层实现的数据结构，而这些数据结构是由 encoding 字段决定的，每种对象至少有两种数据编码：</p>
-<div align="center"><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0y3ppam19j30u00h37ct.jpg"></div>
+<div align="center"><img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0y3ppam19j30u00h37ct.jpg"></div>
 可以通过 object encoding key 来查看对象所使用
 
 <h2 id="String-对象的编码转化"><a href="#String-对象的编码转化" class="headerlink" title="String 对象的编码转化"></a>String 对象的编码转化</h2><p>String 对象的编码可以是 int 或 raw，对于 String 类型的键值，如果我们存储的是纯数字，Redis 底层采用的是 int 类型的编码，如果其中包括非数字，则会立即转为 raw 编码：</p>

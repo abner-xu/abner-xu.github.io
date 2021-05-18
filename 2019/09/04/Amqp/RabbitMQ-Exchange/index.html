@@ -1,9 +1,10 @@
-<!DOCTYPE HTML>
 <html lang="zh-CN">
 <head><meta name="generator" content="Hexo 3.9.0">
     <!--Setting-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="referrer" content="same-origin">
+    <meta name="referrer" content="no-referrer">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <meta http-equiv="Cache-Control" content="no-transform">
@@ -103,7 +104,7 @@ topic
 <![endif]-->
 
 <body>
-    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <header class="main-header"  style="background-image:url(http://ww2.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
     <div class="main-header-box">
         <a class="header-avatar" href="/" title='abner'>
             <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
@@ -202,6 +203,10 @@ topic
 </div>
             
             
+            <p class="fa fa-exclamation-triangle warning">
+                本文于<strong>621</strong>天之前发表，文中内容可能已经过时。
+            </p>
+        
     </div>
     
     <div class="post-body post-content">
@@ -215,7 +220,7 @@ topic
 <p>其中headers交换器允许你匹配AMQP消息的header而非路由键，除此之外headers交换器和direct交换器完全一致，但性能却很差，几乎用不到，所以我们本文也不做讲解。</p>
 <p><em>注意：fanout、topic交换器是没有历史数据的，也就是说对于中途创建的队列，获取不到之前的消息。</em></p>
 <h1 id="direct"><a href="#direct" class="headerlink" title="direct"></a>direct</h1><p>direct为默认的交换器类型，也非常的简单，如果路由键匹配的话，消息就投递到相应的队列，如图：</p>
-<div><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gcz4nahazsj30as0deaaq.jpg"><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gcz5lcc4o6j30cl07i0sy.jpg"></div>
+<div><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gcz4nahazsj30as0deaaq.jpg"><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gcz5lcc4o6j30cl07i0sy.jpg"></div>
 
 
 <p><em>注意：不能使用for循环单个消息消费来替代持续消息消费，因为这样性能很低；</em></p>
@@ -226,7 +231,7 @@ topic
 </li>
 <li><p>消息确认<br>看了上面的代码我们可以知道，消息接收到之后必须使用channel.basicAck()方法手动确认（非自动确认删除模式下），那么问题来了。</p>
 </li>
-<li><p>消息收到未确认会怎么样？<br>如果应用程序接收了消息，因为bug忘记确认接收的话，消息在队列的状态会从“Ready”变为“Unacked”，如图：<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gcz4qxvyoaj30ic02gdfo.jpg" alt="rabbitmq-unacked.png"><br><em>总结：消费者消费的每条消息都必须确认。</em></p>
+<li><p>消息收到未确认会怎么样？<br>如果应用程序接收了消息，因为bug忘记确认接收的话，消息在队列的状态会从“Ready”变为“Unacked”，如图：<br><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gcz4qxvyoaj30ic02gdfo.jpg" alt="rabbitmq-unacked.png"><br><em>总结：消费者消费的每条消息都必须确认。</em></p>
 </li>
 <li><p>消息拒绝<br>消息在确认之前，可以有两个选择：</p>
 <ul>
@@ -236,10 +241,10 @@ topic
 </li>
 </ul>
 <h1 id="fanout交换器——发布-订阅模式"><a href="#fanout交换器——发布-订阅模式" class="headerlink" title="fanout交换器——发布/订阅模式"></a>fanout交换器——发布/订阅模式</h1><p>不处理路由键。你只需要简单的将队列绑定到交换机上。一个发送到交换机的消息都会被转发到与该交换机绑定的所有队列上。很像子网广播，每台子网内的主机都获得了一份复制的消息。Fanout交换机转发消息是最快的。 </p>
-<div><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gcz5dpum3vj30890aigmg.jpg"><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gcz5dczg54j30cl08m3yu.jpg"></div>
+<div><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gcz5dpum3vj30890aigmg.jpg"><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gcz5dczg54j30cl08m3yu.jpg"></div>
 
 <h1 id="topic"><a href="#topic" class="headerlink" title="topic"></a>topic</h1><p>topic交换器运行和fanout类似，但是可以更灵活的匹配自己想要订阅的信息，这个时候routingKey路由键就排上用场了，使用路由键进行消息（规则）匹配。<br>假设我们现在有一个日志系统，会把所有日志级别的日志发送到交换器，warning、log、error、fatal，但我们只想处理error以上的日志，要怎么处理？这就需要使用topic路由器了。<br>topic路由器的关键在于定义路由键，定义routingKey名称不能超过255字节，使用“.”作为分隔符，例如：com.mq.rabbit.error。</p>
-<div><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gcz5tem5nsj30bp0elabi.jpg"><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gcz5temiurj30f90870tz.jpg"></div>
+<div><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gcz5tem5nsj30bp0elabi.jpg"><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gcz5temiurj30f90870tz.jpg"></div>
 
 
     </div>

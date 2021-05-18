@@ -1,9 +1,10 @@
-<!DOCTYPE HTML>
 <html lang="zh-CN">
 <head><meta name="generator" content="Hexo 3.9.0">
     <!--Setting-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="referrer" content="same-origin">
+    <meta name="referrer" content="no-referrer">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <meta http-equiv="Cache-Control" content="no-transform">
@@ -96,7 +97,7 @@
 <![endif]-->
 
 <body>
-    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <header class="main-header"  style="background-image:url(http://ww2.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
     <div class="main-header-box">
         <a class="header-avatar" href="/" title='abner'>
             <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
@@ -195,15 +196,19 @@
 </div>
             
             
+            <p class="fa fa-exclamation-triangle warning">
+                本文于<strong>464</strong>天之前发表，文中内容可能已经过时。
+            </p>
+        
     </div>
     
     <div class="post-body post-content">
         <h1 id="图的定义"><a href="#图的定义" class="headerlink" title="图的定义"></a>图的定义</h1><p>定义：图(graph)是由一些点(vertex)和这些点之间的连线(edge)所组成的；其中，点通常被成为”顶点(vertex)”，而点与点之间的连线则被成为”边或弧”(edege)。通常记为，G=(V,E)。</p>
 <h1 id="图的种类"><a href="#图的种类" class="headerlink" title="图的种类"></a>图的种类</h1><p>根据边是否有方向，将图可以划分为：无向图和有向图。</p>
-<h2 id="无向图"><a href="#无向图" class="headerlink" title="无向图"></a>无向图</h2><div align="center">![1.jpg](http://ww1.sinaimg.cn/large/007lnJOlly1gbp2xll06nj308f08fwf1.jpg)</div>
+<h2 id="无向图"><a href="#无向图" class="headerlink" title="无向图"></a>无向图</h2><div align="center">![1.jpg](http://ww2.sinaimg.cn/large/007lnJOlly1gbp2xll06nj308f08fwf1.jpg)</div>
 
 <p>上面的图G0是无向图，无向图的所有的边都是不区分方向的。G0=(V1,{E1})。其中，<br>(01) V1={A,B,C,D,E,F}。 V1表示由”A,B,C,D,E,F”几个顶点组成的集合。<br>(02) E1={(A,B),(A,C),(B,C),(B,E),(B,F),(C,F), (C,D),(E,F),(C,E)}。 E1是由边(A,B),边(A,C)…等等组成的集合。其中，(A,C)表示由顶点A和顶点C连接成的边。</p>
-<h2 id="有向图"><a href="#有向图" class="headerlink" title="有向图"></a>有向图</h2><div align="center">![2.jpg](http://ww1.sinaimg.cn/large/007lnJOlly1gbp34sljjij308f08yq3k.jpg)</div>
+<h2 id="有向图"><a href="#有向图" class="headerlink" title="有向图"></a>有向图</h2><div align="center">![2.jpg](http://ww2.sinaimg.cn/large/007lnJOlly1gbp34sljjij308f08yq3k.jpg)</div>
 
 <p>上面的图G2是有向图。和无向图不同，有向图的所有的边都是有方向的！ G2=(V2,{A2})。其中，<br>(01) V2={A,C,B,F,D,E,G}。 V2表示由”A,B,C,D,E,F,G”几个顶点组成的集合。<br>(02) <code>A2={&lt;A,B&gt;,&lt;B,C&gt;,&lt;B,F&gt;,&lt;B,E&gt;,&lt;C,E&gt;,&lt;E,D&gt;,&lt;D,C&gt;,&lt;E,B&gt;,&lt;F,G&gt;}</code>。 E1是由矢量&lt;<code>A,B&gt;</code>,矢量<code>&lt;B,C&gt;...</code>等等组成的集合。其中，矢量<code>&lt;A,C)</code>表示由”顶点A”指向”顶点C”的有向边。</p>
 <hr>
@@ -221,24 +226,24 @@
 <li>连通分量：非连通图中的各个连通子图称为该图的连通分量。</li>
 </ul>
 <h2 id="权"><a href="#权" class="headerlink" title="权"></a>权</h2><p>在学习”哈夫曼树”的时候，了解过”权”的概念。图中权的概念与此类似。</p>
-<div align="center">![1.jpg](http://ww1.sinaimg.cn/large/007lnJOlly1gbp4fje3fhj308f08f750.jpg)</div>
+<div align="center">![1.jpg](http://ww2.sinaimg.cn/large/007lnJOlly1gbp4fje3fhj308f08f750.jpg)</div>
 
 <h1 id="图的存储结构"><a href="#图的存储结构" class="headerlink" title="图的存储结构"></a>图的存储结构</h1><p>图的存储结构，常用的是”邻接矩阵”和”邻接表”。</p>
 <h2 id="邻接矩阵"><a href="#邻接矩阵" class="headerlink" title="邻接矩阵"></a>邻接矩阵</h2><p>邻接矩阵是指用矩阵来表示图。它是采用矩阵来描述图中顶点之间的关系(及弧或边的权)。<br>假设图中顶点数为n，则邻接矩阵定义为：</p>
-<div align="center"><![1.jpg](http://ww1.sinaimg.cn/large/007lnJOlly1gbp5jqxsw5j30bl0350t7.jpg)</div>
+<div align="center"><![1.jpg](http://ww2.sinaimg.cn/large/007lnJOlly1gbp5jqxsw5j30bl0350t7.jpg)</div>
 
 <p>下面通过示意图来进行解释。</p>
-<div align="center">![1.jpg](http://ww1.sinaimg.cn/large/007lnJOlly1gbp5jqzli7j30lk08yac8.jpg)</div>
+<div align="center">![1.jpg](http://ww2.sinaimg.cn/large/007lnJOlly1gbp5jqzli7j30lk08yac8.jpg)</div>
 
 <p>图中的G1是无向图和它对应的邻接矩阵。</p>
-<div align="center">![1.jpg](http://ww1.sinaimg.cn/large/007lnJOlly1gbp5jr2yy6j30l108yjtk.jpg)</div>
+<div align="center">![1.jpg](http://ww2.sinaimg.cn/large/007lnJOlly1gbp5jr2yy6j30l108yjtk.jpg)</div>
 
 <p>图中的G2是无向图和它对应的邻接矩阵。<br>通常采用两个数组来实现邻接矩阵：一个一维数组用来保存顶点信息，一个二维数组来用保存边的信息。<br>邻接矩阵的缺点就是比较耗费空间。</p>
 <h2 id="邻接表"><a href="#邻接表" class="headerlink" title="邻接表"></a>邻接表</h2><p>邻接表是图的一种链式存储表示方法。它是改进后的”邻接矩阵”，它的缺点是不方便判断两个顶点之间是否有边，但是相对邻接矩阵来说更省空间。</p>
-<div align="center">![1.jpg](http://ww1.sinaimg.cn/large/007lnJOlly1gbp5oq9oxuj30n409hq54.jpg)</div>
+<div align="center">![1.jpg](http://ww2.sinaimg.cn/large/007lnJOlly1gbp5oq9oxuj30n409hq54.jpg)</div>
 
 <p>图中的G1是无向图和它对应的邻接矩阵。</p>
-<div align="center">![1.jpg](http://ww1.sinaimg.cn/large/007lnJOlly1gbp5opwpx7j30lk09hq4x.jpg)c</div>
+<div align="center">![1.jpg](http://ww2.sinaimg.cn/large/007lnJOlly1gbp5opwpx7j30lk09hq4x.jpg)c</div>
 
 
 

@@ -1,0 +1,660 @@
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="referrer" content="same-origin">
+    <meta name="referrer" content="no-referrer">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="XuChen的博客">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <link rel="dns-prefetch" href="http://xuchen.youtuc.cn">
+    <!--SEO-->
+
+    <meta name="keywords" content="docker、PHP、Golang、Redis、MySQL、Web面试；">
+
+
+    <meta name="description" content="概述在接口开发经常会遇到一个问题是后端需要写大量的繁琐代码进行数据校验，所以就想着有没有像前端校验一样写规则进行匹配校验，然后就发现了validator包，一个比较强大的校验工具包下面是一些学习...">
+
+
+
+<meta name="robots" content="all">
+<meta name="google" content="all">
+<meta name="googlebot" content="all">
+<meta name="verify" content="all">
+
+    <!--Title-->
+
+
+<title>gin_validator | XuChen的博客</title>
+
+
+    <link rel="alternate" href="/atom.xml" title="XuChen的博客" type="application/atom+xml">
+
+
+    <link rel="icon" href="/favicon.ico">
+
+    
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+
+
+
+
+    
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?312e8b385d973dd9c15c283aa84ea6a8";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    
+
+    <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+</head>
+
+</html>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+
+<body>
+    <header class="main-header"  style="background-image:url(http://ww2.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='abner'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+        	<!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+                <h2> 待到风起时，扬帆济沧海 </h2>
+            
+    	</div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                    <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://xuchen.youtuc.cn">XuChen的博客</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/"><i class="fa "></i>首页</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/后端/"><i class="fa "></i>后端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/前端/"><i class="fa "></i>前端</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/categories/工具/"><i class="fa "></i>工具</a>
+                            </li>
+                        
+                            <li role="presentation" class="text-center">
+                                <a href="/archives/"><i class="fa "></i>归档</a>
+                            </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container-fluid">
+            <div class="row">
+                <main class="col-xs-12 col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="gin_validator">
+            
+	            gin_validator
+            
+        </h1>
+        <div class="post-meta">
+    
+        <span class="categories-meta fa-wrap">
+            <i class="fa fa-folder-open-o"></i>
+            <a class="category-link" href="/categories/后端/">后端</a> <a class="category-link" href="/categories/后端/Golang/">Golang</a>
+        </span>
+    
+
+    
+        <span class="fa-wrap">
+            <i class="fa fa-tags"></i>
+            <span class="tags-meta">
+                
+            </span>
+        </span>
+    
+
+    
+        
+        <span class="fa-wrap">
+            <i class="fa fa-clock-o"></i>
+            <span class="date-meta">2021/04/12</span>
+        </span>
+        
+            <span class="fa-wrap">
+                <i class="fa fa-eye"></i>
+                <span id="busuanzi_value_page_pv"></span>
+            </span>
+        
+    
+</div>
+            
+            
+    </div>
+    
+    <div class="post-body post-content">
+        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>在接口开发经常会遇到一个问题是后端需要写大量的繁琐代码进行数据校验，所以就想着有没有像前端校验一样写规则进行匹配校验，然后就发现了validator包，一个比较强大的校验工具包下面是一些学习总结，详细内容可以查看<a href="https://github.com/go-playground/validator" target="_blank" rel="noopener">validator</a><br>包下载：go get github.com/go-playground/validator/v10</p>
+<h1 id="操作符说明"><a href="#操作符说明" class="headerlink" title="操作符说明"></a>操作符说明</h1><table>
+<thead>
+<tr>
+<th>标记</th>
+<th>标记说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>,</td>
+<td>多操作符分割</td>
+</tr>
+<tr>
+<td>&#124;</td>
+<td>或操作符</td>
+</tr>
+<tr>
+<td>-</td>
+<td>跳过验证字段</td>
+</tr>
+</tbody></table>
+<h1 id="常用标记说明"><a href="#常用标记说明" class="headerlink" title="常用标记说明"></a>常用标记说明</h1><table>
+<thead>
+<tr>
+<th>标记</th>
+<th>标记说明</th>
+<th>例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>required</td>
+<td>必填</td>
+<td>Field或Struct validate:”required”,如果int,0作为特殊可通过*int判断</td>
+</tr>
+<tr>
+<td>omitempty</td>
+<td>空时忽略</td>
+<td>Field或Struct validate:”omitempty”</td>
+</tr>
+<tr>
+<td>len</td>
+<td>长度</td>
+<td>Field validate:”len=0”</td>
+</tr>
+<tr>
+<td>eq</td>
+<td>等于</td>
+<td>Field validate:”eq=0”</td>
+</tr>
+<tr>
+<td>gt</td>
+<td>大于</td>
+<td>Field validate:”gt=0”</td>
+</tr>
+<tr>
+<td>gte</td>
+<td>大于等于</td>
+<td>Field validate:”gte=0”</td>
+</tr>
+<tr>
+<td>lt</td>
+<td>小于</td>
+<td>Field validate:”lt=0”</td>
+</tr>
+<tr>
+<td>lte</td>
+<td>小于等于</td>
+<td>Field validate:”lte=0”</td>
+</tr>
+<tr>
+<td>eqfield</td>
+<td>同一结构体字段相等</td>
+<td>Field validate:”eqfield=Field2”</td>
+</tr>
+<tr>
+<td>nefield</td>
+<td>同一结构体字段不相等</td>
+<td>Field validate:”nefield=Field2”</td>
+</tr>
+<tr>
+<td>gtfield</td>
+<td>大于同一结构体字段</td>
+<td>Field validate:”gtfield=Field2”</td>
+</tr>
+<tr>
+<td>gtefield</td>
+<td>大于等于同一结构体字段</td>
+<td>Field validate:”gtefield=Field2”</td>
+</tr>
+<tr>
+<td>ltfield</td>
+<td>小于同一结构体字段</td>
+<td>Field validate:”ltfield=Field2”</td>
+</tr>
+<tr>
+<td>ltefield</td>
+<td>小于等于同一结构体字段</td>
+<td>Field validate:”ltefield=Field2”</td>
+</tr>
+<tr>
+<td>eqcsfield</td>
+<td>跨不同结构体字段相等</td>
+<td>Struct1.Field validate:”eqcsfield=Struct2.Field2”</td>
+</tr>
+<tr>
+<td>necsfield</td>
+<td>跨不同结构体字段不相等</td>
+<td>Struct1.Field validate:”necsfield=Struct2.Field2”</td>
+</tr>
+<tr>
+<td>gtcsfield</td>
+<td>大于跨不同结构体字段</td>
+<td>Struct1.Field validate:”gtcsfield=Struct2.Field2”</td>
+</tr>
+<tr>
+<td>gtecsfield</td>
+<td>大于等于跨不同结构体字段</td>
+<td>Struct1.Field validate:”gtecsfield=Struct2.Field2”</td>
+</tr>
+<tr>
+<td>ltcsfield</td>
+<td>小于跨不同结构体字段</td>
+<td>Struct1.Field validate:”ltcsfield=Struct2.Field2”</td>
+</tr>
+<tr>
+<td>ltecsfield</td>
+<td>小于等于跨不同结构体字段</td>
+<td>Struct1.Field validate:”ltecsfield=Struct2.Field2”</td>
+</tr>
+<tr>
+<td>min</td>
+<td>最大值</td>
+<td>Field validate:”min=1”</td>
+</tr>
+<tr>
+<td>max</td>
+<td>最小值</td>
+<td>Field validate:”max=2”</td>
+</tr>
+<tr>
+<td>structonly</td>
+<td>仅验证结构体，不验证任何结构体字段</td>
+<td>Struct validate:”structonly”</td>
+</tr>
+<tr>
+<td>nostructlevel</td>
+<td>不运行任何结构级别的验证</td>
+<td>Struct validate:”nostructlevel”</td>
+</tr>
+<tr>
+<td>dive</td>
+<td>向下延伸验证，多层向下需要多个dive标记</td>
+<td>[][]string validate:”gt=0,dive,len=1,dive,required”</td>
+</tr>
+<tr>
+<td>dive Keys &amp; EndKeys</td>
+<td>与dive同时使用，用于对map对象的键的和值的验证，keys为键，endkeys为值</td>
+<td>map[string]string validate:”gt=0,dive,keys,eq=1|eq=2,endkeys,required”</td>
+</tr>
+<tr>
+<td>required_with</td>
+<td>其他字段其中一个不为空且当前字段不为空</td>
+<td>Field validate:”required_with=Field1 Field2”</td>
+</tr>
+<tr>
+<td>required_with_all</td>
+<td>其他所有字段不为空且当前字段不为空</td>
+<td>Field validate:”required_with_all=Field1 Field2”</td>
+</tr>
+<tr>
+<td>required_without</td>
+<td>其他字段其中一个为空且当前字段不为空</td>
+<td>Field `validate:”required_without=Field1 Field2”</td>
+</tr>
+<tr>
+<td>required_without_all</td>
+<td>其他所有字段为空且当前字段不为空</td>
+<td>Field validate:”required_without_all=Field1 Field2”</td>
+</tr>
+<tr>
+<td>isdefault</td>
+<td>是默认值</td>
+<td>Field validate:”isdefault=0”</td>
+</tr>
+<tr>
+<td>oneof</td>
+<td>其中之一</td>
+<td>Field validate:”oneof=5 7 9”</td>
+</tr>
+<tr>
+<td>containsfield</td>
+<td>字段包含另一个字段</td>
+<td>Field validate:”containsfield=Field2”</td>
+</tr>
+<tr>
+<td>excludesfield</td>
+<td>字段不包含另一个字段</td>
+<td>Field validate:”excludesfield=Field2”</td>
+</tr>
+<tr>
+<td>unique</td>
+<td>是否唯一，通常用于切片或结构体</td>
+<td>Field validate:”unique”</td>
+</tr>
+<tr>
+<td>alphanum</td>
+<td>字符串值是否只包含 ASCII 字母数字字符</td>
+<td>Field validate:”alphanum”</td>
+</tr>
+<tr>
+<td>alphaunicode</td>
+<td>字符串值是否只包含 unicode 字符</td>
+<td>Field validate:”alphaunicode”</td>
+</tr>
+<tr>
+<td>alphanumunicode</td>
+<td>字符串值是否只包含 unicode 字母数字字符</td>
+<td>Field validate:”alphanumunicode”</td>
+</tr>
+<tr>
+<td>numeric</td>
+<td>字符串值是否包含基本的数值</td>
+<td>Field validate:”numeric”</td>
+</tr>
+<tr>
+<td>hexadecimal</td>
+<td>字符串值是否包含有效的十六进制</td>
+<td>Field validate:”hexadecimal”</td>
+</tr>
+<tr>
+<td>hexcolor</td>
+<td>字符串值是否包含有效的十六进制颜色</td>
+<td>Field validate:”hexcolor”</td>
+</tr>
+<tr>
+<td>lowercase</td>
+<td>符串值是否只包含小写字符</td>
+<td>Field validate:”lowercase”</td>
+</tr>
+<tr>
+<td>uppercase</td>
+<td>符串值是否只包含大写字符</td>
+<td>Field validate:”uppercase”</td>
+</tr>
+<tr>
+<td>email</td>
+<td>字符串值包含一个有效的电子邮件</td>
+<td>Field validate:”email”</td>
+</tr>
+<tr>
+<td>json</td>
+<td>字符串值是否为有效的 JSON</td>
+<td>Field validate:”json”</td>
+</tr>
+<tr>
+<td>file</td>
+<td>符串值是否包含有效的文件路径，以及该文件是否存在于计算机上</td>
+<td>Field validate:”file”</td>
+</tr>
+<tr>
+<td>url</td>
+<td>符串值是否包含有效的 url</td>
+<td>Field validate:”url”</td>
+</tr>
+<tr>
+<td>uri</td>
+<td>符串值是否包含有效的 uri</td>
+<td>Field validate:”uri”</td>
+</tr>
+<tr>
+<td>base64</td>
+<td>字符串值是否包含有效的 base64值</td>
+<td>Field validate:”base64”</td>
+</tr>
+<tr>
+<td>contains</td>
+<td>字符串值包含子字符串值</td>
+<td>Field validate:”contains=@”</td>
+</tr>
+<tr>
+<td>containsany</td>
+<td>字符串值包含子字符串值中的任何字符</td>
+<td>Field validate:”containsany=abc”</td>
+</tr>
+<tr>
+<td>containsrune</td>
+<td>字符串值包含提供的特殊符号值</td>
+<td>Field validate:”containsrune=☢”</td>
+</tr>
+<tr>
+<td>excludes</td>
+<td>字符串值不包含子字符串值</td>
+<td>Field validate:”excludes=@”</td>
+</tr>
+<tr>
+<td>excludesall</td>
+<td>字符串值不包含任何子字符串值</td>
+<td>Field validate:”excludesall=abc”</td>
+</tr>
+<tr>
+<td>excludesrune</td>
+<td>字符串值不包含提供的特殊符号值</td>
+<td>Field validate:”containsrune=☢”</td>
+</tr>
+<tr>
+<td>startswith</td>
+<td>字符串以提供的字符串值开始</td>
+<td>Field validate:”startswith=abc”</td>
+</tr>
+<tr>
+<td>endswith</td>
+<td>字符串以提供的字符串值结束</td>
+<td>Field validate:”endswith=abc”</td>
+</tr>
+<tr>
+<td>ip</td>
+<td>字符串值是否包含有效的 IP 地址</td>
+<td>Field validate:”ip”</td>
+</tr>
+<tr>
+<td>ipv4</td>
+<td>字符串值是否包含有效的 ipv4地址</td>
+<td>Field validate:”ipv4”</td>
+</tr>
+<tr>
+<td>datetime</td>
+<td>字符串值是否包含有效的 日期</td>
+<td>Field validate:”datetime”</td>
+</tr>
+</tbody></table>
+<hr>
+<h1 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h1><h2 id="使用注意"><a href="#使用注意" class="headerlink" title="使用注意"></a>使用注意</h2><ol>
+<li><p>当搜索条件与特殊标记冲突时,如：逗号（,），或操作（|），中横线（-）等则需要使用 UTF-8十六进制表示形式</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Test <span class="keyword">struct</span> &#123;</span><br><span class="line">   Field1 <span class="keyword">string</span>  <span class="string">`validate:"excludesall=|"`</span>    <span class="comment">// 错误</span></span><br><span class="line">   Field2 <span class="keyword">string</span> <span class="string">`validate:"excludesall=0x7C"`</span> <span class="comment">// 正确.</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>可通过validationErrors := errs.(validator.ValidationErrors)获取错误对象自定义返回响应错误</p>
+</li>
+<li><p>自定义校验结果翻译</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 初始化翻译器</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">validateInit</span><span class="params">()</span></span> &#123;</span><br><span class="line">	zh_ch := zh.New()</span><br><span class="line">	uni := ut.New(zh_ch)               <span class="comment">// 万能翻译器，保存所有的语言环境和翻译数据</span></span><br><span class="line">	Trans, _ = uni.GetTranslator(<span class="string">"zh"</span>) <span class="comment">// 翻译器</span></span><br><span class="line">	Validate = validator.New()</span><br><span class="line">	_ = zh_translations.RegisterDefaultTranslations(Validate, Trans)</span><br><span class="line">	<span class="comment">// 添加额外翻译</span></span><br><span class="line">	_ = Validate.RegisterTranslation(<span class="string">"required_without"</span>, Trans, <span class="function"><span class="keyword">func</span><span class="params">(ut ut.Translator)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">		<span class="keyword">return</span> ut.Add(<span class="string">"required_without"</span>, <span class="string">"&#123;0&#125; 为必填字段!"</span>, <span class="literal">true</span>)</span><br><span class="line">	&#125;, <span class="function"><span class="keyword">func</span><span class="params">(ut ut.Translator, fe validator.FieldError)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">		t, _ := ut.T(<span class="string">"required_without"</span>, fe.Field())</span><br><span class="line">		<span class="keyword">return</span> t</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h2 id="使用示例-1"><a href="#使用示例-1" class="headerlink" title="使用示例"></a>使用示例</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">   <span class="string">"fmt"</span></span><br><span class="line">   <span class="string">"github.com/go-playground/validator/v10"</span></span><br><span class="line">)</span><br><span class="line"><span class="comment">// 实例化验证对象</span></span><br><span class="line"><span class="keyword">var</span> validate = validator.New()</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">   <span class="comment">// 结构体验证</span></span><br><span class="line">   <span class="keyword">type</span> Inner <span class="keyword">struct</span> &#123;</span><br><span class="line">      String <span class="keyword">string</span> <span class="string">`validate:"contains=111"`</span></span><br><span class="line">   &#125;</span><br><span class="line">   inner := &amp;Inner&#123;String: <span class="string">"11@"</span>&#125;</span><br><span class="line">   errs := validate.Struct(inner)</span><br><span class="line">   <span class="keyword">if</span> errs != <span class="literal">nil</span> &#123;</span><br><span class="line">      fmt.Println(errs.Error())</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="comment">// 变量验证</span></span><br><span class="line">   m := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>&#123;<span class="string">""</span>: <span class="string">""</span>, <span class="string">"val3"</span>: <span class="string">"val3"</span>&#125;</span><br><span class="line">   errs = validate.Var(m, <span class="string">"required,dive,keys,required,endkeys,required"</span>)</span><br><span class="line">   <span class="keyword">if</span> errs != <span class="literal">nil</span> &#123;</span><br><span class="line">      fmt.Println(errs.Error())</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="gin框架中使用验证器"><a href="#gin框架中使用验证器" class="headerlink" title="gin框架中使用验证器"></a>gin框架中使用验证器</h1><h2 id="定义错误翻译器"><a href="#定义错误翻译器" class="headerlink" title="定义错误翻译器"></a>定义错误翻译器</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> xcore</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"github.com/gin-gonic/gin/binding"</span></span><br><span class="line">	<span class="string">"reflect"</span></span><br><span class="line">	<span class="string">"strings"</span></span><br><span class="line">	<span class="comment">//gin表单验证</span></span><br><span class="line">	<span class="string">"github.com/go-playground/locales/en"</span></span><br><span class="line">	<span class="string">"github.com/go-playground/locales/zh"</span></span><br><span class="line">	<span class="string">"github.com/go-playground/universal-translator"</span></span><br><span class="line">	<span class="string">"github.com/go-playground/validator/v10"</span></span><br><span class="line">	enTranslations <span class="string">"github.com/go-playground/validator/v10/translations/en"</span></span><br><span class="line">	zhTranslations <span class="string">"github.com/go-playground/validator/v10/translations/zh"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义一个全局翻译器</span></span><br><span class="line"><span class="keyword">var</span> trans ut.Translator</span><br><span class="line"></span><br><span class="line"><span class="comment">// InitTrans 初始化翻译器</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">InitTrans</span><span class="params">(locale <span class="keyword">string</span>)</span> <span class="params">(err error)</span></span> &#123;</span><br><span class="line">	<span class="comment">//修改gin框架中的Validator属性，实现自定制</span></span><br><span class="line">	<span class="keyword">if</span> v, ok := binding.Validator.Engine().(*validator.Validate); ok &#123;</span><br><span class="line">		<span class="comment">// 注册一个获取json tag的自定义方法</span></span><br><span class="line">		v.RegisterTagNameFunc(<span class="function"><span class="keyword">func</span><span class="params">(fld reflect.StructField)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">			name := strings.SplitN(fld.Tag.Get(<span class="string">"json"</span>), <span class="string">","</span>, <span class="number">2</span>)[<span class="number">0</span>]</span><br><span class="line">			<span class="keyword">if</span> name == <span class="string">"-"</span> &#123;</span><br><span class="line">				<span class="keyword">return</span> <span class="string">""</span></span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> name</span><br><span class="line">		&#125;)</span><br><span class="line"></span><br><span class="line">		zhT := zh.New() <span class="comment">//中文翻译器</span></span><br><span class="line">		enT := en.New() <span class="comment">//英文翻译器</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">// 第一个参数是备用（fallback）的语言环境</span></span><br><span class="line">		<span class="comment">// 后面的参数是应该支持的语言环境（支持多个）</span></span><br><span class="line">		<span class="comment">// uni := ut.New(zhT, zhT) 也是可以的</span></span><br><span class="line">		uni := ut.New(enT, zhT, enT)</span><br><span class="line"></span><br><span class="line">		<span class="comment">// locale 通常取决于 http 请求头的 'Accept-Language'</span></span><br><span class="line">		<span class="keyword">var</span> ok <span class="keyword">bool</span></span><br><span class="line">		<span class="comment">// 也可以使用 uni.FindTranslator(...) 传入多个locale进行查找</span></span><br><span class="line">		trans, ok = uni.GetTranslator(locale)</span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			<span class="keyword">return</span> fmt.Errorf(<span class="string">"uni.GetTranslator(%s) failed"</span>, locale)</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 添加额外翻译</span></span><br><span class="line">		_ = v.RegisterTranslation(<span class="string">"required_with"</span>, trans, <span class="function"><span class="keyword">func</span><span class="params">(ut ut.Translator)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">			<span class="keyword">return</span> ut.Add(<span class="string">"required_with"</span>, <span class="string">"&#123;0&#125; 为必填字段!"</span>, <span class="literal">true</span>)</span><br><span class="line">		&#125;, <span class="function"><span class="keyword">func</span><span class="params">(ut ut.Translator, fe validator.FieldError)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">			t, _ := ut.T(<span class="string">"required_with"</span>, fe.Field())</span><br><span class="line">			<span class="keyword">return</span> t</span><br><span class="line">		&#125;)</span><br><span class="line">		_ = v.RegisterTranslation(<span class="string">"required_without"</span>, trans, <span class="function"><span class="keyword">func</span><span class="params">(ut ut.Translator)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">			<span class="keyword">return</span> ut.Add(<span class="string">"required_without"</span>, <span class="string">"&#123;0&#125; 为必填字段!"</span>, <span class="literal">true</span>)</span><br><span class="line">		&#125;, <span class="function"><span class="keyword">func</span><span class="params">(ut ut.Translator, fe validator.FieldError)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">			t, _ := ut.T(<span class="string">"required_without"</span>, fe.Field())</span><br><span class="line">			<span class="keyword">return</span> t</span><br><span class="line">		&#125;)</span><br><span class="line">		_ = v.RegisterTranslation(<span class="string">"required_without_all"</span>, trans, <span class="function"><span class="keyword">func</span><span class="params">(ut ut.Translator)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">			<span class="keyword">return</span> ut.Add(<span class="string">"required_without_all"</span>, <span class="string">"&#123;0&#125; 为必填字段!"</span>, <span class="literal">true</span>)</span><br><span class="line">		&#125;, <span class="function"><span class="keyword">func</span><span class="params">(ut ut.Translator, fe validator.FieldError)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">			t, _ := ut.T(<span class="string">"required_without_all"</span>, fe.Field())</span><br><span class="line">			<span class="keyword">return</span> t</span><br><span class="line">		&#125;)</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 注册翻译器</span></span><br><span class="line">		<span class="keyword">switch</span> locale &#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="string">"en"</span>:</span><br><span class="line">			err = enTranslations.RegisterDefaultTranslations(v, trans)</span><br><span class="line">		<span class="keyword">case</span> <span class="string">"zh"</span>:</span><br><span class="line">			err = zhTranslations.RegisterDefaultTranslations(v, trans)</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			err = enTranslations.RegisterDefaultTranslations(v, trans)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">addValueToMap</span><span class="params">(fields <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>)</span> <span class="title">map</span>[<span class="title">string</span>]<span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">	res := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">	<span class="keyword">for</span> field, err := <span class="keyword">range</span> fields &#123;</span><br><span class="line">		fieldArr := strings.SplitN(field, <span class="string">"."</span>, <span class="number">2</span>)</span><br><span class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(fieldArr) &gt; <span class="number">1</span> &#123;</span><br><span class="line">			NewFields := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>&#123;fieldArr[<span class="number">1</span>]: err&#125;</span><br><span class="line">			returnMap := addValueToMap(NewFields)</span><br><span class="line">			<span class="keyword">if</span> res[fieldArr[<span class="number">0</span>]] != <span class="literal">nil</span> &#123;</span><br><span class="line">				<span class="keyword">for</span> k, v := <span class="keyword">range</span> returnMap &#123;</span><br><span class="line">					res[fieldArr[<span class="number">0</span>]].(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;)[k] = v</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				res[fieldArr[<span class="number">0</span>]] = returnMap</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			res[field] = err</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 去掉结构体名称前缀</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeTopStruct</span><span class="params">(fields <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>)</span> <span class="title">map</span>[<span class="title">string</span>]<span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">	lowerMap := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>&#123;&#125;</span><br><span class="line">	<span class="keyword">for</span> field, err := <span class="keyword">range</span> fields &#123;</span><br><span class="line">		fieldArr := strings.SplitN(field, <span class="string">"."</span>, <span class="number">2</span>)</span><br><span class="line">		lowerMap[fieldArr[<span class="number">1</span>]] = err</span><br><span class="line">	&#125;</span><br><span class="line">	res := addValueToMap(lowerMap)</span><br><span class="line">	<span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//handler中调用的错误翻译方法</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ValidatorError</span><span class="params">(err error)</span> <span class="title">map</span>[<span class="title">string</span>]<span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">	errs, ok := err.(validator.ValidationErrors)</span><br><span class="line">	<span class="keyword">if</span> ok &#123;</span><br><span class="line">		<span class="keyword">return</span> removeTopStruct(errs.Translate(trans))</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *IndexController)</span> <span class="title">Validator</span><span class="params">(ctx *gin.Context)</span></span> &#123;</span><br><span class="line">	req := requests.AdminReq&#123;&#125;</span><br><span class="line">	<span class="keyword">if</span> err := ctx.ShouldBindJSON(&amp;req); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		ctx.JSON(http.StatusBadRequest, gin.H&#123;<span class="string">"error"</span>: xcore.ValidatorError(err)&#125;)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	ctx.JSON(http.StatusNotFound, <span class="string">"ok"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+                转载声明：转载请注明出处，如有侵权请联系 © <a href="mailto:abner510@126.com" target="_blank">abner-xu</a>
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+
+<div class="article-nav prev-next-wrap clearfix">
+    
+        <a href="/2021/05/06/Go/go语言编程模式/" class="pre-post btn btn-default" title='go语言编程模式'>
+            <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+            <span class="hidden-xs">go语言编程模式</span>
+        </a>
+    
+    
+        <a href="/2020/05/24/网络/TCP和UDP/" class="next-post btn btn-default" title='TCP和UDP'>
+            <span class="hidden-lg">下一篇</span>
+            <span class="hidden-xs">TCP和UDP</span><i class="fa fa-angle-right fa-fw"></i>
+        </a>
+    
+</div>
+
+
+    <div id="comments">
+        
+   <p>评论系统未开启，无法评论！</p>
+
+    </div>
+
+
+
+
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-xs-6 col-sm-3">
+    <div class="widget">
+        <h3 class="title">文章目录</h3>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#概述"><span class="toc-text">概述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#操作符说明"><span class="toc-text">操作符说明</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#常用标记说明"><span class="toc-text">常用标记说明</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#使用示例"><span class="toc-text">使用示例</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用注意"><span class="toc-text">使用注意</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用示例-1"><span class="toc-text">使用示例</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#gin框架中使用验证器"><span class="toc-text">gin框架中使用验证器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#定义错误翻译器"><span class="toc-text">定义错误翻译器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用"><span class="toc-text">使用</span></a></li></ol></li></ol>
+        
+    </div>
+</aside>
+
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+
+<a id="back-to-top" class="icon-btn hide">
+	<i class="fa fa-chevron-up"></i>
+</a>
+
+
+
+
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+        访问量:
+        <strong id="busuanzi_value_site_pv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+        &nbsp; | &nbsp;
+        访客数:
+        <strong id="busuanzi_value_site_uv">
+            <i class="fa fa-spinner fa-spin"></i>
+        </strong>
+    
+</div>
+
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy; 2019
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+
+</body>
+</html>

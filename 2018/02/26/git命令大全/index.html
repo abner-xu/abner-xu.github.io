@@ -1,9 +1,10 @@
-<!DOCTYPE HTML>
 <html lang="zh-CN">
 <head><meta name="generator" content="Hexo 3.9.0">
     <!--Setting-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="referrer" content="same-origin">
+    <meta name="referrer" content="no-referrer">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <meta http-equiv="Cache-Control" content="no-transform">
@@ -98,7 +99,7 @@ git show # 显示某次提交的内容 git show $id
 <![endif]-->
 
 <body>
-    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <header class="main-header"  style="background-image:url(http://ww2.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
     <div class="main-header-box">
         <a class="header-avatar" href="/" title='abner'>
             <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
@@ -198,7 +199,7 @@ git show # 显示某次提交的内容 git show $id
             
             
             <p class="fa fa-exclamation-triangle warning">
-                本文于<strong>846</strong>天之前发表，文中内容可能已经过时。
+                本文于<strong>1177</strong>天之前发表，文中内容可能已经过时。
             </p>
         
     </div>
@@ -240,6 +241,7 @@ git checkout -b &lt;new_branch&gt; # 创建新的分支，并且切换过去
 git checkout -b &lt;new_branch&gt; &lt;branch&gt; # 基于branch创建新的new_branch
 git checkout $id # 把某次历史提交记录checkout出来，但无分支信息，切换到其他分支会自动删除
 git checkout $id -b &lt;new_branch&gt; # 把某次历史提交记录checkout出来，创建成一个分支
+git checkout develop --patch 文件路径 #合并单个文件到当前分支
 git branch -d &lt;branch&gt; # 删除某个分支
 git branch -D &lt;branch&gt; # 强制删除某个分支 (未被合并的分支被删除的时候需要强制)</code></pre><h3 id="分支合并和rebase"><a href="#分支合并和rebase" class="headerlink" title="分支合并和rebase"></a>分支合并和rebase</h3><pre><code>git merge &lt;branch&gt; # 将branch分支合并到当前分支
 git merge origin/master --no-ff # 不要Fast-Foward合并，这样可以生成merge提交
@@ -393,9 +395,9 @@ git cherry-pick [&lt;options&gt;] &lt;commit-ish&gt;...
         </a>
     
     
-        <a href="/2017/12/25/Tools/Docker/Docker-搭建可一键部署的多域名LNMP环境/" class="next-post btn btn-default" title='Docker搭建可一键部署的多域名LNMP环境'>
+        <a href="/2017/12/25/Tools/vscode折腾/" class="next-post btn btn-default" title='vscode折腾'>
             <span class="hidden-lg">下一篇</span>
-            <span class="hidden-xs">Docker搭建可一键部署的多域名LNMP环境</span><i class="fa fa-angle-right fa-fw"></i>
+            <span class="hidden-xs">vscode折腾</span><i class="fa fa-angle-right fa-fw"></i>
         </a>
     
 </div>

@@ -1,9 +1,10 @@
-<!DOCTYPE HTML>
 <html lang="zh-CN">
 <head><meta name="generator" content="Hexo 3.9.0">
     <!--Setting-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="referrer" content="same-origin">
+    <meta name="referrer" content="no-referrer">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <meta http-equiv="Cache-Control" content="no-transform">
@@ -100,7 +101,7 @@
 <![endif]-->
 
 <body>
-    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <header class="main-header"  style="background-image:url(http://ww2.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
     <div class="main-header-box">
         <a class="header-avatar" href="/" title='abner'>
             <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
@@ -200,13 +201,13 @@
             
             
             <p class="fa fa-exclamation-triangle warning">
-                本文于<strong>666</strong>天之前发表，文中内容可能已经过时。
+                本文于<strong>998</strong>天之前发表，文中内容可能已经过时。
             </p>
         
     </div>
     
     <div class="post-body post-content">
-        <h1 id="宏观了解"><a href="#宏观了解" class="headerlink" title="宏观了解"></a>宏观了解</h1><p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gdm7aidmy0j30ug0hnjzk.jpg" alt="1.png"></p>
+        <h1 id="宏观了解"><a href="#宏观了解" class="headerlink" title="宏观了解"></a>宏观了解</h1><p><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gdm7aidmy0j30ug0hnjzk.jpg" alt="1.png"></p>
 <hr>
 <h1 id="查询缓存"><a href="#查询缓存" class="headerlink" title="查询缓存"></a>查询缓存</h1><p>我们先通过<code>show variables like &#39;%query_cache%&#39;</code>来看一下默认的数据库配置，<code>query_cache_type=ON</code></p>
 <ul>
@@ -289,8 +290,8 @@
 <li><p>数据库索引为什么使用B+树？</p>
 <ul>
 <li><a href="#B+树">B+树了解</a></li>
-<li>二叉搜索树<br>  <img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0obvlcqw9j307h05gjr6.jpg" alt="二叉搜索树"><br>  二叉搜索树，如上图，是最为大家所熟知的一种数据结构，就不展开介绍了，它为什么不适合用作数据库索引？<br>  (1)当数据量大的时候，树的高度会比较高，数据量大的时候，查询会比较慢；<br>  (2)每个节点只存储一个记录，可能导致一次查询有很多次磁盘IO；</li>
-<li>B树<br>  <img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0obx5x6lsj30hx05ia9y.jpg" alt="B树"><br>  B树，如上图，它的特点是：<br>  (1)不再是二叉搜索，而是m叉搜索；<br>  (2)叶子节点，非叶子节点，都存储数据；<br>  (3)中序遍历，可以获得所有节点；  </li>
+<li>二叉搜索树<br>  <img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0obvlcqw9j307h05gjr6.jpg" alt="二叉搜索树"><br>  二叉搜索树，如上图，是最为大家所熟知的一种数据结构，就不展开介绍了，它为什么不适合用作数据库索引？<br>  (1)当数据量大的时候，树的高度会比较高，数据量大的时候，查询会比较慢；<br>  (2)每个节点只存储一个记录，可能导致一次查询有很多次磁盘IO；</li>
+<li>B树<br>  <img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0obx5x6lsj30hx05ia9y.jpg" alt="B树"><br>  B树，如上图，它的特点是：<br>  (1)不再是二叉搜索，而是m叉搜索；<br>  (2)叶子节点，非叶子节点，都存储数据；<br>  (3)中序遍历，可以获得所有节点；  </li>
 </ul>
 </li>
 </ol>
@@ -311,11 +312,11 @@
 <li><p>回表查询过程<br>举个栗子，不妨设有表：t(id PK, name KEY, sex, flag);<br>表中有四条记录：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1, shenjian, m, A</span><br><span class="line">3, zhangsan, m, A</span><br><span class="line">5, lisi, m, A</span><br><span class="line">9, wangwu, f, B</span><br></pre></td></tr></table></figure>
 
-<p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1ge196wtglcj309z06t0tw.jpg" alt="1.png"></p>
+<p><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1ge196wtglcj309z06t0tw.jpg" alt="1.png"></p>
 <p>两个B+树索引分别如上图：<br>　　（1）id为PK，聚集索引，叶子节点存储行记录；<br>　　（2）name为KEY，普通索引，叶子节点存储PK值，即id；<br>既然从普通索引无法直接定位行记录，那普通索引的查询过程是怎么样的呢？<br>通常情况下，需要扫码两遍索引树。<br>例如：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t <span class="keyword">where</span> <span class="keyword">name</span>=<span class="string">'lisi'</span>;</span><br></pre></td></tr></table></figure>
 
-<p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1ge199ptq6ej30bp06pwg0.jpg" alt="2.png"></p>
+<p><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1ge199ptq6ej30bp06pwg0.jpg" alt="2.png"></p>
 <p>如红色路径，需要扫码两遍索引树：<br>（1）先通过普通索引定位到主键值id=5；<br>（2）在通过聚集索引定位到行记录；<br>这就是<code>回表查询</code> </p>
 </li>
 </ul>
@@ -328,13 +329,13 @@
 <li>不管是SQL-Server官网，还是MySQL官网，都表达了：<code>只需要在一棵索引树上就能获取SQL所需的所有列数据，无需回表，速度更快</code>。</li>
 </ul>
 </li>
-<li><p>如何实现索引覆盖？<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1ge1ef4ql42j30u006u0x7.jpg" alt="1.png"><br>能够命中name索引，索引叶子节点存储了主键id，通过name的索引树即可获取id和name，无需回表，符合索引覆盖，效率较高。</p>
-<p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1ge1ef3ij5lj30u006s795.jpg" alt="2.png"><br>能够命中name索引，索引叶子节点存储了主键id，但sex字段必须回表查询才能获取到，不符合索引覆盖，需要再次通过id值扫码聚集索引获取sex字段，效率会降低。</p>
-<p>如果把(name)单列索引升级为<code>联合索引(name, sex)</code>就不同了。<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1ge1ef3ka10j30u006v7av.jpg" alt="3.png"><br><code>都能够命中索引覆盖，无需回表</code>。</p>
+<li><p>如何实现索引覆盖？<br><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1ge1ef4ql42j30u006u0x7.jpg" alt="1.png"><br>能够命中name索引，索引叶子节点存储了主键id，通过name的索引树即可获取id和name，无需回表，符合索引覆盖，效率较高。</p>
+<p><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1ge1ef3ij5lj30u006s795.jpg" alt="2.png"><br>能够命中name索引，索引叶子节点存储了主键id，但sex字段必须回表查询才能获取到，不符合索引覆盖，需要再次通过id值扫码聚集索引获取sex字段，效率会降低。</p>
+<p>如果把(name)单列索引升级为<code>联合索引(name, sex)</code>就不同了。<br><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1ge1ef3ka10j30u006v7av.jpg" alt="3.png"><br><code>都能够命中索引覆盖，无需回表</code>。</p>
 </li>
 <li><p>哪些场景可以利用索引覆盖来优化SQL？</p>
 <ol>
-<li>全表count查询优化<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1ge1enuwk83j30re096q9d.jpg" alt="4.png"></li>
+<li>全表count查询优化<br><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1ge1enuwk83j30re096q9d.jpg" alt="4.png"></li>
 <li>场景2：列查询回表优化(同上面的例子)</li>
 </ol>
 </li>
@@ -353,7 +354,7 @@
 <li>总结<br>（1）MyISAM的索引与数据分开存储，索引叶子存储指针，主键索引与普通索引无太大区别；<br>（2）InnoDB的聚集索引和数据行统一存储，聚集索引存储数据行本身，普通索引存储主键；<br>（3）InnoDB不建议使用太长字段作为PK（此时可以加入一个自增键PK），MyISAM则无所谓；</li>
 </ol>
 </li>
-<li><p>like查询一定不命中索引吗？<br>mysql在使用like查询，%在最前面不会用到索引，中间或最后是会用到索引的，只是越靠前扫描的行数越多<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1ge1fk94ciqj31og0p479x.jpg" alt="2.jpg"></p>
+<li><p>like查询一定不命中索引吗？<br>mysql在使用like查询，%在最前面不会用到索引，中间或最后是会用到索引的，只是越靠前扫描的行数越多<br><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1ge1fk94ciqj31og0p479x.jpg" alt="2.jpg"></p>
 </li>
 <li><p>索引下推</p>
 <blockquote>
@@ -421,7 +422,7 @@
 <li>持久性：即一旦提交结果永久保存</li>
 </ol>
 </li>
-<li><p>事物是如何通过日志实现的<br> <img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf2srbcrexj30kc0aoq3h.jpg" alt="1.jpeg"></p>
+<li><p>事物是如何通过日志实现的<br> <img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gf2srbcrexj30kc0aoq3h.jpg" alt="1.jpeg"></p>
 <blockquote>
 <p>redo_log 实现持久化和原子性，而undo_log实现一致性，二种日志均可以视为一种恢复操作，redo_log是恢复提交事务修改的页操作，而undo_log是回滚行记录到特定版本。二者记录的内容也不同，redo_log是物理日志，记录页的物理修改操作，而undo_log是逻辑日志，根据每行记录进行记录。</p>
 </blockquote>
@@ -472,7 +473,7 @@
 <ol start="5">
 <li>MVCC解释<ol>
 <li>MVCC (Multiversion Concurrency Control)，即多版本并发控制技术,它使得大部分支持行锁的事务引擎，不再单纯的使用行锁来进行数据库的并发控制，取而代之的是把数据库的行锁与行的多个版本结合起来，只需要很小的开销,就可以实现非锁定读，从而大大提高数据库系统的并发性能</li>
-<li>核心原理<br> (1) 写任务发生时，将数据克隆一份，以版本号区分；<br> (2) 写任务操作新克隆的数据，直至提交；<br> (3) 并发读任务可以继续读取旧版本的数据，不至于阻塞；<br> <img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf3b392gmtj309705q3yh.jpg" alt="640.png"><br> 如上图：<ol>
+<li>核心原理<br> (1) 写任务发生时，将数据克隆一份，以版本号区分；<br> (2) 写任务操作新克隆的数据，直至提交；<br> (3) 并发读任务可以继续读取旧版本的数据，不至于阻塞；<br> <img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gf3b392gmtj309705q3yh.jpg" alt="640.png"><br> 如上图：<ol>
 <li>最开始数据的版本是V0；</li>
 <li>T1时刻发起了一个写任务，这是把数据clone了一份，进行修改，版本变为V1，但任务还未完成；</li>
 <li>T2时刻并发了一个读任务，依然可以读V0版本的数据；</li>
@@ -489,7 +490,7 @@
 </ol>
 <hr>
 <hr>
-<h1 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h1><p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf3o1zpt8dj30fw07x3z8.jpg" alt="1.jpg"></p>
+<h1 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h1><p><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gf3o1zpt8dj30fw07x3z8.jpg" alt="1.jpg"></p>
 <ol>
 <li><p>锁机制</p>
 <ol>
@@ -507,7 +508,7 @@
 </li>
 <li><p>锁粒度</p>
 <ol>
-<li>行锁详解<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gf3o4h6kdkj327a0oqn8f.jpg" alt="1.png"></li>
+<li>行锁详解<br><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gf3o4h6kdkj327a0oqn8f.jpg" alt="1.png"></li>
 <li>表锁详解</li>
 <li>页锁详解</li>
 </ol>
@@ -545,7 +546,7 @@
 </li>
 </ol>
 <h1 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h1><ol>
-<li><p>主从复制原理<br> <img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0nbwnv9noj30g607i3zy.jpg" alt="主从复制"></p>
+<li><p>主从复制原理<br> <img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0nbwnv9noj30g607i3zy.jpg" alt="主从复制"></p>
 <ol>
 <li>mysql启动以后会存在2个进程，一个是sqlThred进程一个IOThred进程</li>
 <li>在Slave 服务器上执行sart slave命令开启主从复制开关，开始进行主从复制</li>
@@ -566,7 +567,7 @@
 <h1 id="压力测试"><a href="#压力测试" class="headerlink" title="压力测试"></a>压力测试</h1><blockquote>
 <p><a href="https://imysql.com/tag/%E5%8E%8B%E6%B5%8B" target="_blank" rel="noopener">https://imysql.com/tag/%E5%8E%8B%E6%B5%8B</a><br>比较常用的MySQL基准压力测试工具有 tpcc-mysql、sysbench、mysqlslap 等几个。</p>
 </blockquote>
-<p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gcy9jer66rj30o90i9q47.jpg" alt="1.png"></p>
+<p><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gcy9jer66rj30o90i9q47.jpg" alt="1.png"></p>
 <hr>
 <h1 id="延伸知识点"><a href="#延伸知识点" class="headerlink" title="延伸知识点"></a>延伸知识点</h1><h2 id="MYSQL-count总结"><a href="#MYSQL-count总结" class="headerlink" title="MYSQL count总结"></a>MYSQL count总结</h2><ol>
 <li><p>COUNT有几种用法？count(*),count(常数)，count(列名)</p>
@@ -600,7 +601,7 @@
 <li>由于是m分叉的，高度能够大大降低；</li>
 <li>每个节点可以存储j个记录，如果将节点大小设置为页大小，例如4K，能够充分的利用预读的特性，极大减少磁盘IO；</li>
 </ol>
-<h2 id="B-树"><a href="#B-树" class="headerlink" title="B+树"></a><a id="B+树">B+树</a></h2><p><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0oc9sjwr8j30ox052mx3.jpg" alt="B+树"><br>B树的插入及平衡化操作和2-3树很相似，这里就不介绍了。下面是往B树中依次插入<br><code>6 10 4 14 5 11 15 3 2 12 1 7 8 8 6 3 6 21 5 15 15 6 32 23 45 65 7 8 6 5 4</code><br><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0r4g7fuy3g30qm06d4qq.gif" alt="动画演示"><br>B+树，如上图，仍是m叉搜索树，在B树的基础上，做了一些改进：</p>
+<h2 id="B-树"><a href="#B-树" class="headerlink" title="B+树"></a><a id="B+树">B+树</a></h2><p><img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0oc9sjwr8j30ox052mx3.jpg" alt="B+树"><br>B树的插入及平衡化操作和2-3树很相似，这里就不介绍了。下面是往B树中依次插入<br><code>6 10 4 14 5 11 15 3 2 12 1 7 8 8 6 3 6 21 5 15 15 6 32 23 45 65 7 8 6 5 4</code><br><img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0r4g7fuy3g30qm06d4qq.gif" alt="动画演示"><br>B+树，如上图，仍是m叉搜索树，在B树的基础上，做了一些改进：</p>
 <ol>
 <li>非叶子节点不再存储数据，数据只存储在同一层的叶子节点上；（画外音：B+树中根到每一个节点的路径长度一样，而B树不是这样。）</li>
 <li>叶子之间，增加了链表，获取所有节点，不再需要中序遍历；<br>这些改进让B+树比B树有更优的特性：</li>
@@ -625,9 +626,9 @@
 
 <div class="article-nav prev-next-wrap clearfix">
     
-        <a href="/2018/11/21/LeetCode/Data/Link-单向链表/" class="pre-post btn btn-default" title='单向链表'>
+        <a href="/2018/11/21/LeetCode/Data/Link-双向链表/" class="pre-post btn btn-default" title='双向链表'>
             <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
-            <span class="hidden-xs">单向链表</span>
+            <span class="hidden-xs">双向链表</span>
         </a>
     
     

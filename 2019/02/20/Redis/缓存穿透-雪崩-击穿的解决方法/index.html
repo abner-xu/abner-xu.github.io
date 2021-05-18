@@ -1,9 +1,10 @@
-<!DOCTYPE HTML>
 <html lang="zh-CN">
 <head><meta name="generator" content="Hexo 3.9.0">
     <!--Setting-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="referrer" content="same-origin">
+    <meta name="referrer" content="no-referrer">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <meta http-equiv="Cache-Control" content="no-transform">
@@ -96,7 +97,7 @@
 <![endif]-->
 
 <body>
-    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <header class="main-header"  style="background-image:url(http://ww2.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
     <div class="main-header-box">
         <a class="header-avatar" href="/" title='abner'>
             <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
@@ -196,13 +197,13 @@
             
             
             <p class="fa fa-exclamation-triangle warning">
-                本文于<strong>486</strong>天之前发表，文中内容可能已经过时。
+                本文于<strong>818</strong>天之前发表，文中内容可能已经过时。
             </p>
         
     </div>
     
     <div class="post-body post-content">
-        <h1 id="1-缓存穿透"><a href="#1-缓存穿透" class="headerlink" title="1.缓存穿透"></a>1.缓存穿透</h1><p>缓存穿透是指查询一个一定不存在的数据，由于缓存是不命中时需要从数据库查询，查不到数据则不写入缓存，这将导致这个不存在的数据每次请求都要到数据库查询，失去了缓存的意义。在流量大时，可能DB就挂掉了，要是有人利用不存在的key频繁攻击我们的应用，这就是漏洞。<br>例如下图:<br><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0l15jr5mfj30lc07tdga.jpg" alt="bug-pic"></p>
+        <h1 id="1-缓存穿透"><a href="#1-缓存穿透" class="headerlink" title="1.缓存穿透"></a>1.缓存穿透</h1><p>缓存穿透是指查询一个一定不存在的数据，由于缓存是不命中时需要从数据库查询，查不到数据则不写入缓存，这将导致这个不存在的数据每次请求都要到数据库查询，失去了缓存的意义。在流量大时，可能DB就挂掉了，要是有人利用不存在的key频繁攻击我们的应用，这就是漏洞。<br>例如下图:<br><img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0l15jr5mfj30lc07tdga.jpg" alt="bug-pic"></p>
 <h2 id="1-1解决办法"><a href="#1-1解决办法" class="headerlink" title="1.1解决办法"></a>1.1解决办法</h2><ul>
 <li><p>将不存在的key设置默认的值  </p>
 <p>  如果有人利用ID攻击应用，可以将这个key预先设置一个null或者程序可判断的值，决定应用是否进行下面的执行。当缓存失效或者缓存key经过轮训以后不再为空，则进行程序的后续执行</p>
@@ -231,11 +232,11 @@
 <h2 id="2-1解决办法"><a href="#2-1解决办法" class="headerlink" title="2.1解决办法"></a>2.1解决办法</h2><p>从业务层面。可以给缓存设置过期时间上加上一个随机值，使得每个key的过期时间分布开来，不会集中在同一时刻</p>
 <h1 id="3-缓存击穿（并发）"><a href="#3-缓存击穿（并发）" class="headerlink" title="3. 缓存击穿（并发）"></a>3. 缓存击穿（并发）</h1><p>一个存在的key，在缓存过期的一刻，同时有大量的请求，这些请求都会击穿到DB，造成瞬时DB请求量大、压力骤增。</p>
 <h2 id="3-1解决办法"><a href="#3-1解决办法" class="headerlink" title="3.1解决办法"></a>3.1解决办法</h2><ol>
-<li>使用互斥锁：让一个线程构建缓存，其他线程等待等待构建缓存的线程执行完，从新从缓存中获取数据就行（如下图）<br><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0l51hzscvj30g50c474f.jpg" alt="mutex-key-pic"><br>如果是单机，可以用synchronize或者lock来处理，如果是分布式环境可以使用分布式锁（memcached的add、redis的setnx,zookeeper的添加节点）,当缓存构建完成以后释放分布式锁</li>
+<li>使用互斥锁：让一个线程构建缓存，其他线程等待等待构建缓存的线程执行完，从新从缓存中获取数据就行（如下图）<br><img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0l51hzscvj30g50c474f.jpg" alt="mutex-key-pic"><br>如果是单机，可以用synchronize或者lock来处理，如果是分布式环境可以使用分布式锁（memcached的add、redis的setnx,zookeeper的添加节点）,当缓存构建完成以后释放分布式锁</li>
 <li>后台刷新：定义个Job专门主动刷新缓存，比如缓存30分钟，那么Job可以设置每隔29分钟定时将DB数据刷新缓存中。<code>这种方案适合key相对固定，cache粒度较大</code></li>
 <li>检查更新：将缓存的过期时间（绝对时间）一起保存到缓存中（可以是key拼接，或者value中存放字段），在每次只需get操作以后都将get出来的缓存与当前系统时间进行比较，缓存时间-当前时间&lt;=1分钟（自定义时间阈值），则主动更新缓存</li>
 </ol>
-<h1 id="4-如何解决缓存单机热点问题"><a href="#4-如何解决缓存单机热点问题" class="headerlink" title="4. 如何解决缓存单机热点问题"></a>4. 如何解决缓存单机热点问题</h1><p>分布式缓存一致性hash算法解决<br><image src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0r3lrzxnfj30et0e4wgm.jpg" width="300" height="300"><br>简单概述：</image></p>
+<h1 id="4-如何解决缓存单机热点问题"><a href="#4-如何解决缓存单机热点问题" class="headerlink" title="4. 如何解决缓存单机热点问题"></a>4. 如何解决缓存单机热点问题</h1><p>分布式缓存一致性hash算法解决<br><image src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0r3lrzxnfj30et0e4wgm.jpg" width="300" height="300"><br>简单概述：</image></p>
 <ol>
 <li>一致性hash算法通过构造一个长度为2^32的整数环</li>
 <li>根据节点名（或者服务器IP等信息）的hash值将缓存服务器节点放置在这个环上 </li>

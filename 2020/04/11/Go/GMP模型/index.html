@@ -1,9 +1,10 @@
-<!DOCTYPE HTML>
 <html lang="zh-CN">
 <head><meta name="generator" content="Hexo 3.9.0">
     <!--Setting-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="referrer" content="same-origin">
+    <meta name="referrer" content="no-referrer">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <meta http-equiv="Cache-Control" content="no-transform">
@@ -102,7 +103,7 @@ G= Goroutine 协程，P=Processor 处理器， M=Thread 线程
 <![endif]-->
 
 <body>
-    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <header class="main-header"  style="background-image:url(http://ww2.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
     <div class="main-header-box">
         <a class="header-avatar" href="/" title='abner'>
             <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
@@ -201,13 +202,17 @@ G= Goroutine 协程，P=Processor 处理器， M=Thread 线程
 </div>
             
             
+            <p class="fa fa-exclamation-triangle warning">
+                本文于<strong>401</strong>天之前发表，文中内容可能已经过时。
+            </p>
+        
     </div>
     
     <div class="post-body post-content">
         <blockquote>
 <p><a href="https://learnku.com/articles/41728" target="_blank" rel="noopener">https://learnku.com/articles/41728</a></p>
 </blockquote>
-<h1 id="GMP-模型"><a href="#GMP-模型" class="headerlink" title="GMP 模型"></a>GMP 模型</h1><p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gdq6pczx1xj30sg0lcdhj.jpg" alt="1.jpeg"></p>
+<h1 id="GMP-模型"><a href="#GMP-模型" class="headerlink" title="GMP 模型"></a>GMP 模型</h1><p><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gdq6pczx1xj30sg0lcdhj.jpg" alt="1.jpeg"></p>
 <p><strong>G= Goroutine 协程，P=Processor 处理器， M=Thread 线程</strong></p>
 <ul>
 <li>全局队列（Global Queue）：存放等待运行的 G。</li>
@@ -249,7 +254,7 @@ G= Goroutine 协程，P=Processor 处理器， M=Thread 线程
 </li>
 </ol>
 <hr>
-<h1 id="go-func-调度流程"><a href="#go-func-调度流程" class="headerlink" title="go func () 调度流程"></a>go func () 调度流程</h1><p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gdq7eb6xmxj30yg0jeq4b.jpg" alt="2.jpg"></p>
+<h1 id="go-func-调度流程"><a href="#go-func-调度流程" class="headerlink" title="go func () 调度流程"></a>go func () 调度流程</h1><p><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gdq7eb6xmxj30yg0jeq4b.jpg" alt="2.jpg"></p>
 <ol>
 <li>我们通过 go func () 来创建一个 goroutine；</li>
 <li>有两个存储 G 的队列，一个是局部调度器 P 的本地队列、一个是全局 G 队列。新创建的 G 会先保存在 P 的本地队列中，如果 P 的本地队列已经满了就会保存在全局的队列中；<br>​3. G 只能运行在 M 中，一个 M 必须持有一个 P，M 与 P 是 1：1 的关系。M 会从 P 的本地队列弹出一个可执行状态的 G 来执行，如果 P 的本地队列为空，就会想其他的 MP 组合偷取一个可执行的 G 来执行；<br>​4. 一个 M 调度 G 执行的过程是一个循环机制；</li>
@@ -257,7 +262,7 @@ G= Goroutine 协程，P=Processor 处理器， M=Thread 线程
 <li>当 M 系统调用结束时候，这个 G 会尝试获取一个空闲的 P 执行，并放入到这个 P 的本地队列。如果获取不到 P，那么这个线程 M 变成休眠状态， 加入到空闲线程中，然后这个 G 会被放入全局队列中。</li>
 </ol>
 <hr>
-<h1 id="调度器的生命周期"><a href="#调度器的生命周期" class="headerlink" title="调度器的生命周期"></a>调度器的生命周期</h1><p><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gdqskyqbo1j30c70o83yq.jpg" alt="2.png"></p>
+<h1 id="调度器的生命周期"><a href="#调度器的生命周期" class="headerlink" title="调度器的生命周期"></a>调度器的生命周期</h1><p><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gdqskyqbo1j30c70o83yq.jpg" alt="2.png"></p>
 <hr>
 <h1 id="特殊的-M0-和-G0"><a href="#特殊的-M0-和-G0" class="headerlink" title="特殊的 M0 和 G0"></a>特殊的 M0 和 G0</h1><ul>
 <li>M0 是启动程序后的编号为 0 的主线程，这个 M 对应的实例会在全局变量 runtime.m0 中，不需要在 heap 上分配，M0 负责执行初始化操作和启动第一个 G， 在之后 M0 就和其他的 M 一样了。</li>

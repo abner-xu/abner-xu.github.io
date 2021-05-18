@@ -1,9 +1,10 @@
-<!DOCTYPE HTML>
 <html lang="zh-CN">
 <head><meta name="generator" content="Hexo 3.9.0">
     <!--Setting-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="referrer" content="same-origin">
+    <meta name="referrer" content="no-referrer">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta http-equiv="Cache-Control" content="no-siteapp">
     <meta http-equiv="Cache-Control" content="no-transform">
@@ -101,7 +102,7 @@
 <![endif]-->
 
 <body>
-    <header class="main-header"  style="background-image:url(http://ww1.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
+    <header class="main-header"  style="background-image:url(http://ww2.sinaimg.cn/large/0078bOVFgy1g0xp1zlruqj30zk05a0un.jpg);background-repeat:round;"  >
     <div class="main-header-box">
         <a class="header-avatar" href="/" title='abner'>
             <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
@@ -201,7 +202,7 @@
             
             
             <p class="fa fa-exclamation-triangle warning">
-                本文于<strong>479</strong>天之前发表，文中内容可能已经过时。
+                本文于<strong>810</strong>天之前发表，文中内容可能已经过时。
             </p>
         
     </div>
@@ -220,7 +221,7 @@
 <li>HyperLogLog(2.8.9版本新增):用来做基数统计的算法，HyperLogLog 的优点是，在输入元素的数量或者体积非常非常大时，计算基数所需的空间总是固定 的、并且是很小的。使用场景最常见的就是计算网站UV等，对数据精度要求不高</li>
 <li>Geo（3.2版本新增）：GEO(地理位置)的支持，主要是对经纬度一个位置计算等特性</li>
 <li>BitMap</li>
-<li>BloomFilter<br><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0n97yi9czj30a504hjri.jpg" alt="data-struct"><br><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0n991tb0hj30rp0cqmyi.jpg" alt="data-struct"></li>
+<li>BloomFilter<br><img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0n97yi9czj30a504hjri.jpg" alt="data-struct"><br><img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0n991tb0hj30rp0cqmyi.jpg" alt="data-struct"></li>
 </ol>
 <hr>
 <h1 id="Redis的过期策略以及内存淘汰机制"><a href="#Redis的过期策略以及内存淘汰机制" class="headerlink" title="Redis的过期策略以及内存淘汰机制"></a>Redis的过期策略以及内存淘汰机制</h1><ol>
@@ -257,11 +258,11 @@
 <li>当子进程完成写RDB文件，用新文件替换老文件。</li>
 <li>bgsave的原理是什么？你给出两个词汇就可以了，fork和cow。fork是指redis通过创建子进程来进行bgsave操作，cow指的是copy on write，子进程创建后，父子进程共享数据段，父进程继续提供读写服务，写脏的页面数据会逐渐和子进程分离开来。</li>
 </ol>
-<p><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0mlshrku0j30gn053gm7.jpg" alt="fork"></p>
+<p><img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0mlshrku0j30gn053gm7.jpg" alt="fork"></p>
 </li>
 <li><p>AOF（特点：AOF增量持久化）</p>
 <p>AOF持久化以日志的形式记录服务器所处理的每一个写、删除操作，查询操作不会记录，以文本的方式记录，可以打开文件看到详细的操作记录。 </p>
-<p><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0mltf2mfsj30hj037aan.jpg" alt="aof"></p>
+<p><img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0mltf2mfsj30hj037aan.jpg" alt="aof"></p>
 </li>
 </ol>
 <hr>
@@ -273,7 +274,7 @@
 </ol>
 </li>
 </ol>
-<p><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0mm2zwx3qj30mn0dzjrv.jpg" alt="full_sync"></p>
+<p><img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0mm2zwx3qj30mn0dzjrv.jpg" alt="full_sync"></p>
 <ol start="2">
 <li>主从复制的断点续传<ol>
 <li>redis从2.8开始就支持断点续传功能，即当slave与master断开后，重新连接时，会继续从上一次断开的点继续传送数据，而不是full resynchronization。</li>
@@ -291,7 +292,7 @@
 </li>
 </ol>
 <hr>
-<h1 id="Redis-Cluster集群"><a href="#Redis-Cluster集群" class="headerlink" title="Redis-Cluster集群"></a>Redis-Cluster集群</h1><div align="center"><img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0natm1efxj30dr0fut9k.jpg" width="256" height="256"></div>
+<h1 id="Redis-Cluster集群"><a href="#Redis-Cluster集群" class="headerlink" title="Redis-Cluster集群"></a>Redis-Cluster集群</h1><div align="center"><img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0natm1efxj30dr0fut9k.jpg" width="256" height="256"></div>
 
 <ol>
 <li>所有的redis节点彼此互联(PING-PONG机制),内部使用二进制协议优化传输速度和带宽。</li>
@@ -304,13 +305,13 @@
 <p>虽然使用CRC16算法最多可以分配65535（2^16-1）个槽位，65535=65k，压缩后就是8k（8 * 8 (8 bit) * 1024(1k) = 8K），也就是说需要需要8k的心跳包，作者认为这样做不太值得；并且一般情况下一个redis集群不会有超过1000个master节点，所以16k的槽位是个比较合适的选择。</p>
 <hr>
 <h1 id="Redis哨兵"><a href="#Redis哨兵" class="headerlink" title="Redis哨兵"></a>Redis哨兵</h1><div align="center">
-<img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0y43vh0ilj30ay07g3z3.jpg">
+<img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0y43vh0ilj30ay07g3z3.jpg">
 
 <p>在Server1 掉线后：</p>
-<img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0y43vh0ilj30ay07g3z3.jpg">
+<img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0y43vh0ilj30ay07g3z3.jpg">
 
 <p>升级Server2 为新的主服务器：</p>
-<img src="http://ww1.sinaimg.cn/large/0078bOVFgy1g0y477tgrvj30as082wfb.jpg">
+<img src="http://ww2.sinaimg.cn/large/0078bOVFgy1g0y477tgrvj30as082wfb.jpg">
 </div>
 
 <ol>
@@ -390,7 +391,7 @@
 <li>Redis主从复制的性能问题，为了主从复制的速度和连接的稳定性，Slave和Master最好在同一个局域网内</li>
 </ol>
 <hr>
-<h1 id="Redis6-0-多线程"><a href="#Redis6-0-多线程" class="headerlink" title="Redis6.0 多线程"></a>Redis6.0 多线程</h1><p>其实本质只是在网络IO上面实现了多线程读取和写入，然后进行执行队列，执行还是单线程<br><img src="http://ww1.sinaimg.cn/large/007lnJOlgy1gdoxcw7xwhj30cf0ah0tr.jpg" alt="1.jpeg"><br>加入多线程 IO 之后，整体的读流程如下:</p>
+<h1 id="Redis6-0-多线程"><a href="#Redis6-0-多线程" class="headerlink" title="Redis6.0 多线程"></a>Redis6.0 多线程</h1><p>其实本质只是在网络IO上面实现了多线程读取和写入，然后进行执行队列，执行还是单线程<br><img src="http://ww2.sinaimg.cn/large/007lnJOlgy1gdoxcw7xwhj30cf0ah0tr.jpg" alt="1.jpeg"><br>加入多线程 IO 之后，整体的读流程如下:</p>
 <ul>
 <li>主线程负责接收建连请求，读事件到来(收到请求)则放到一个全局等待读处理队列</li>
 <li>主线程处理完读事件之后，通过 RR(Round Robin) 将这些连接分配给这些 IO 线程，然后主线程忙等待(spinlock 的效果)状态</li>
