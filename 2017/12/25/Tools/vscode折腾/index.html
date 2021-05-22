@@ -199,7 +199,7 @@ Auto Close Tag ...">
             
             
             <p class="fa fa-exclamation-triangle warning">
-                本文于<strong>1239</strong>天之前发表，文中内容可能已经过时。
+                本文于<strong>1243</strong>天之前发表，文中内容可能已经过时。
             </p>
         
     </div>
@@ -218,6 +218,13 @@ Auto Close Tag ...">
 <li>PHP Snippets from PHPStrom,使用和 PHPStrom 一样的快捷代码片段，pubf + tab？</li>
 <li>PHP Namespace Resolver,PHP 命名空间解析器；可以导入和扩展类；还可以排序。优秀，必装。</li>
 <li>Better Align,可以实现变量和数组的等号对齐。优秀，必装。</li>
+<li>php.validate.executablepath,配置成docker 容器中的php路径，办法<ol>
+<li>新建文件 Create a file named php in <code>你自己的路径</code></li>
+<li>写入内容<code>#!/bin/bash docker exec -i --user=1000:1000 php7-vscode php &quot;$@&quot;</code></li>
+<li>修改可执行<code>sudo chmod +x php</code></li>
+<li>php.validate.executablepath=<code>你自己的路径</code>/php</li>
+</ol>
+</li>
 </ol>
 <h1 id="go环境"><a href="#go环境" class="headerlink" title="go环境"></a>go环境</h1><ol>
 <li><p>设置代理  set GOPROXY=”<a href="https://goproxy.cn&quot;" target="_blank" rel="noopener">https://goproxy.cn&quot;</a></p>

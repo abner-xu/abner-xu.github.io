@@ -164,34 +164,6 @@
         <div class="post-content">
             <div class="post-head home-post-head">
                 <h1 class="post-title">
-                    <a href="/2019/09/04/Amqp/RabbitMQ-Exchange/">RabbitMQ-Exchange</a>
-                </h1>
-                <div class="post-meta">  &bull;
-                    <time class="post-date" datetime="" title="">
-                        2019年09月04日
-                    </time>
-                </div>
-            </div>
-            <p class="brief">
-                
-                    交换器分类RabbitMQ的Exchange（交换器）分为四类：
-
-direct（默认）
-headers
-fanout
-topic
-
-其中headers交换器允许你匹配AMQP消息的header而非路由键，除此之外headers交换器...
-                
-            </p>
-        </div>
-    </article>
- 
-    <article class="post">
-        
-        <div class="post-content">
-            <div class="post-head home-post-head">
-                <h1 class="post-title">
                     <a href="/2019/09/04/Amqp/RabbitMQ-工作原理/">RabbitMQ-工作原理</a>
                 </h1>
                 <div class="post-meta">  &bull;
@@ -231,6 +203,34 @@ topic
 重复消息问题
 
 生产者-&amp;gt;服务端出现网络抖动等问题的重发(上半场): 此时重发是MQ-client发起的，消息的处理是MQ-server,为了避免重复，对每条消息MQ系统内部必须生成一个inner-msg-id，全局唯一，...
+                
+            </p>
+        </div>
+    </article>
+ 
+    <article class="post">
+        
+        <div class="post-content">
+            <div class="post-head home-post-head">
+                <h1 class="post-title">
+                    <a href="/2019/09/04/Amqp/RabbitMQ-Exchange/">RabbitMQ-Exchange</a>
+                </h1>
+                <div class="post-meta">  &bull;
+                    <time class="post-date" datetime="" title="">
+                        2019年09月04日
+                    </time>
+                </div>
+            </div>
+            <p class="brief">
+                
+                    交换器分类RabbitMQ的Exchange（交换器）分为四类：
+
+direct（默认）
+headers
+fanout
+topic
+
+其中headers交换器允许你匹配AMQP消息的header而非路由键，除此之外headers交换器...
                 
             </p>
         </div>
